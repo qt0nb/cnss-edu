@@ -1,0 +1,217 @@
+"use client";
+
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import type { Bi, ProgressState, ReviewCardState } from "@/lib/types";
+import { ACHIEVEMENTS } from "@/data/achievements";
+
+const todayStr = () => new Date().toISOString().slice(0, 10);
+const dayDiff = (a: string, b: string) =>
+  Math.round((new Date(b).getTime() - new Date(a).getTime()) / 86400000);
+
+/** Leitner box intervals in days: box0→10min treated as 0.007d */
+const BOX_DAYS = [0.007, 1, 3, 7, 14, 30];
+
+export interface Store extends ProgressState {
+  hydrated: boolean;
+  setHydrated: () => void;
+  touchDay: () => void;
+  completeLesson: (lessonId: string) => void;
+  recordQuiz: (lessonId: string, correct: number, total: number) => number;
+  ensureCards: (cards: { key: string; front: Bi; back: Bi }[]) => number;
+  answerReview: (key: string, grade: "good" | "ok" | "bad") => void;
+  toggleToolBookmark: (id: string) => void;
+  toggleProjectBookmark: (id: string) => void;
+  markPlaygroundUsed: (id: string) => void;
+  resetAll: () => void;
+  checkAchievements: () => string[];
+}
+
+const initial: ProgressState = {
+  version: 1,
+  xp: 0,
+  streak: 0,
+  lastActiveDay: "",
+  completedLessons: {},
+  quizStats: {},
+  quizTotals: { answered: 0, correct: 0, perfect: 0 },
+  reviewCards: {},
+  reviewsDone: 0,
+  toolBookmarks: [],
+  projectBookmarks: [],
+  achievements: [],
+  playgroundUsed: [],
+};
+
+function metrics(p: ProgressState) {
+  return {
+    lessonsCompleted: Object.keys(p.completedLessons).length,
+    xp: p.xp,
+    quizCorrect: p.quizTotals.correct,
+    quizTotal: p.quizTotals.answered,
+    streak: p.streak,
+    toolsBookmarked: p.toolBookmarks.length,
+    projectsBookmarked: p.projectBookmarks.length,
+    reviewsDone: p.reviewsDone,
+    perfectQuizzes: p.quizTotals.perfect,
+  };
+}
+
+export const useProgress = create<Store>()(
+  persist(
+    (set, get) => ({
+      ...initial,
+      hydrated: false,
+      setHydrated: () => set({ hydrated: true }),
+
+      touchDay: () => {
+        const today = todayStr();
+        const { lastActiveDay, streak } = get();
+        if (lastActiveDay === today) return;
+        const diff = lastActiveDay ? dayDiff(lastActiveDay, today) : 99;
+        const newStreak = diff === 1 ? streak + 1 : 1;
+        set({ lastActiveDay: today, streak: newStreak, xp: get().xp + 2 });
+      },
+
+      completeLesson: (lessonId) => {
+        const state = get();
+        if (state.completedLessons[lessonId]) return;
+        set({
+          completedLessons: {
+            ...state.completedLessons,
+            [lessonId]: { completedAt: new Date().toISOString() },
+          },
+          xp: state.xp + 10,
+        });
+        get().touchDay();
+      },
+
+      recordQuiz: (lessonId, correct, total) => {
+        const state = get();
+        const prev = state.quizStats[lessonId] ?? { attempts: 0, correct: 0, best: 0 };
+        const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+        const perfect = correct === total && total > 0 ? 1 : 0;
+        set({
+          quizStats: {
+            ...state.quizStats,
+            [lessonId]: {
+              attempts: prev.attempts + 1,
+              correct: prev.correct + correct,
+              best: Math.max(prev.best, pct),
+            },
+          },
+          quizTotals: {
+            answered: state.quizTotals.answered + total,
+            correct: state.quizTotals.correct + correct,
+            perfect: state.quizTotals.perfect + perfect,
+          },
+          xp: state.xp + correct * 5 + (perfect ? 15 : 0),
+        });
+        get().touchDay();
+        return pct;
+      },
+
+      ensureCards: (cards) => {
+        const state = get();
+        const next = { ...state.reviewCards };
+        let added = 0;
+        for (const c of cards) {
+          if (!(c.key in next)) {
+            next[c.key] = { box: 0, due: Date.now(), seen: 0, lapses: 0 };
+            added++;
+          }
+        }
+        if (added > 0) set({ reviewCards: next });
+        return added;
+      },
+
+      answerReview: (key, grade) => {
+        const state = get();
+        const card = state.reviewCards[key];
+        if (!card) return;
+        let box = card.box;
+        if (grade === "good") box = Math.min(5, box + 1);
+        else if (grade === "ok") box = Math.max(0, box);
+        else box = 0;
+        const due = Date.now() + BOX_DAYS[box] * 86400000;
+        set({
+          reviewCards: { ...state.reviewCards, [key]: { ...card, box, due, seen: card.seen + 1, lapses: grade === "bad" ? card.lapses + 1 : card.lapses } },
+          reviewsDone: state.reviewsDone + 1,
+          xp: state.xp + (grade === "good" ? 3 : 1),
+        });
+      },
+
+      toggleToolBookmark: (id) => {
+        const state = get();
+        const has = state.toolBookmarks.includes(id);
+        set({
+          toolBookmarks: has ? state.toolBookmarks.filter((t) => t !== id) : [...state.toolBookmarks, id],
+          xp: has ? state.xp : state.xp + 2,
+        });
+      },
+
+      toggleProjectBookmark: (id) => {
+        const state = get();
+        const has = state.projectBookmarks.includes(id);
+        set({
+          projectBookmarks: has ? state.projectBookmarks.filter((t) => t !== id) : [...state.projectBookmarks, id],
+          xp: has ? state.xp : state.xp + 2,
+        });
+      },
+
+      markPlaygroundUsed: (id) => {
+        const state = get();
+        if (state.playgroundUsed.includes(id)) return;
+        set({ playgroundUsed: [...state.playgroundUsed, id], xp: state.xp + 5 });
+      },
+
+      resetAll: () => set({ ...initial }),
+
+      checkAchievements: () => {
+        const state = get();
+        const m = metrics(state);
+        const unlocked: string[] = [];
+        for (const a of ACHIEVEMENTS) {
+          if (!state.achievements.includes(a.id) && m[a.metric] >= a.goal) unlocked.push(a.id);
+        }
+        if (unlocked.length > 0) {
+          set({ achievements: [...state.achievements, ...unlocked], xp: state.xp + unlocked.length * 20 });
+        }
+        return unlocked;
+      },
+    }),
+    {
+      name: "nm-progress",
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated();
+      },
+    }
+  )
+);
+
+// ── derived helpers ────────────────────────────────────────────────────
+export const learnerLevel = (xp: number): number => Math.min(12, Math.floor(Math.sqrt(Math.max(xp, 1) / 70)) + 1);
+
+export const levelTitle = (level: number): Bi => {
+  const titles: Bi[] = [
+    { ar: "مبتدئ", en: "Novice" },
+    { ar: "متعلم", en: "Learner" },
+    { ar: "متمرّس", en: "Practitioner" },
+    { ar: "متقن", en: "Proficient" },
+    { ar: "محترف", en: "Professional" },
+    { ar: "خبير", en: "Expert" },
+    { ar: "مهندس شبكات", en: "Network Engineer" },
+    { ar: "معماري شبكات", en: "Network Architect" },
+    { ar: "سيد الشبكات", en: "Network Master" },
+    { ar: "أسطورة الشبكات", en: "Network Legend" },
+    { ar: "حكيم الإنترنت", en: "Internet Sage" },
+    { ar: "خارق", en: "Transcendent" },
+  ];
+  return titles[Math.min(level - 1, titles.length - 1)];
+};
+
+export const dueCards = (cards: Record<string, ReviewCardState>): string[] =>
+  Object.entries(cards)
+    .filter(([, c]) => c.due <= Date.now())
+    .map(([k]) => k);
