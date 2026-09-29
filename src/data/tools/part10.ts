@@ -822,7 +822,7 @@ export const TOOLS_PART10: Tool[] = [
       ar: "مرجع شهادات خاص مفتوح المصدر من Smallstep يصدر شهادات X.509 وSSH قصيرة الأجل تلقائيًا. مثالي لبنى الثقة الصفرية التي تتجدد فيها بيانات الاعتماد كل ساعات.",
       en: "Smallstep's open-source private certificate authority issuing short-lived X.509 and SSH certificates automatically. Perfect for zero-trust setups where credentials rotate every few hours.",
     },
-    cmd: "step ca init --name NetMastery --dns ca.lab.example.com --address :8443",
+    cmd: "step ca init --name CNSS-edu --dns ca.lab.example.com --address :8443",
     cmdDesc: {
       ar: "يبدأ تهيئة مرجع شهادات جديد بالاسم والنطاقات والعنوان المحدد.",
       en: "Begins initializing a new CA with the given name, DNS names and listen address.",
@@ -888,7 +888,7 @@ export const TOOLS_PART10: Tool[] = [
       ar: "وحدة أمان عتادية برمجية تحاكي جهاز HSM الحقيقي عبر واجهة PKCS#11 لأغراض الاختبار والتطوير. تتيح تجربة عزل مفاتيح مرجع الشهادات دون شراء عتاد مخصص.",
       en: "A software HSM emulator exposing a PKCS#11 interface for testing and development. Lets you trial CA key isolation without buying dedicated hardware.",
     },
-    cmd: "softhsm2-util --init-token --slot 0 --label NetMasteryCA --so-pin 123456 --pin 654321",
+    cmd: "softhsm2-util --init-token --slot 0 --label CNSS-eduCA --so-pin 123456 --pin 654321",
     cmdDesc: {
       ar: "يبدأ تهيئة فتحة التوكن ويثبّت أرقام الدبوس لتجربة تخزين المفاتيح.",
       en: "Initializes a token slot with pins, ready for CA key storage trials.",
@@ -1081,7 +1081,7 @@ export const TOOLS_PART10: Tool[] = [
       ar: "منصة أتمتة دفاتر التشغيل تحول إجراءات الشبكة إلى مهام ويب موثقة وصاحبة صلاحيات وسجل كامل. تجعل مهام الصيانة الليلية قابلة للتفويض الآمن لأي عضو في الفريق.",
       en: "A runbook automation platform turning network procedures into audited, permissioned web jobs. Makes overnight network maintenance safely delegable to any team member.",
     },
-    cmd: "rd jobs run -j nightly-backups -p NetMastery",
+    cmd: "rd jobs run -j nightly-backups -p CNSS-edu",
     cmdDesc: {
       ar: "يشغّل وظيفة النسخ الاحتياطي المجدولة في المشروع بأمر واحد.",
       en: "Kicks off the scheduled backup job in the project with one command.",

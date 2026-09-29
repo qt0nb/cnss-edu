@@ -188,10 +188,10 @@ export function createDevice(kind: DeviceKind, x: number, y: number, topo?: Topo
     gateway: null,
     dnsServer: null,
     dhcpClient: false,
-    ssid: "NetMastery",
+    ssid: "CNSS-edu",
     dhcpPool: null,
     dnsZone: null,
-    httpRoot: { title: "NetMastery", body: "مرحباً من خادم NetMastery!\nWelcome from NetMastery server!" },
+    httpRoot: { title: "CNSS-edu", body: "مرحباً من خادم CNSS-edu!\nWelcome from CNSS-edu server!" },
     nat: kind === "wirelessRouter",
     natTable: [],
     natWanCounter: 40000,
@@ -1242,7 +1242,7 @@ export function simulateHttp(topo: Topology, clientId: string, host: string): Si
   const get = sendTcp("HTTP GET", { ar: "طلب GET", en: "HTTP GET" }, "ACK", "102", 1025, 80, { ar: `GET / HTTP/1.1\nHost: ${host}`, en: `GET / HTTP/1.1\nHost: ${host}` });
   void get;
   const okStep = [...ctx.steps].reverse().find((s) => s.packet.kind === "HTTP 200 OK" && s.deviceId === clientId);
-  const page = okStep ? { title: okStep.packet.payload?.en.split("\n")[0] ?? "NetMastery", body: okStep.packet.payload?.en.split("\n").slice(1).join("\n") ?? "" } : null;
+  const page = okStep ? { title: okStep.packet.payload?.en.split("\n")[0] ?? "CNSS-edu", body: okStep.packet.payload?.en.split("\n").slice(1).join("\n") ?? "" } : null;
   return { steps: ctx.steps, devices: t.devices, success: !!okStep, note: okStep ? info("تم تحميل الصفحة بنجاح عبر HTTP!", "Page loaded successfully over HTTP!") : info("لم يصل رد HTTP — تأكد من إعداد الخادم والمسار", "No HTTP reply — check server config & route"), page };
 }
 

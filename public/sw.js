@@ -1,4 +1,4 @@
-/* NetMastery PWA service worker — offline-first, whole-site caching.
+/* CNSS-edu PWA service worker — offline-first, whole-site caching.
  *
  * Strategy:
  *  - Navigations (the SPA shell): network-first → cached shell → inline offline page.
@@ -9,14 +9,14 @@
  *  - Everything is captured on first visit; PwaRegister additionally prefetches
  *    all view chunks so every page works offline after the FIRST load.
  */
-const VERSION = "netmastery-v1";
+const VERSION = "cnss-v2";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const MAX_RUNTIME_ENTRIES = 600;
 
 const OFFLINE_HTML = `<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NetMastery — دون اتصال</title>
+<title>CNSS-edu — دون اتصال</title>
 <style>
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0a0f0d;color:#e6f4ee;font-family:system-ui,"Segoe UI",Tahoma,sans-serif;text-align:center;padding:2rem}
 .c{max-width:26rem}
@@ -27,8 +27,8 @@ b{color:#34d399}
 </style></head><body><div class="c">
 <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg>
 <h1>لا يوجد اتصال بالإنترنت — No internet</h1>
-<p>افتح التطبيق المثبّت <b>NetMastery</b> ليعمل كاملاً دون اتصال.<br>
-Open the installed <b>NetMastery</b> app — it works fully offline.</p>
+<p>افتح التطبيق المثبّت <b>CNSS-edu</b> ليعمل كاملاً دون اتصال.<br>
+Open the installed <b>CNSS-edu</b> app — it works fully offline.</p>
 </div></body></html>`;
 
 self.addEventListener("install", (event) => {

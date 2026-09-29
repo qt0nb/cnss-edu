@@ -1,4 +1,4 @@
-// ─── Shared types for NetMastery platform ───────────────────────────────
+// ─── Shared types for CNSS-edu platform ───────────────────────────────
 export type Lang = "ar" | "en";
 
 /** Bilingual string: Arabic + English */

@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { LangProvider, useLang } from "@/lib/i18n";
 import { useNav } from "@/lib/nav";
+import { useCountUp } from "@/lib/useCountUp";
 import { useProgress, learnerLevel, levelTitle } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -68,18 +69,26 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
   const { t } = useLang();
   return (
     <div className="flex items-center gap-2.5 select-none">
-      <div className="relative grid size-10 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-primary-foreground shadow-lg glow-primary">
-        <Network className="size-5" strokeWidth={2.4} />
+      <div className="relative grid size-10 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-primary-foreground shadow-lg glow-primary radar">
+        <Network className="size-5 relative z-10" strokeWidth={2.4} />
       </div>
       {!compact && (
         <div className="leading-tight">
-          <div className="font-extrabold text-[15px] text-glow">{t("appName")}</div>
-          <div className="text-[10.5px] text-muted-foreground font-medium">NetMastery</div>
+          <div className="font-mono font-extrabold text-[15px] tracking-tight text-glow">
+            {t("appName")}
+            <span className="caret text-emerald-500 font-bold">_</span>
+          </div>
+          <div className="text-[10px] text-muted-foreground font-semibold truncate max-w-[170px]">
+            {t("appNameFull")}
+          </div>
         </div>
       )}
     </div>
   );
 }
+
+/** Animated count-up for numeric stats */
+// (moved to @/lib/useCountUp — imported above)
 
 function StatPills() {
   const { t, lang } = useLang();
@@ -87,18 +96,28 @@ function StatPills() {
   const streak = useProgress((s) => s.streak);
   const lvl = learnerLevel(xp);
   const title = levelTitle(lvl)[lang];
+  const xpDisplay = useCountUp(xp);
+  // level progress: XP needed for level L is (L-1)^2*70
+  const prevXp = Math.pow(lvl - 1, 2) * 70;
+  const nextXp = Math.pow(lvl, 2) * 70;
+  const lvlPct = Math.min(100, Math.max(3, Math.round(((xp - prevXp) / Math.max(nextXp - prevXp, 1)) * 100)));
   return (
     <div className="flex items-center gap-1.5">
-      <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-accent/60 border border-border px-2.5 py-1 text-[11px] font-bold text-accent-foreground">
-        <span className="text-amber-500">★</span> {title} · {lvl}
+      <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-accent/60 border border-border px-2.5 py-1 text-[11px] font-bold text-accent-foreground" title={t("learnerLevel")}>
+        <span className="text-amber-500">★</span>
+        <span className="font-mono">L{lvl}</span>
+        <span className="hidden md:inline">{title}</span>
+        <span className="relative ms-0.5 block h-1 w-10 overflow-hidden rounded-full bg-muted">
+          <span className="absolute inset-y-0 start-0 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-700" style={{ width: `${lvlPct}%` }} />
+        </span>
       </span>
       <span className="inline-flex items-center gap-1 rounded-full bg-accent/60 border border-border px-2.5 py-1 text-[11px] font-bold text-accent-foreground" title={t("streakDays")}>
-        <Flame className="size-3.5 text-orange-500" />
-        {streak}
+        <Flame className="size-3.5 text-orange-500 blink-dot" />
+        <span className="font-mono">{streak}</span>
       </span>
       <span className="inline-flex items-center gap-1 rounded-full bg-accent/60 border border-border px-2.5 py-1 text-[11px] font-bold text-accent-foreground" title={t("xp")}>
         <Zap className="size-3.5 text-yellow-500" />
-        {xp}
+        <span className="font-mono tabular-nums">{xpDisplay}</span>
       </span>
     </div>
   );
@@ -143,7 +162,7 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <nav className="flex flex-col gap-1" aria-label="Main navigation">
-      {NAV_ITEMS.map((item) => {
+      {NAV_ITEMS.map((item, idx) => {
         const active = view === item.view;
         const Icon = item.icon;
         const badge =
@@ -157,17 +176,27 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
               go(item.view);
               onNavigate?.();
             }}
-            className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all
+            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200
               ${active
                 ? "bg-primary text-primary-foreground shadow-md glow-primary"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:-translate-x-0.5 rtl:hover:translate-x-0.5"
               }`}
             aria-current={active ? "page" : undefined}
           >
-            <Icon className="size-[18px] shrink-0" strokeWidth={2.2} />
+            {active && (
+              <motion.span
+                layoutId="nav-active-glow"
+                className="absolute inset-y-1 -start-1 w-1 rounded-full bg-gradient-to-b from-emerald-400 to-teal-500 glow-primary"
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              />
+            )}
+            <span className="relative font-mono text-[9.5px] w-4 shrink-0 text-center opacity-60 group-hover:opacity-100">
+              {String(idx + 1).padStart(2, "0")}
+            </span>
+            <Icon className={`size-[18px] shrink-0 transition-transform duration-200 ${active ? "scale-110" : "group-hover:scale-105"}`} strokeWidth={2.2} />
             <span className="truncate">{t(item.key)}</span>
             {badge && (
-              <span className={`ms-auto rounded-full px-1.5 py-0.5 text-[10px] font-bold ${active ? "bg-primary-foreground/20" : "bg-muted"}`}>
+              <span className={`ms-auto rounded-full px-1.5 py-0.5 text-[10px] font-bold font-mono ${active ? "bg-primary-foreground/20" : "bg-muted"}`}>
                 {badge}
               </span>
             )}
@@ -353,14 +382,60 @@ function ViewRouter() {
   );
 }
 
+/** Sidebar bottom: XP meter + system status */
+function SidebarXpMeter() {
+  const { t, lang } = useLang();
+  const xp = useProgress((s) => s.xp);
+  const lvl = learnerLevel(xp);
+  const prevXp = Math.pow(lvl - 1, 2) * 70;
+  const nextXp = lvl >= 12 ? prevXp : Math.pow(lvl, 2) * 70;
+  const pct = lvl >= 12 ? 100 : Math.min(100, Math.max(2, Math.round(((xp - prevXp) / Math.max(nextXp - prevXp, 1)) * 100)));
+  const title = levelTitle(lvl)[lang];
+  return (
+    <div className="mt-auto border-t border-sidebar-border p-3.5">
+      <div className="mb-1.5 flex items-center justify-between text-[10.5px] font-bold">
+        <span className="text-muted-foreground">{t("level")} {lvl} · {title}</span>
+        <span className="font-mono text-emerald-600 dark:text-emerald-400">{xp}/{lvl >= 12 ? "MAX" : nextXp}</span>
+      </div>
+      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div
+          className="absolute inset-y-0 start-0 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-700"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <div className="mt-2.5 flex items-center gap-1.5 text-[10px] text-muted-foreground">
+        <span className="relative inline-block size-1.5 rounded-full bg-emerald-500 blink-dot" />
+        <span className="font-mono">SYSTEM ONLINE</span>
+      </div>
+    </div>
+  );
+}
+
 function Footer() {
   const { t } = useLang();
   return (
     <footer className="mt-auto border-t bg-muted/30">
+      {/* system ticker line */}
+      <div className="overflow-hidden border-b border-border/60 bg-background/60 py-1.5" dir="ltr">
+        <div className="ticker-track font-mono text-[10px] tracking-wide text-muted-foreground">
+          {[0, 1].map((dup) => (
+            <span key={dup} className="inline-flex gap-12">
+              <span className="inline-flex items-center gap-1.5"><span className="inline-block size-1.5 rounded-full bg-emerald-500 blink-dot" />CNSS-EDU v2.0</span>
+              <span>MODULES 10 · LESSONS 100</span>
+              <span>TOOLS 1060 · CATEGORIES 37</span>
+              <span>LABS 12 · CHALLENGES 12</span>
+              <span>PWA READY · OFFLINE MODE</span>
+              <span>NETSIM ENGINE v3 · AI ONLINE</span>
+            </span>
+          ))}
+        </div>
+      </div>
       <div className="mx-auto w-full max-w-6xl px-4 py-4 pb-24 lg:pb-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11.5px] text-muted-foreground">
         <div className="flex items-center gap-2">
-          <Network className="size-3.5 text-primary" />
-          <span className="font-semibold">{t("appName")} · NetMastery</span>
+          <Network className="size-3.5 text-primary float-soft" />
+          <span className="font-mono font-semibold">CNSS-edu</span>
+          <span className="text-muted-foreground/60">·</span>
+          <span className="hidden sm:inline text-[10.5px]">{t("appNameFull")}</span>
         </div>
         <span className="text-center">{t("footerRights")}</span>
       </div>
@@ -416,32 +491,96 @@ function PwaButtons() {
   );
 }
 
+/** Terminal-style boot splash — shown once per session, overlays the shell */
+function BootSplash({ onDone }: { onDone: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 1750);
+    return () => clearTimeout(t);
+  }, [onDone]);
+  const lines = [
+    "$ cnss-edu --init",
+    "> mounting network modules ......... [ OK ]",
+    "> loading 1060 tools / 37 categories  [ OK ]",
+    "> starting simulation engine ........ [ OK ]",
+    "> arming AI lab assistant ........... [ OK ]",
+    "> SYSTEM ONLINE_",
+  ];
+  return (
+    <motion.div
+      className="fixed inset-0 z-[100] grid place-items-center bg-[#050807]"
+      exit={{ opacity: 0, filter: "blur(6px)" }}
+      transition={{ duration: 0.45 }}
+    >
+      <div className="net-grid-bg absolute inset-0 opacity-60" />
+      <div className="scanline absolute inset-x-0 top-0" />
+      <div className="relative w-[min(92vw,520px)] rounded-xl border border-emerald-500/25 bg-black/70 p-5 shadow-2xl hud-panel">
+        <div className="flex items-center gap-2 border-b border-emerald-500/15 pb-2.5 mb-3">
+          <div className="radar grid size-7 place-items-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+            <Network className="size-4 relative z-10" strokeWidth={2.5} />
+          </div>
+          <span className="font-mono text-sm font-bold tracking-tight text-emerald-300">CNSS-edu</span>
+          <span className="ms-auto font-mono text-[10px] text-emerald-500/60">v2.0 · boot</span>
+        </div>
+        <div className="font-mono text-[12.5px] leading-7 text-emerald-300/90" dir="ltr">
+          {lines.map((l, i) => (
+            <div
+              key={i}
+              className={`type-line ${i === 5 ? "text-emerald-400 font-bold" : ""}`}
+              style={{ animationDelay: `${i * 0.16}s` }}
+            >
+              {l}
+            </div>
+          ))}
+          <div className="caret mt-1 inline-block h-3.5 w-2 bg-emerald-400" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 function AppShell() {
   const { t } = useLang();
   const view = useNav((s) => s.view);
   const syncFromHash = useNav((s) => s.syncFromHash);
+  const [booting, setBooting] = useState(true);
 
   // Keep the store in sync with location.hash (deep links, back/forward).
   // Runs before paint on the client to avoid a flash of the default view.
   const useBeforePaint = typeof window !== "undefined" ? useLayoutEffect : useEffect;
   useBeforePaint(() => {
     syncFromHash();
+    try {
+      if (sessionStorage.getItem("cnss-booted")) setBooting(false);
+    } catch {
+      setBooting(false);
+    }
   }, [syncFromHash]);
+
+  // safety: never trap the user on the splash
+  useEffect(() => {
+    if (!booting) return;
+    const t = setTimeout(() => setBooting(false), 2600);
+    return () => clearTimeout(t);
+  }, [booting]);
+
+  const finishBoot = () => {
+    setBooting(false);
+    try { sessionStorage.setItem("cnss-booted", "1"); } catch { /* private mode */ }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <ProgressWatcher />
+      <AnimatePresence>{booting && <BootSplash onDone={finishBoot} />}</AnimatePresence>
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex fixed inset-y-0 start-0 z-30 w-60 flex-col border-e bg-sidebar">
-        <div className="p-4">
+        <div className="p-4 pb-3">
           <BrandMark />
         </div>
         <div className="px-3">
           <SideNav />
         </div>
-        <div className="mt-auto p-4 text-[10.5px] leading-relaxed text-muted-foreground border-t border-sidebar-border">
-          {t("appTagline")}
-        </div>
+        <SidebarXpMeter />
       </aside>
 
       {/* Main column */}
@@ -452,13 +591,22 @@ function AppShell() {
             <div className="lg:hidden">
               <BrandMark compact />
             </div>
-            <h1 className="hidden lg:block text-base font-extrabold truncate">{t(view === "dashboard" ? "appName" : NAV_ITEMS.find((n) => n.view === view)?.key ?? "appName")}</h1>
+            <div className="hidden lg:flex items-center gap-2.5 min-w-0">
+              <span className="code-chip shrink-0">{view}</span>
+              <h1 className="text-base font-extrabold truncate">{t(view === "dashboard" ? "appNameFull" : NAV_ITEMS.find((n) => n.view === view)?.key ?? "appName")}</h1>
+            </div>
             <div className="ms-auto flex items-center gap-1.5">
               <StatPills />
               <PwaButtons />
               <LangToggle />
               <ThemeToggle />
             </div>
+          </div>
+          {/* animated packet status line */}
+          <div className="packet-line h-[2px] w-full bg-gradient-to-r from-transparent via-emerald-500/25 to-transparent">
+            <span className="pkt" />
+            <span className="pkt" />
+            <span className="pkt" />
           </div>
         </header>
 

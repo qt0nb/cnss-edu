@@ -443,7 +443,7 @@ export function showCommand(d: Device, sub: string): string[] {
     out.push((d.acls ?? []).map((r) => `access-list ${r.action} ${r.proto} ${r.src} ${r.dst}${r.port ? " " + r.port : ""}`).join("\n"));
     if (d.defaultDeny) out.push("policy deny-all");
   } else if (s.startsWith("version")) {
-    out.push(`${d.name} — NetMastery Sim (IOS-like)\nالنموذج: ${d.kind === "router" ? "1941 ISR" : d.kind === "switch" ? "2960" : "عمومي"}\nالذاكرة: 512MB DRAM\nالبوابات: ${d.ports.length}`);
+    out.push(`${d.name} — CNSS-edu Sim (IOS-like)\nالنموذج: ${d.kind === "router" ? "1941 ISR" : d.kind === "switch" ? "2960" : "عمومي"}\nالذاكرة: 512MB DRAM\nالبوابات: ${d.ports.length}`);
   } else {
     out.push("% اكتب: show ip interface brief | show arp | show mac address-table | show ip route | show vlan | show running-config");
   }

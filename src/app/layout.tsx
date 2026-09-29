@@ -23,15 +23,15 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "إتقان الشبكات | NetMastery — منصة تعلم علوم الشبكات",
+  title: "CNSS-edu | Computer Networks & Security Sciences — منصة علوم الشبكات والأمن السيبراني",
   description:
     "منصة تعليمية شاملة ثنائية اللغة لعلوم الشبكات: ١٠٠ درس دقيق، ١٠٦٠ أداة، ٢٠٠ فكرة مشروع مربح، اختبارات ومراجعة ذكية ومختبر تفاعلي بالذكاء الاصطناعي — تعمل دون اتصال.",
-  applicationName: "NetMastery",
+  applicationName: "CNSS-edu",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "NetMastery",
+    title: "CNSS-edu",
   },
   formatDetection: { telephone: false },
   keywords: [
@@ -53,10 +53,10 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: "إتقان الشبكات | NetMastery",
+    title: "CNSS-edu | علوم الشبكات والأمن السيبراني",
     description:
       "Master networking science: 100 lessons, 1060 tools, 200 monetizable ideas, quizzes & interactive lab — fully offline-capable PWA.",
-    siteName: "NetMastery",
+    siteName: "CNSS-edu",
     type: "website",
   },
 };

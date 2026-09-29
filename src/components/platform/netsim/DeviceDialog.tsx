@@ -44,8 +44,8 @@ export function CliTerminal({
   const { lang } = useLang();
   const [lines, setLines] = useState<string[]>([
     lang === "ar"
-      ? "NetMastery Sim — اكتب ? لعرض الأوامر"
-      : "NetMastery Sim — type ? for commands",
+      ? "CNSS-edu Sim — اكتب ? لعرض الأوامر"
+      : "CNSS-edu Sim — type ? for commands",
   ]);
   const [input, setInput] = useState("");
   const [cliState, setCliState] = useState<CliState>(initialCliState);

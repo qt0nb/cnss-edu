@@ -1576,7 +1576,7 @@ export const m08_LESSONS: Lesson[] = [
         },
         code: {
           lang: "bash",
-          snippet: "curl -s https://api.github.com/users/octocat\n\n# طلب مصادق عليه: التوكن في رأس Authorization\ncurl -s -H \"Authorization: Bearer ghp_xxxxxxxx\" \\\n  https://api.github.com/user\n\n# إنشاء مورد عبر POST\ncurl -s -X POST -H \"Authorization: Bearer $TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\":\"NetMastery\",\"private\":false}' \\\n  https://api.github.com/user/repos",
+          snippet: "curl -s https://api.github.com/users/octocat\n\n# طلب مصادق عليه: التوكن في رأس Authorization\ncurl -s -H \"Authorization: Bearer ghp_xxxxxxxx\" \\\n  https://api.github.com/user\n\n# إنشاء مورد عبر POST\ncurl -s -X POST -H \"Authorization: Bearer $TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\":\"CNSS-edu\",\"private\":false}' \\\n  https://api.github.com/user/repos",
         },
       },
       {

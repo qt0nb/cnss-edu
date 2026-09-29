@@ -72,7 +72,7 @@ function buildIosBundle(topo: Topology): string {
   const skipped = topo.devices.filter((d) => !ROUTER_LIKE.includes(d.kind));
   const head = [
     "! ═════════════════════════════════════════════════════",
-    "! NetMastery NetSim — IOS-like config bundle",
+    "! CNSS-edu NetSim — IOS-like config bundle",
     `! generated: ${new Date().toISOString()}`,
     `! devices: ${routerLike.length} router-like, ${skipped.length} end/wireless (not included)`,
     "! NOTE: the simulator models static routing, VLANs, ACLs & NAT;",
@@ -128,7 +128,7 @@ function buildContainerlab(topo: Topology): string {
   const nodeName = new Map<string, string>();
   const ethCounter = new Map<string, number>();
   const lines: string[] = [];
-  lines.push("# ─── NetMastery NetSim → Containerlab export ───");
+  lines.push("# ─── CNSS-edu NetSim → Containerlab export ───");
   lines.push("# Kind mapping (NetSim device → containerlab node):");
   for (const d of topo.devices) {
     const m = CLAB_IMAGE[d.kind];

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   BookOpen, Zap, Flame, Target, RefreshCw, CircleHelp, FlaskConical, Rocket,
-  ArrowRight, TrendingUp, Wrench, GraduationCap, Layers, Trophy,
+  ArrowRight, TrendingUp, Wrench, GraduationCap, Layers, Trophy, Terminal, Activity,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { useLang } from "@/lib/i18n";
 import { useNav } from "@/lib/nav";
 import { useProgress, learnerLevel, levelTitle, dueCards } from "@/lib/store";
+import { useCountUp } from "@/lib/useCountUp";
 import { ALL_LESSONS, TOTAL_LESSONS, lessonById } from "@/data/lessons";
 import { MODULES } from "@/data/modules";
 import { ALL_TOOLS, TOTAL_TOOLS } from "@/data/tools";
@@ -53,16 +54,23 @@ export default function DashboardView() {
 
   const totalQuestions = ALL_LESSONS.reduce((s, l) => s + l.quiz.length, 0);
 
+  const xpDisplay = useCountUp(xp);
+  const toolsDisplay = useCountUp(TOTAL_TOOLS, 1100);
+  const lessonsDisplay = useCountUp(TOTAL_LESSONS, 900);
+  const streakDisplay = useCountUp(streak, 500);
+  const doneDisplay = useCountUp(doneCount, 700);
+  const accDisplay = useCountUp(accuracy, 700);
+
   const stats = [
-    { icon: BookOpen, label: t("lessonsCompleted"), value: `${doneCount}/${TOTAL_LESSONS}`, color: "text-emerald-500 bg-emerald-500/10" },
-    { icon: Flame, label: t("streakDays"), value: streak, color: "text-orange-500 bg-orange-500/10" },
-    { icon: Target, label: t("quizAccuracy"), value: `${accuracy}%`, color: "text-amber-500 bg-amber-500/10" },
+    { icon: BookOpen, label: t("lessonsCompleted"), value: `${doneDisplay}/${TOTAL_LESSONS}`, color: "text-emerald-500 bg-emerald-500/10" },
+    { icon: Flame, label: t("streakDays"), value: streakDisplay, color: "text-orange-500 bg-orange-500/10" },
+    { icon: Target, label: t("quizAccuracy"), value: `${accDisplay}%`, color: "text-amber-500 bg-amber-500/10" },
     { icon: RefreshCw, label: t("dueCards"), value: dueCount, color: "text-primary bg-primary/10" },
   ];
 
   const platformStats = [
-    { icon: BookOpen, value: TOTAL_LESSONS, label: t("lessonsCount") },
-    { icon: Wrench, value: TOTAL_TOOLS, label: t("toolsCount") },
+    { icon: BookOpen, value: lessonsDisplay, label: t("lessonsCount") },
+    { icon: Wrench, value: toolsDisplay, label: t("toolsCount") },
     { icon: Rocket, value: TOTAL_PROJECTS, label: t("projectsCount") },
     { icon: CircleHelp, value: totalQuestions, label: t("quizQuestions") },
     { icon: Layers, value: MODULES.length, label: t("modulesCount") },
@@ -71,13 +79,25 @@ export default function DashboardView() {
   return (
     <div className="space-y-4">
       {/* hero */}
-      <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/15 via-card to-card p-5 sm:p-6 net-grid-bg">
+      <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/15 via-card to-card p-5 sm:p-6 net-grid-bg hud-panel">
+        <div className="scanline" />
         <div className="relative space-y-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black leading-snug">
-              {t("welcome")} 👋
-            </h1>
-            <p className="text-[12.5px] text-muted-foreground mt-1">{t("appTagline")}</p>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="mb-1.5 flex items-center gap-2">
+                <span className="code-chip inline-flex items-center gap-1"><Terminal className="size-3" /> operator</span>
+                <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground">
+                  <span className="inline-block size-1.5 rounded-full bg-emerald-500 blink-dot" /> STATUS: ACTIVE
+                </span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black leading-snug">
+                {t("welcome")} 👋
+              </h1>
+              <p className="text-[12.5px] text-muted-foreground mt-1">{t("appTagline")}</p>
+            </div>
+            <div className="hidden sm:grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-primary-foreground glow-primary radar shrink-0">
+              <Activity className="size-6 relative z-10" strokeWidth={2.4} />
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -89,12 +109,12 @@ export default function DashboardView() {
                 <div className="text-sm font-black">{bi(title)}</div>
                 <div className="flex items-center gap-2 mt-1">
                   <Progress value={lvlPct} className="h-1.5 flex-1" />
-                  <span className="text-[10px] font-mono font-bold text-muted-foreground shrink-0">{xp}/{nextLvlXp}</span>
+                  <span className="text-[10px] font-mono font-bold text-muted-foreground shrink-0 tabular-nums">{xpDisplay}/{nextLvlXp}</span>
                 </div>
               </div>
             </div>
             <Badge variant="outline" className="gap-1.5 py-1.5 px-3 text-[11px] font-bold">
-              <Zap className="size-3.5 text-yellow-500" /> {t("xp")}: <span className="font-mono">{xp}</span>
+              <Zap className="size-3.5 text-yellow-500" /> {t("xp")}: <span className="font-mono tabular-nums">{xpDisplay}</span>
             </Badge>
           </div>
 
@@ -141,14 +161,14 @@ export default function DashboardView() {
       {/* stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
         {stats.map((s, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-            <Card>
+          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rise-in" style={{ animationDelay: `${i * 0.08}s` }}>
+            <Card className="hud-panel">
               <CardContent className="p-3 flex items-center gap-2.5">
                 <div className={`grid size-9 place-items-center rounded-xl ${s.color}`}>
                   <s.icon className="size-4.5" />
                 </div>
                 <div>
-                  <div className="text-lg font-black font-mono leading-none">{s.value}</div>
+                  <div className="text-lg font-black font-mono leading-none tabular-nums">{s.value}</div>
                   <div className="text-[10px] text-muted-foreground mt-0.5">{s.label}</div>
                 </div>
               </CardContent>
@@ -168,9 +188,9 @@ export default function DashboardView() {
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {platformStats.map((s, i) => (
-              <div key={i} className="rounded-xl border bg-muted/30 p-3 text-center">
-                <s.icon className="size-4 mx-auto text-primary mb-1" />
-                <div className="text-xl font-black font-mono leading-none">{s.value.toLocaleString()}</div>
+              <div key={i} className="rounded-xl border bg-muted/30 p-3 text-center hud-panel">
+                <s.icon className="size-4 mx-auto text-primary mb-1 float-soft" style={{ animationDelay: `${i * 0.3}s` }} />
+                <div className="text-xl font-black font-mono leading-none tabular-nums">{s.value.toLocaleString()}</div>
                 <div className="text-[9.5px] text-muted-foreground mt-1">{s.label}</div>
               </div>
             ))}
@@ -209,6 +229,7 @@ export default function DashboardView() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
+                    <span className="font-mono text-[9px] text-muted-foreground shrink-0">M{String(i + 1).padStart(2, "0")}</span>
                     <span className="text-[13px] font-black truncate group-hover:text-primary transition-colors">{bi(m.title)}</span>
                     <span className="text-[9px] text-muted-foreground shrink-0">{levelMap[m.level]}</span>
                   </div>

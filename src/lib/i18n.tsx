@@ -7,10 +7,11 @@ type Dict = Record<string, Bi>;
 
 export const UI: Dict = {
   // Brand / shell
-  appName: { ar: "إتقان الشبكات", en: "NetMastery" },
+  appName: { ar: "CNSS-edu", en: "CNSS-edu" },
+  appNameFull: { ar: "علوم الشبكات والأمن السيبراني", en: "Computer Networks & Security Sciences" },
   appTagline: {
-    ar: "منصتك الشاملة لإتقان علوم الشبكات بالعربية والإنجليزية",
-    en: "Your comprehensive platform to master networking science in Arabic & English",
+    ar: "منصتك الأدائية لإتقان علوم الشبكات والأمن السيبراني — اختبارات، تحديات ومختبر محاكاة",
+    en: "Your performance platform for networking & security sciences — exams, challenges & simulation lab",
   },
   home: { ar: "الرئيسية", en: "Dashboard" },
   lessons: { ar: "الدروس", en: "Lessons" },
@@ -36,8 +37,8 @@ export const UI: Dict = {
   english: { ar: "الإنجليزية", en: "English" },
   menu: { ar: "القائمة", en: "Menu" },
   footerRights: {
-    ar: "منصة تعليمية شاملة — ١٠٠ درس، ١٠٦٠ أداة، ٢٠٠ فكرة ربح",
-    en: "Comprehensive learning platform — 100 lessons, 1060 tools, 200 money-making ideas",
+    ar: "CNSS-edu — منصة أدائية شخصية: ١٠٠ درس، ١٠٦٠ أداة، ٢٠٠ فكرة، مختبر ذكي",
+    en: "CNSS-edu — personal performance platform: 100 lessons, 1060 tools, 200 ideas, smart lab",
   },
 
   // Dashboard
