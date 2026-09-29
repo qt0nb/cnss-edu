@@ -253,12 +253,11 @@ const LangContext = createContext<LangCtx>({
 });
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("ar");
-
-  useEffect(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("nm-lang") : null;
-    if (saved === "ar" || saved === "en") setLangState(saved);
-  }, []);
+  const [lang, setLangState] = useState<Lang>(() => {
+    if (typeof window === "undefined") return "ar";
+    const saved = window.localStorage.getItem("nm-lang");
+    return saved === "ar" || saved === "en" ? saved : "ar";
+  });
 
   useEffect(() => {
     const dir = lang === "ar" ? "rtl" : "ltr";

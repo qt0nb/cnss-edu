@@ -242,7 +242,7 @@ function ProgressWatcher() {
   // streak touch once per day on load
   useEffect(() => {
     if (hydrated) store.touchDay();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [hydrated]);
 
   // achievement toasts
@@ -260,7 +260,7 @@ function ProgressWatcher() {
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [
     hydrated,
     store.xp,
@@ -293,7 +293,7 @@ function ProgressWatcher() {
     return () => {
       if (timer.current) clearTimeout(timer.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [
     store.xp,
     store.streak,

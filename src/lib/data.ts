@@ -23,17 +23,19 @@ export function searchLessons(q: string, lang: "ar" | "en"): Lesson[] {
   );
 }
 
-export function moduleExam(moduleId: string, count = 10): QuizQuestion[] {
+export type QuizItem = QuizQuestion & { lessonId: string };
+
+export function moduleExam(moduleId: string, count = 10): QuizItem[] {
   const lessons = ALL_LESSONS.filter((l) => l.moduleId === moduleId);
-  const pool = lessons.flatMap((l) => l.quiz.map((q) => ({ ...q, lessonId: l.id })));
+  const pool = lessons.flatMap((l) => l.quiz.map((q) => ({ ...q, lessonId: l.id })) as QuizItem[]);
   return shuffle(pool).slice(0, count);
 }
 
-export function finalExam(count = 40): QuizQuestion[] {
+export function finalExam(count = 40): QuizItem[] {
   const pool = ALL_LESSONS.flatMap((l) => l.quiz.map((q) => ({ ...q, lessonId: l.id })));
   // spread across modules: take per module proportionally
   const perModule = Math.max(2, Math.floor(count / MODULES.length));
-  const picked: (QuizQuestion & { lessonId: string })[] = [];
+  const picked: QuizItem[] = [];
   for (const m of MODULES) {
     const modPool = shuffle(pool.filter((q) => q.lessonId.startsWith("l") && ALL_LESSONS.find((l) => l.id === q.lessonId)?.moduleId === m.id));
     picked.push(...modPool.slice(0, perModule));
@@ -43,8 +45,8 @@ export function finalExam(count = 40): QuizQuestion[] {
   return shuffle(picked).slice(0, count);
 }
 
-export function randomPractice(count = 15): QuizQuestion[] {
-  const pool = ALL_LESSONS.flatMap((l) => l.quiz.map((q) => ({ ...q, lessonId: l.id })));
+export function randomPractice(count = 15): QuizItem[] {
+  const pool = ALL_LESSONS.flatMap((l) => l.quiz.map((q) => ({ ...q, lessonId: l.id })) as QuizItem[]);
   return shuffle(pool).slice(0, count);
 }
 
