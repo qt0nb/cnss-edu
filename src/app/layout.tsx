@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Cairo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/platform/theme-provider";
+import PwaRegister from "@/components/platform/PwaRegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,15 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "إتقان الشبكات | NetMastery — منصة تعلم علوم الشبكات",
   description:
-    "منصة تعليمية شاملة ثنائية اللغة لعلوم الشبكات: ١٠٠ درس دقيق، ٥٠٠ أداة، ٢٠٠ فكرة مشروع مربح، اختبارات ومراجعة ذكية ومختبر تفاعلي.",
+    "منصة تعليمية شاملة ثنائية اللغة لعلوم الشبكات: ١٠٠ درس دقيق، ١٠٦٠ أداة، ٢٠٠ فكرة مشروع مربح، اختبارات ومراجعة ذكية ومختبر تفاعلي بالذكاء الاصطناعي — تعمل دون اتصال.",
+  applicationName: "NetMastery",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "NetMastery",
+  },
+  formatDetection: { telephone: false },
   keywords: [
     "شبكات",
     "networking",
@@ -36,15 +45,30 @@ export const metadata: Metadata = {
     "network tools",
   ],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: [
+      { url: "/icons/icon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     title: "إتقان الشبكات | NetMastery",
     description:
-      "Master networking science: 100 lessons, 500 tools, 200 monetizable ideas, quizzes & interactive lab.",
+      "Master networking science: 100 lessons, 1060 tools, 200 monetizable ideas, quizzes & interactive lab — fully offline-capable PWA.",
     siteName: "NetMastery",
     type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0a0f0d" },
+    { media: "(prefers-color-scheme: light)", color: "#059669" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -64,6 +88,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <PwaRegister />
           <Toaster />
         </ThemeProvider>
       </body>

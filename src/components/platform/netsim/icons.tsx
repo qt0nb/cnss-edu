@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Printer, Phone, HardDrive, Cctv, Tv, Thermometer, Router, Radar } from "lucide-react";
 import type { DeviceKind, LinkKind } from "@/lib/netsim/types";
 
 export function DeviceIcon({ kind, size = 44 }: { kind: DeviceKind; size?: number }) {
@@ -118,7 +119,50 @@ export function DeviceIcon({ kind, size = 44 }: { kind: DeviceKind; size?: numbe
           </g>
         </svg>
       );
+    // ── v3: peripherals & IoT get a colored chip + lucide glyph (emerald/teal/amber/rose/zinc hues) ──
+    case "printer":
+    case "ipPhone":
+    case "nas":
+    case "camera":
+    case "tv":
+    case "thermostat":
+    case "iotSensor":
+    case "modem":
+      return <ChipIcon kind={kind} size={size} />;
   }
+}
+
+/** colored chip + lucide icon for the v3 device kinds */
+function ChipIcon({ kind, size }: { kind: DeviceKind; size: number }) {
+  const cfg: Record<string, { Icon: React.ElementType; bg: string; border: string; fg: string }> = {
+    printer: { Icon: Printer, bg: "#0f3d3a", border: "#14b8a6", fg: "#5eead4" }, // teal
+    ipPhone: { Icon: Phone, bg: "#062f21", border: "#10b981", fg: "#6ee7b7" }, // emerald
+    nas: { Icon: HardDrive, bg: "#27272a", border: "#71717a", fg: "#d4d4d8" }, // zinc
+    camera: { Icon: Cctv, bg: "#3f0d1c", border: "#f43f5e", fg: "#fda4af" }, // rose
+    tv: { Icon: Tv, bg: "#402a05", border: "#f59e0b", fg: "#fcd34d" }, // amber
+    thermostat: { Icon: Thermometer, bg: "#1c1917", border: "#fbbf24", fg: "#fde68a" }, // stone + amber
+    iotSensor: { Icon: Radar, bg: "#052e1b", border: "#34d399", fg: "#a7f3d0" }, // emerald
+    modem: { Icon: Router, bg: "#1f1f23", border: "#a1a1aa", fg: "#e4e4e7" }, // zinc
+  };
+  const { Icon, bg, border, fg } = cfg[kind] ?? cfg.nas;
+  const px = Math.round(size * 0.52);
+  return (
+    <span
+      aria-hidden
+      className="inline-flex items-center justify-center"
+      style={{
+        width: size,
+        height: size,
+        borderRadius: Math.round(size * 0.24),
+        background: bg,
+        border: `2px solid ${border}`,
+        boxShadow: `0 0 0 1px ${bg}`,
+        flex: "0 0 auto",
+      }}
+    >
+      <Icon style={{ width: px, height: px, color: fg }} strokeWidth={2.2} />
+    </span>
+  );
 }
 
 export const linkStyle = (kind: LinkKind): { color: string; dash: string; width: number } => {
@@ -128,7 +172,7 @@ export const linkStyle = (kind: LinkKind): { color: string; dash: string; width:
     case "serial":
       return { color: "#f59e0b", dash: "0", width: 3.5 };
     case "fiber":
-      return { color: "#0d9488", dash: "0", width: 3 };
+      return { color: "#d97706", dash: "0", width: 4 };
     case "console":
       return { color: "#64748b", dash: "1 3", width: 2 };
     case "crossover":

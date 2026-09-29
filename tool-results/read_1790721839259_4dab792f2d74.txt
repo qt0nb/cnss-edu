@@ -1,0 +1,624 @@
+   898→  const inP = findPort(d, inPortId);
+   899→  const out = (inP && inP.linkId && inP.adminUp ? inP : d.ports.find((p) => p.linkId && p.adminUp)) ?? d.ports[0];
+   900→  const name = packet.payload?.en ?? "";
+   901→  const answer = zone?.a[name];
+   902→  const reply = mkPacket({
+   903→    proto: "DNS",
+   904→    kind: "DNS Answer",
+   905→    kindBi: { ar: "جواب DNS", en: "DNS Answer" },
+   906→    srcMac: out.mac,
+   907→    dstMac: packet.srcMac,
+   908→    srcIp: packet.dstIp,
+   909→    dstIp: packet.srcIp,
+   910→    ttl: 128,
+   911→    srcPort: 53,
+   912→    dstPort: packet.srcPort,
+   913→    payload: answer
+   914→      ? { ar: `${name} = ${answer}`, en: `${name} = ${answer}` }
+   915→      : { ar: `${name} غير موجود (NXDOMAIN)`, en: `${name} not found (NXDOMAIN)` },
+   916→  });
+   917→  step(ctx, d, inPortId, out.id, null, null, reply, answer
+   918→    ? info(`${d.name}: جواب DNS — ${name} = ${answer}`, `${d.name}: DNS answer — ${name} = ${answer}`)
+   919→    : info(`${d.name}: لا يوجد سجل لـ ${name}`, `${d.name}: no record for ${name}`));
+   920→  wireOut(ctx, d, out.id, reply, depth);
+   921→}
+   922→
+   923→function dhcpHostHandle(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: number): void {
+   924→  const inP = findPort(d, inPortId);
+   925→  const out = (inP && inP.linkId && inP.adminUp ? inP : d.ports.find((p) => p.linkId && p.adminUp)) ?? d.ports[0];
+   926→  if (packet.kind === "DHCP Discover") {
+   927→    // server side
+   928→    const pool = d.dhcpPool;
+   929→    if (!pool || !pool.ifacePortId) {
+   930→      step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا أدير DHCP — تجاهل`, `${d.name}: not a DHCP server — ignoring`));
+   931→      return;
+   932→    }
+   933→    const ip = leaseIp(pool, packet.srcMac);
+   934→    const offer = mkPacket({
+   935→      proto: "DHCP",
+   936→      kind: "DHCP Offer",
+   937→      kindBi: { ar: "عرض DHCP", en: "DHCP Offer" },
+   938→      srcMac: out.mac,
+   939→      dstMac: packet.srcMac,
+   940→      srcIp: (findPort(d, pool.ifacePortId)?.ip) ?? "0.0.0.0",
+   941→      dstIp: ip,
+   942→      ttl: 128,
+   943→      srcPort: 67,
+   944→      dstPort: 68,
+   945→      payload: { ar: `أعرض ${ip} بوابة ${pool.gateway} قناع ${pool.mask}`, en: `Offering ${ip} gw ${pool.gateway} mask ${pool.mask}` },
+   946→    });
+   947→    step(ctx, d, inPortId, out.id, null, null, offer, info(`${d.name}: عرض DHCP بعنوان ${ip}`, `${d.name}: DHCP offer with ${ip}`));
+   948→    wireOut(ctx, d, out.id, offer, depth);
+   949→    return;
+   950→  }
+   951→  if (packet.kind === "DHCP Request" && d.dhcpPool) {
+   952→    const pool = d.dhcpPool;
+   953→    const m = packet.payload?.en.match(/\b(\d{1,3}(?:\.\d{1,3}){3})\b/);
+   954→    const ip = m?.[1] ?? leaseIp(pool, packet.srcMac);
+   955→    const ack = mkPacket({
+   956→      proto: "DHCP",
+   957→      kind: "DHCP Ack",
+   958→      kindBi: { ar: "تأكيد DHCP", en: "DHCP Ack" },
+   959→      srcMac: out.mac,
+   960→      dstMac: packet.srcMac,
+   961→      srcIp: (findPort(d, pool.ifacePortId)?.ip) ?? "0.0.0.0",
+   962→      dstIp: ip,
+   963→      ttl: 128,
+   964→      srcPort: 67,
+   965→      dstPort: 68,
+   966→      payload: { ar: `تأكيد ${ip} بوابة ${pool.gateway} DNS ${pool.dns ?? "-"}`, en: `Ack ${ip} gw ${pool.gateway} dns ${pool.dns ?? "-"}` },
+   967→    });
+   968→    step(ctx, d, inPortId, out.id, null, null, ack, info(`${d.name}: تأكيد DHCP — ${ip} أصبح لعنوان ${packet.srcMac}`, `${d.name}: DHCP ack — ${ip} assigned to ${packet.srcMac}`));
+   969→    wireOut(ctx, d, out.id, ack, depth);
+   970→    return;
+   971→  }
+   972→  // client side
+   973→  if (packet.kind === "DHCP Offer" && d.dhcpClient) {
+   974→    const ip = packet.dstIp;
+   975→    const req = mkPacket({
+   976→      proto: "DHCP",
+   977→      kind: "DHCP Request",
+   978→      kindBi: { ar: "طلب DHCP", en: "DHCP Request" },
+   979→      srcMac: out.mac,
+   980→      dstMac: BROADCAST_MAC,
+   981→      srcIp: ZERO_IP,
+   982→      dstIp: BROADCAST_IP,
+   983→      ttl: 128,
+   984→      srcPort: 68,
+   985→      dstPort: 67,
+   986→      payload: { ar: `أطلب ${ip}`, en: `Requesting ${ip}` },
+   987→    });
+   988→    step(ctx, d, inPortId, out.id, null, null, req, info(`${d.name}: طلب العنوان ${ip}`, `${d.name}: requesting ${ip}`));
+   989→    (d as Device & { _offered?: string })._offered = ip;
+   990→    wireOut(ctx, d, out.id, req, depth);
+   991→    return;
+   992→  }
+   993→  if (packet.kind === "DHCP Ack" && d.dhcpClient) {
+   994→    const ip = packet.dstIp;
+   995→    const port = out;
+   996→    port.ip = ip;
+   997→    port.mask = "255.255.255.0";
+   998→    const gwMatch = packet.payload?.ar.match(/بوابة\s*(\S+)/);
+   999→    const dnsMatch = packet.payload?.ar.match(/DNS\s*(\S+)/);
+  1000→    d.gateway = gwMatch?.[1] ?? null;
+  1001→    d.dnsServer = dnsMatch?.[1] && dnsMatch[1] !== "-" ? dnsMatch[1] : null;
+  1002→    delete (d as Device & { _offered?: string })._offered;
+  1003→    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: استلمت ${ip} عبر DHCP — تم الإعداد!`, `${d.name}: got ${ip} via DHCP — configured!`));
+  1004→    return;
+  1005→  }
+  1006→}
+  1007→
+  1008→function leaseIp(pool: import("./types").DhcpPool, mac: string): string {
+  1009→  const existing = pool.leases.find((l) => l.mac === mac);
+  1010→  if (existing) return existing.ip;
+  1011→  const from = ipToInt(pool.from);
+  1012→  const to = ipToInt(pool.to);
+  1013→  const used = new Set(pool.leases.map((l) => l.ip));
+  1014→  for (let i = from; i <= to; i++) {
+  1015→    const cand = intToIp(i);
+  1016→    if (!used.has(cand)) {
+  1017→      pool.leases.push({ mac, ip: cand });
+  1018→      return cand;
+  1019→    }
+  1020→  }
+  1021→  return pool.from;
+  1022→}
+  1023→
+  1024→function httpHandle(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: number): void {
+  1025→  const inP0 = findPort(d, inPortId);
+  1026→  const out = (inP0 && inP0.linkId && inP0.adminUp ? inP0 : d.ports.find((p) => p.linkId && p.adminUp)) ?? d.ports[0];
+  1027→  const myIp = hostIp(d).ip ?? d.ports.find((p) => p.ip)?.ip;
+  1028→  if (!myIp) return;
+  1029→  const forMeIp = packet.dstIp === myIp;
+  1030→
+  1031→  if (packet.kind === "TCP SYN" && forMeIp) {
+  1032→    // SYN flood: half-open connections exhaust the backlog
+  1033→    const hits = (ctx.hit.get(`${d.id}|${packet.srcIp}`) ?? 0) + 1;
+  1034→    ctx.hit.set(`${d.id}|${packet.srcIp}`, hits);
+  1035→    if (hits >= 6) d.halfOpen = 6;
+  1036→    if ((d.halfOpen ?? 0) >= 6) {
+  1037→      step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: طابور SYN ممتلئ — رفض الاتصال (SYN Flood?)`, `${d.name}: SYN backlog full — connection refused (SYN flood?)`), true);
+  1038→      return;
+  1039→    }
+  1040→    const synack = mkPacket({ proto: "TCP", kind: "TCP SYN-ACK", kindBi: { ar: "مصافحة SYN-ACK", en: "TCP SYN-ACK" }, srcMac: out.mac, dstMac: packet.srcMac, srcIp: myIp, dstIp: packet.srcIp, ttl: 128, srcPort: packet.dstPort, dstPort: packet.srcPort, flags: "SYN,ACK", seq: "200" });
+  1041→    step(ctx, d, inPortId, out.id, null, null, synack, info(`${d.name}: SYN-ACK — بدء المصافحة الثلاثية`, `${d.name}: SYN-ACK — three-way handshake`));
+  1042→    wireOut(ctx, d, out.id, synack, depth);
+  1043→    return;
+  1044→  }
+  1045→  if (packet.kind === "TCP ACK") {
+  1046→    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: اكتملت المصافحة — الاتصال مفتوح`, `${d.name}: handshake complete — connection open`));
+  1047→    return;
+  1048→  }
+  1049→  if (packet.kind === "HTTP GET" && forMeIp) {
+  1050→    const page = d.httpRoot;
+  1051→    const ok = mkPacket({ proto: "HTTP", kind: "HTTP 200 OK", kindBi: { ar: "رد HTTP 200", en: "HTTP 200 OK" }, srcMac: out.mac, dstMac: packet.srcMac, srcIp: myIp, dstIp: packet.srcIp, ttl: 128, srcPort: 80, dstPort: packet.srcPort, payload: { ar: `${page.title}\n${page.body}`, en: `${page.title}\n${page.body}` } });
+  1052→    step(ctx, d, inPortId, out.id, null, null, ok, info(`${d.name}: صفحة «${page.title}» جاهزة — 200 OK`, `${d.name}: page "${page.title}" served — 200 OK`));
+  1053→    wireOut(ctx, d, out.id, ok, depth);
+  1054→    return;
+  1055→  }
+  1056→  step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: استلم حزمة ${packet.kind}`, `${d.name}: received ${packet.kind}`));
+  1057→}
+  1058→
+  1059→// ─────────────── Public simulation API ───────────────
+  1060→function newCtx(t: Topology, maxSteps = 220): Ctx {
+  1061→  return { t, steps: [], sid: 0, warn: null, seen: new Set(), maxSteps, flow: new Map(), ipMac: new Map(), hit: new Map() };
+  1062→}
+  1063→
+  1064→export function simulatePing(topo: Topology, srcId: string, dstIdOrIp: string): SimResult {
+  1065→  const t = cloneTopo(topo);
+  1066→  const ctx = newCtx(t);
+  1067→  const src = findDevice(t, srcId);
+  1068→  if (!src) return { steps: [], devices: topo.devices, success: false, note: info("الجهاز غير موجود", "Device not found") };
+  1069→  const { ip, mask, port } = hostIp(src);
+  1070→  if (!ip || !mask || !port) {
+  1071→    return { steps: [], devices: topo.devices, success: false, note: info(`${src.name} بلا عنوان IP — اضبطه أولاً من إعدادات الجهاز`, `${src.name} has no IP — configure it first in device settings`) };
+  1072→  }
+  1073→  // resolve destination ip
+  1074→  let dstIp = dstIdOrIp;
+  1075→  const dstDev = findDevice(t, dstIdOrIp);
+  1076→  if (dstDev) {
+  1077→    const dip = hostIp(dstDev).ip;
+  1078→    if (!dip) return { steps: [], devices: topo.devices, success: false, note: info(`${dstDev.name} بلا عنوان IP`, `${dstDev.name} has no IP`) };
+  1079→    dstIp = dip;
+  1080→  }
+  1081→  // ARP resolution
+  1082→  const local = sameSubnet(ip, dstIp, mask);
+  1083→  const nextIp = local ? dstIp : src.gateway;
+  1084→  if (!nextIp) {
+  1085→    return { steps: [], devices: topo.devices, success: false, note: info("الوجهة خارج شبكتك ولا يوجد بوابة افتراضية (Default Gateway)", "Destination is off-subnet and no default gateway is set") };
+  1086→  }
+  1087→  let arpEntry = src.arp.find((a) => a.ip === nextIp);
+  1088→  const outPort = local ? port : (port.linkId ? port : port);
+  1089→  if (!arpEntry) {
+  1090→    const req = mkPacket({ proto: "ARP", kind: "ARP Request", kindBi: { ar: "طلب ARP", en: "ARP Request" }, srcMac: outPort.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: nextIp, ttl: 128, payload: { ar: `من يعرف ${nextIp}؟`, en: `Who has ${nextIp}?` } });
+  1091→    step(ctx, src, null, outPort.id, null, null, req, info(`${src.name}: أريد ${nextIp} — إرسال ARP بثّاً`, `${src.name}: need ${nextIp} — broadcasting ARP`));
+  1092→    wireOut(ctx, src, outPort.id, req, 0);
+  1093→    arpEntry = src.arp.find((a) => a.ip === nextIp);
+  1094→    if (!arpEntry) {
+  1095→      return { steps: ctx.steps, devices: t.devices, success: false, note: info("لا جواب ARP — تحقق من الكابلات والشبكة الفرعية نفسها", "No ARP reply — check cables and matching subnets") };
+  1096→    }
+  1097→  }
+  1098→  const echo = mkPacket({ proto: "ICMP", kind: "Echo Request", kindBi: { ar: "طلب ICMP (Ping)", en: "ICMP Echo Request" }, srcMac: outPort.mac, dstMac: arpEntry.mac, srcIp: ip, dstIp, ttl: 128 });
+  1099→  step(ctx, src, null, outPort.id, null, null, echo, info(`${src.name}: Ping إلى ${dstIp}`, `${src.name}: ping to ${dstIp}`));
+  1100→  wireOut(ctx, src, outPort.id, echo, 0);
+  1101→  const replied = ctx.steps.some((s) => s.packet.kind === "Echo Reply" && s.deviceId === srcId);
+  1102→  return {
+  1103→    steps: ctx.steps,
+  1104→    devices: t.devices,
+  1105→    success: replied,
+  1106→    note: replied
+  1107→      ? info("نجح Ping! رأيت الطلب والرد يمران عبر كل الأجهزة", "Ping succeeded! You saw request & reply traverse every device")
+  1108→      : info("فشل Ping — راجع الخطوات المظللة بالأحمر", "Ping failed — review the red-marked steps"),
+  1109→  };
+  1110→}
+  1111→
+  1112→export function simulateDhcp(topo: Topology, clientId: string): SimResult {
+  1113→  const t = cloneTopo(topo);
+  1114→  const ctx = newCtx(t);
+  1115→  const client = findDevice(t, clientId);
+  1116→  if (!client) return { steps: [], devices: topo.devices, success: false, note: info("الجهاز غير موجود", "Device not found") };
+  1117→  const port = client.ports.find((p) => p.linkId && p.adminUp);
+  1118→  if (!port) return { steps: [], devices: topo.devices, success: false, note: info("لا يوجد كابل متصل", "No cable connected") };
+  1119→  const discover = mkPacket({ proto: "DHCP", kind: "DHCP Discover", kindBi: { ar: "استكشاف DHCP", en: "DHCP Discover" }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ZERO_IP, dstIp: BROADCAST_IP, ttl: 128, srcPort: 68, dstPort: 67, payload: { ar: "هل من خادم DHCP؟", en: "Any DHCP server?" } });
+  1120→  step(ctx, client, null, port.id, null, null, discover, info(`${client.name}: بث DISCOVER بحثاً عن خادم DHCP`, `${client.name}: broadcasting DISCOVER for a DHCP server`));
+  1121→  wireOut(ctx, client, port.id, discover, 0);
+  1122→  const acked = client.ports.some((p) => p.ip) && ctx.steps.some((s) => s.packet.kind === "DHCP Ack");
+  1123→  return { steps: ctx.steps, devices: t.devices, success: acked, note: acked ? info("تم استئجار العنوان بنجاح (DORA كاملة)", "Lease acquired (full DORA)") : info("لم يصل ACK — تأكد من وجود خادم DHCP بالشبكة نفسها", "No ACK — ensure a DHCP server in the same L2 network") };
+  1124→}
+  1125→
+  1126→export function simulateDns(topo: Topology, clientId: string, name: string): SimResult & { resolvedIp: string | null } {
+  1127→  const t = cloneTopo(topo);
+  1128→  const ctx = newCtx(t);
+  1129→  const client = findDevice(t, clientId);
+  1130→  if (!client) return { steps: [], devices: topo.devices, success: false, note: info("الجهاز غير موجود", "Device not found"), resolvedIp: null };
+  1131→  const { ip, mask, port } = hostIp(client);
+  1132→  if (!ip || !mask || !port) return { steps: [], devices: topo.devices, success: false, note: info("اضبط عنوان الجهاز أولاً", "Configure device IP first"), resolvedIp: null };
+  1133→  if (!client.dnsServer) return { steps: [], devices: topo.devices, success: false, note: info("لا يوجد خادم DNS مضبوط", "No DNS server configured"), resolvedIp: null };
+  1134→  const local = sameSubnet(ip, client.dnsServer, mask);
+  1135→  const nextIp = local ? client.dnsServer : client.gateway;
+  1136→  if (!nextIp) return { steps: [], devices: topo.devices, success: false, note: info("لا بوابة للوصول لخادم DNS", "No gateway to reach DNS server"), resolvedIp: null };
+  1137→  let arpEntry = client.arp.find((a) => a.ip === nextIp);
+  1138→  if (!arpEntry) {
+  1139→    ensureArpFor(ctx, client, port, nextIp, 0);
+  1140→    arpEntry = client.arp.find((a) => a.ip === nextIp);
+  1141→    if (!arpEntry) return { steps: ctx.steps, devices: t.devices, success: false, note: info("لا جواب ARP نحو DNS", "No ARP reply toward DNS"), resolvedIp: null };
+  1142→  }
+  1143→  const query = mkPacket({ proto: "DNS", kind: "DNS Query", kindBi: { ar: "استعلام DNS", en: "DNS Query" }, srcMac: port.mac, dstMac: arpEntry.mac, srcIp: ip, dstIp: client.dnsServer, ttl: 128, srcPort: 1025, dstPort: 53, payload: { ar: name, en: name } });
+  1144→  step(ctx, client, null, port.id, null, null, query, info(`${client.name}: استعلام عن ${name}`, `${client.name}: querying ${name}`));
+  1145→  wireOut(ctx, client, port.id, query, 0);
+  1146→  const answerStep = [...ctx.steps].reverse().find((s) => s.packet.kind === "DNS Answer" && s.deviceId === clientId);
+  1147→  const resolved = answerStep?.packet.payload?.ar.split(" = ")[1] ?? null;
+  1148→  const ok = !!answerStep && !answerStep.packet.payload?.ar.includes("غير موجود");
+  1149→  return { steps: ctx.steps, devices: t.devices, success: ok, note: ok ? info(`تم حل ${name} إلى ${resolved}`, `Resolved ${name} to ${resolved}`) : info(`تعذر حل ${name}`, `Could not resolve ${name}`), resolvedIp: ok ? resolved : null };
+  1150→}
+  1151→
+  1152→export function simulateHttp(topo: Topology, clientId: string, host: string): SimResult & { page: { title: string; body: string } | null } {
+  1153→  const t = cloneTopo(topo);
+  1154→  const ctx = newCtx(t);
+  1155→  const client = findDevice(t, clientId);
+  1156→  if (!client) return { steps: [], devices: topo.devices, success: false, note: info("الجهاز غير موجود", "Device not found"), page: null };
+  1157→  let targetIp: string | null = null;
+  1158→  let stepsSoFar: SimStep[] = [];
+  1159→  if (!isValidIp(host)) {
+  1160→    const dns = simulateDns(topo, clientId, host);
+  1161→    stepsSoFar = dns.steps;
+  1162→    // commit arp/dns state
+  1163→    for (const dev of dns.devices) {
+  1164→      const mine = findDevice(t, dev.id);
+  1165→      if (mine) {
+  1166→        mine.arp = dev.arp;
+  1167→        mine.macTable = dev.macTable;
+  1168→      }
+  1169→    }
+  1170→    targetIp = dns.resolvedIp;
+  1171→    if (!targetIp) {
+  1172→      return { steps: stepsSoFar, devices: t.devices, success: false, note: info(`تعذر حل اسم ${host} — أضف سجل A في خادم DNS`, `Cannot resolve ${host} — add an A record on the DNS server`), page: null };
+  1173→    }
+  1174→  } else {
+  1175→    targetIp = host;
+  1176→  }
+  1177→  // run on a fresh context so steps continue linearly
+  1178→  ctx.steps.push(...stepsSoFar);
+  1179→  ctx.sid = stepsSoFar.length;
+  1180→  const { ip, mask, port } = hostIp(client);
+  1181→  if (!ip || !mask || !port) return { steps: ctx.steps, devices: t.devices, success: false, note: info("اضبط عنوان الجهاز أولاً", "Configure device IP first"), page: null };
+  1182→  const local = sameSubnet(ip, targetIp, mask);
+  1183→  const nextIp = local ? targetIp : client.gateway;
+  1184→  if (!nextIp) return { steps: ctx.steps, devices: t.devices, success: false, note: info("لا بوابة مضبوطة", "No gateway set"), page: null };
+  1185→  let arpEntry = client.arp.find((a) => a.ip === nextIp);
+  1186→  if (!arpEntry) {
+  1187→    ensureArpFor(ctx, client, port, nextIp, 0);
+  1188→    arpEntry = client.arp.find((a) => a.ip === nextIp);
+  1189→    if (!arpEntry) return { steps: ctx.steps, devices: t.devices, success: false, note: info("لا جواب ARP", "No ARP reply"), page: null };
+  1190→  }
+  1191→  // TCP handshake
+  1192→  const sendTcp = (kind: string, kindBi: { ar: string; en: string }, flags: string, seq: string, srcPort: number, dstPort: number, payload?: { ar: string; en: string }) => {
+  1193→    const pkt = mkPacket({ proto: kind.startsWith("HTTP") ? "HTTP" : "TCP", kind, kindBi, srcMac: port.mac, dstMac: arpEntry!.mac, srcIp: ip!, dstIp: targetIp!, ttl: 128, srcPort, dstPort, flags, seq, payload });
+  1194→    wireOut(ctx, client, port.id, pkt, 0);
+  1195→    return pkt;
+  1196→  };
+  1197→  const syn = sendTcp("TCP SYN", { ar: "SYN", en: "TCP SYN" }, "SYN", "100", 1025, 80);
+  1198→  void syn;
+  1199→  // SYN-ACK/ACK handled by handlers; send ACK
+  1200→  const ack = sendTcp("TCP ACK", { ar: "ACK", en: "TCP ACK" }, "ACK", "101", 1025, 80);
+  1201→  void ack;
+  1202→  // GET
+  1203→  const get = sendTcp("HTTP GET", { ar: "طلب GET", en: "HTTP GET" }, "ACK", "102", 1025, 80, { ar: `GET / HTTP/1.1\nHost: ${host}`, en: `GET / HTTP/1.1\nHost: ${host}` });
+  1204→  void get;
+  1205→  const okStep = [...ctx.steps].reverse().find((s) => s.packet.kind === "HTTP 200 OK" && s.deviceId === clientId);
+  1206→  const page = okStep ? { title: okStep.packet.payload?.en.split("\n")[0] ?? "NetMastery", body: okStep.packet.payload?.en.split("\n").slice(1).join("\n") ?? "" } : null;
+  1207→  return { steps: ctx.steps, devices: t.devices, success: !!okStep, note: okStep ? info("تم تحميل الصفحة بنجاح عبر HTTP!", "Page loaded successfully over HTTP!") : info("لم يصل رد HTTP — تأكد من إعداد الخادم والمسار", "No HTTP reply — check server config & route"), page };
+  1208→}
+  1209→
+  1210→// helper to reset a host's DHCP-assigned values
+  1211→export function releaseIp(d: Device): void {
+  1212→  for (const p of d.ports) {
+  1213→    p.ip = null;
+  1214→    p.mask = null;
+  1215→  }
+  1216→  d.gateway = null;
+  1217→  d.dnsServer = null;
+  1218→}
+  1219→
+  1220→export const isHostKind = (k: DeviceKind) => ["pc", "server", "laptop", "smartphone", "attacker"].includes(k);
+  1221→export const infoBi = info;
+  1222→
+  1223→// ═══════════════ NetSim v2: ACL / IDS / L3-Switch / Attacks ═══════════════
+  1224→
+  1225→let _alertId = 0;
+  1226→
+  1227→/** Record an IDS-style alert on a device (ids sensors, firewalls, switches) */
+  1228→export function pushAlert(d: Device, kind: import("./types").IdsAlert["kind"], severity: import("./types").IdsAlert["severity"], srcIp: string, dstIp: string, ar: string, en: string): void {
+  1229→  if (!Array.isArray(d.idsAlerts)) d.idsAlerts = [];
+  1230→  d.idsAlerts.push({ id: ++_alertId, kind, severity, srcIp, dstIp, detail: { ar, en } });
+  1231→  if (d.idsAlerts.length > 80) d.idsAlerts.shift();
+  1232→}
+  1233→
+  1234→/** Evaluate a packet against a device ACL rule list (first match wins) */
+  1235→export function aclCheck(d: Device, packet: Packet): { action: "permit" | "deny"; rule: import("./types").AclRule | null } {
+  1236→  const rules = d.acls ?? [];
+  1237→  for (const r of rules) {
+  1238→    if (matchAcl(r, packet)) return { action: r.action, rule: r };
+  1239→  }
+  1240→  return { action: d.defaultDeny ? "deny" : "permit", rule: null };
+  1241→}
+  1242→
+  1243→function matchAcl(r: import("./types").AclRule, packet: Packet): boolean {
+  1244→  if (r.src !== "any" && r.srcMask !== "any" && !ipInSubnet(packet.srcIp, r.src, r.srcMask)) return false;
+  1245→  if (r.dst !== "any" && r.dstMask !== "any" && !ipInSubnet(packet.dstIp, r.dst, r.dstMask)) return false;
+  1246→  if (r.proto !== "any") {
+  1247→    const protoName =
+  1248→      packet.proto === "ICMP" ? "icmp"
+  1249→        : packet.proto === "TCP" || packet.proto === "HTTP" ? "tcp"
+  1250→          : packet.proto === "DNS" || packet.proto === "DHCP" ? "udp"
+  1251→            : "any";
+  1252→    if (r.proto !== protoName) return false;
+  1253→    if (r.port != null && packet.dstPort !== r.port) return false;
+  1254→  }
+  1255→  return true;
+  1256→}
+  1257→
+  1258→function ipInSubnet(ip: string, net: string, mask: string): boolean {
+  1259→  if (!isValidIp(ip) || !isValidIp(net) || !isValidIp(mask)) return false;
+  1260→  return networkOf(ip, mask) === networkOf(net, mask);
+  1261→}
+  1262→
+  1263→/** IDS sensor inspection: ARP-spoof binding conflicts, floods & scans */
+  1264→function idsInspect(ctx: Ctx, d: Device, inPortId: string, packet: Packet): void {
+  1265→  d.statsIn = (d.statsIn ?? 0) + 1;
+  1266→  // IP↔MAC binding DB: forged ARP replies that contradict a known binding = spoof
+  1267→  if (packet.proto === "ARP" && packet.kind === "ARP Reply" && isValidIp(packet.srcIp) && packet.srcIp !== ZERO_IP) {
+  1268→    const prev = ctx.ipMac.get(packet.srcIp);
+  1269→    if (prev && prev !== packet.srcMac) {
+  1270→      pushAlert(d, "arp-spoof", "critical", packet.srcIp, packet.dstIp,
+  1271→        `تسميم ARP مكتشف: ${packet.srcIp} كان ${prev} والآن يدّعي ${packet.srcMac} — مصدره منفذ ${inPortId}`,
+  1272→        `ARP poisoning detected: ${packet.srcIp} was ${prev} but now claims ${packet.srcMac} — seen on port ${inPortId}`);
+  1273→      return;
+  1274→    }
+  1275→    if (!prev) ctx.ipMac.set(packet.srcIp, packet.srcMac);
+  1276→  }
+  1277→  if (!isValidIp(packet.srcIp) || packet.srcIp === ZERO_IP) return;
+  1278→  // flow statistics per source
+  1279→  const fs = ctx.flow.get(packet.srcIp) ?? { echo: 0, syn: 0, dsts: [] };
+  1280→  if (packet.proto === "ICMP" && packet.kind === "Echo Request") fs.echo += 1;
+  1281→  if (packet.kind === "TCP SYN") fs.syn += 1;
+  1282→  if (!fs.dsts.includes(packet.dstIp)) fs.dsts.push(packet.dstIp);
+  1283→  ctx.flow.set(packet.srcIp, fs);
+  1284→  if (fs.echo === 8) {
+  1285→    pushAlert(d, "icmp-flood", "critical", packet.srcIp, packet.dstIp,
+  1286→      `إغراق ICMP: 8+ طلبات Echo متتالية من ${packet.srcIp} — نمط هجوم DDoS`,
+  1287→      `ICMP flood: 8+ consecutive echo requests from ${packet.srcIp} — DDoS attack pattern`);
+  1288→  }
+  1289→  if (fs.syn === 8) {
+  1290→    pushAlert(d, "syn-flood", "critical", packet.srcIp, packet.dstIp,
+  1291→      `إغراق SYN: 8+ محاولات اتصال نصف مفتوحة من ${packet.srcIp} إلى ${packet.dstIp}`,
+  1292→      `SYN flood: 8+ half-open connection attempts from ${packet.srcIp} to ${packet.dstIp}`);
+  1293→  }
+  1294→  if (fs.dsts.length === 5) {
+  1295→    pushAlert(d, "scan", "warn", packet.srcIp, packet.dstIp,
+  1296→      `مسح شبكة مكتشف: ${packet.srcIp} يرمي حزماً نحو 5 عناوين مختلفة — نمط Port/Host Scan`,
+  1297→      `Network scan detected: ${packet.srcIp} probing 5 distinct addresses — host/port scan pattern`);
+  1298→  }
+  1299→}
+  1300→
+  1301→// ─────────────── L3 switch SVI routing ───────────────
+  1302→function l3Route(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: number): void {
+  1303→  if (packet.proto === "ARP" && packet.kind === "ARP Request") {
+  1304→    addArp(d, packet.srcIp, packet.srcMac, inPortId);
+  1305→    const svi = d.ports.find((p) => p.kind === "svi" && p.ip === packet.dstIp);
+  1306→    if (svi && svi.ip) {
+  1307→      const reply = mkPacket({
+  1308→        proto: "ARP", kind: "ARP Reply", kindBi: { ar: "رد ARP (SVI)", en: "ARP Reply (SVI)" },
+  1309→        srcMac: svi.mac, dstMac: packet.srcMac, srcIp: svi.ip, dstIp: packet.srcIp, ttl: 128,
+  1310→        payload: { ar: `بوابة VLAN أنا ${svi.ip}`, en: `I am the VLAN gateway ${svi.ip}` },
+  1311→      });
+  1312→      step(ctx, d, inPortId, inPortId, null, null, reply, info(`${d.name}: SVI ${svi.id} يرد على ARP (${svi.ip})`, `${d.name}: SVI ${svi.id} answers ARP (${svi.ip})`));
+  1313→      wireOut(ctx, d, inPortId, reply, depth);
+  1314→    }
+  1315→    return;
+  1316→  }
+  1317→  if (packet.proto === "ARP" && packet.kind === "ARP Reply") {
+  1318→    addArp(d, packet.srcIp, packet.srcMac, inPortId);
+  1319→    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: تعلمت ${packet.srcIp} = ${packet.srcMac} في جدول ARP`, `${d.name}: learned ${packet.srcIp} = ${packet.srcMac} in ARP table`));
+  1320→    return;
+  1321→  }
+  1322→  const sviMe = d.ports.find((p) => p.kind === "svi" && p.ip === packet.dstIp);
+  1323→  if (packet.proto === "ICMP" && packet.kind === "Echo Request" && sviMe && sviMe.ip) {
+  1324→    const reply = mkPacket({
+  1325→      proto: "ICMP", kind: "Echo Reply", kindBi: { ar: "رد ICMP", en: "ICMP Echo Reply" },
+  1326→      srcMac: sviMe.mac, dstMac: packet.srcMac, srcIp: sviMe.ip, dstIp: packet.srcIp, ttl: 128,
+  1327→    });
+  1328→    step(ctx, d, inPortId, inPortId, null, null, reply, info(`${d.name}: SVI ${sviMe.id} هو الهدف — رد Pong`, `${d.name}: SVI ${sviMe.id} is the target — pong reply`));
+  1329→    wireOut(ctx, d, inPortId, reply, depth);
+  1330→    return;
+  1331→  }
+  1332→  if (packet.proto === "DHCP" || packet.proto === "DNS") return; // still bridge-serviced below
+  1333→  if (packet.dstMac !== BROADCAST_MAC) {
+  1334→    l3Forward(ctx, d, inPortId, packet, depth);
+  1335→  }
+  1336→}
+  1337→
+  1338→function l3Forward(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: number): void {
+  1339→  if (packet.ttl <= 1) {
+  1340→    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: TTL انتهى — إسقاط`, `${d.name}: TTL expired — dropped`), true);
+  1341→    return;
+  1342→  }
+  1343→  const route = lookupRoute(d, packet.dstIp);
+  1344→  if (!route) {
+  1345→    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا مسار إلى ${packet.dstIp} — فعّل ip routing واضبط SVI`, `${d.name}: no route to ${packet.dstIp} — configure an SVI or add a route`), true);
+  1346→    return;
+  1347→  }
+  1348→  // resolve egress SVI by route iface or by subnet match
+  1349→  let svi = route.iface ? d.ports.find((p) => p.id === route.iface && p.kind === "svi") : undefined;
+  1350→  if (!svi) {
+  1351→    svi = d.ports.find((p) => p.kind === "svi" && p.ip && p.mask && networkOf(packet.dstIp, p.mask) === networkOf(p.ip, p.mask));
+  1352→  }
+  1353→  if (!svi || !svi.ip) {
+  1354→    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا SVI لشبكة ${packet.dstIp}`, `${d.name}: no SVI for ${packet.dstIp} subnet`), true);
+  1355→    return;
+  1356→  }
+  1357→  const vlan = parseInt(svi.id.replace("vlan", ""), 10) || 1;
+  1358→  const nextIp = route.nextHop ?? packet.dstIp;
+  1359→  let arpEntry = d.arp.find((a) => a.ip === nextIp);
+  1360→  if (!arpEntry) {
+  1361→    arpBroadcastOnVlan(ctx, d, vlan, svi, nextIp, depth);
+  1362→    arpEntry = d.arp.find((a) => a.ip === nextIp);
+  1363→    if (!arpEntry) {
+  1364→      step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا جواب ARP في VLAN${vlan} — الحزمة سقطت`, `${d.name}: no ARP reply in VLAN${vlan} — packet dropped`), true);
+  1365→      return;
+  1366→    }
+  1367→  }
+  1368→  // pick the physical port where the destination MAC lives (or flood the vlan)
+  1369→  const entry = d.macTable.find((e) => e.mac === arpEntry.mac && e.vlan === vlan);
+  1370→  const phys = d.ports.filter((p) => p.kind === "ethernet" && p.linkId && p.adminUp && p.id !== inPortId && (p.trunk || p.accessVlan === vlan));
+  1371→  const targets = entry ? phys.filter((p) => p.id === entry.portId) : phys;
+  1372→  if (targets.length === 0) {
+  1373→    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا منافذ في VLAN${vlan} للخروج`, `${d.name}: no egress ports in VLAN${vlan}`), true);
+  1374→    return;
+  1375→  }
+  1376→  for (const p of targets) {
+  1377→    const fwd = mkPacket({ ...packet, srcMac: p.mac, dstMac: arpEntry.mac, ttl: packet.ttl - 1, vlan: p.trunk ? vlan : null });
+  1378→    step(ctx, d, inPortId, p.id, null, null, fwd, info(`${d.name}: توجيه بين VLANs → خارج ${p.name} نحو ${arpEntry.mac} (TTL-1)`, `${d.name}: inter-VLAN route → out ${p.name} toward ${arpEntry.mac} (TTL-1)`));
+  1379→    wireOut(ctx, d, p.id, fwd, depth);
+  1380→  }
+  1381→}
+  1382→
+  1383→function arpBroadcastOnVlan(ctx: Ctx, d: Device, vlan: number, svi: Port, targetIp: string, depth: number): void {
+  1384→  const phys = d.ports.filter((p) => p.kind === "ethernet" && p.linkId && p.adminUp && (p.trunk || p.accessVlan === vlan));
+  1385→  for (const p of phys) {
+  1386→    const req = mkPacket({
+  1387→      proto: "ARP", kind: "ARP Request", kindBi: { ar: "طلب ARP", en: "ARP Request" },
+  1388→      srcMac: p.mac, dstMac: BROADCAST_MAC, srcIp: svi.ip ?? ZERO_IP, dstIp: targetIp, ttl: 128,
+  1389→      payload: { ar: `من يعرف ${targetIp}؟ (SVI${vlan})`, en: `Who has ${targetIp}? (SVI${vlan})` },
+  1390→    });
+  1391→    step(ctx, d, null, p.id, null, null, req, info(`${d.name}: ARP من SVI${vlan} نحو ${targetIp}`, `${d.name}: ARP from SVI${vlan} for ${targetIp}`));
+  1392→    wireOut(ctx, d, p.id, req, depth);
+  1393→  }
+  1394→}
+  1395→
+  1396→// ─────────────── Attack simulation (Kali attacker device) ───────────────
+  1397→function resetAttackState(t: Topology): void {
+  1398→  for (const d of t.devices) {
+  1399→    d.overloaded = false;
+  1400→    d.halfOpen = 0;
+  1401→    d.statsIn = 0;
+  1402→    d.statsDropped = 0;
+  1403→    if (Array.isArray(d.idsAlerts)) d.idsAlerts = [];
+  1404→    for (const p of d.ports) p.stickyMac = p.secure ? p.stickyMac : null;
+  1405→  }
+  1406→}
+  1407→
+  1408→function findDevByIp(t: Topology, ip: string): Device | undefined {
+  1409→  return t.devices.find((d) => d.ports.some((p) => p.ip === ip));
+  1410→}
+  1411→
+  1412→export function simulateAttack(topo: Topology, attackerId: string): SimResult & { report: import("./types").AttackReport } {
+  1413→  const t = cloneTopo(topo);
+  1414→  resetAttackState(t);
+  1415→  const ctx = newCtx(t, 900);
+  1416→  const atk = findDevice(t, attackerId);
+  1417→  const empty: import("./types").AttackReport = { blocked: false, reached: 0, sent: 0, alerts: 0, targetDown: false, intercepted: false };
+  1418→  if (!atk || atk.kind !== "attacker" || !atk.attack || !atk.attack.active) {
+  1419→    return { steps: [], devices: topo.devices, success: false, note: info("اضبط الهجوم أولاً من تبويب «الهجمات» في جهاز المهاجم", "Configure the attack first in the attacker's Attacks tab"), report: empty };
+  1420→  }
+  1421→  const port = atk.ports.find((p) => p.linkId && p.adminUp);
+  1422→  if (!port) return { steps: [], devices: topo.devices, success: false, note: info("المهاجم غير موصول بكابل", "Attacker has no cable connected"), report: empty };
+  1423→  const { ip } = hostIp(atk);
+  1424→  if (!ip) return { steps: [], devices: topo.devices, success: false, note: info("المهاجم بلا عنوان IP", "Attacker has no IP address"), report: empty };
+  1425→  const { kind, targetIp, victimIp } = atk.attack;
+  1426→  let sent = 0;
+  1427→  let reached = 0;
+  1428→  let intercepted = false;
+  1429→
+  1430→  const send = (packet: Omit<Packet, "id" | "layers">) => {
+  1431→    sent += 1;
+  1432→    const before = ctx.steps.length;
+  1433→    wireOut(ctx, atk, port.id, mkPacket(packet), 0);
+  1434→    return ctx.steps.length - before;
+  1435→  };
+  1436→
+  1437→  step(ctx, atk, null, port.id, null, null, mkPacket({ proto: "ICMP", kind: "Attack Start", kindBi: { ar: "بدء الهجوم", en: "Attack Start" }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: targetIp, ttl: 128, payload: { ar: `${kind} → ${targetIp}`, en: `${kind} → ${targetIp}` } }), info(`${atk.name}: إطلاق ${kind} على ${targetIp}`, `${atk.name}: launching ${kind} at ${targetIp}`));
+  1438→
+  1439→  if (kind === "arpspoof") {
+  1440→    // forged unicast ARP replies: "I am <victimIp> at <attacker MAC>"
+  1441→    const targetDev = findDevByIp(t, targetIp);
+  1442→    const victimPort = targetDev?.ports.find((p) => p.linkId && p.adminUp);
+  1443→    if (targetDev && victimPort) {
+  1444→      for (let i = 0; i < 2; i++) {
+  1445→        send({
+  1446→          proto: "ARP", kind: "ARP Reply", kindBi: { ar: "رد ARP مسموم", en: "Poisoned ARP Reply" },
+  1447→          srcMac: port.mac, dstMac: victimPort.mac, srcIp: victimIp ?? targetIp, dstIp: targetIp, ttl: 128,
+  1448→          payload: { ar: `أنا ${victimIp} وعنواني ${port.mac} (زيف!)`, en: `I am ${victimIp}, my MAC is ${port.mac} (forged!)` },
+  1449→        });
+  1450→      }
+  1451→      const poisoned = targetDev.arp.find((a) => a.ip === (victimIp ?? ""));
+  1452→      intercepted = !!poisoned && poisoned.mac === port.mac;
+  1453→      reached = intercepted ? 1 : 0;
+  1454→      if (intercepted) {
+  1455→        step(ctx, targetDev, victimPort.id, null, null, null, mkPacket({ proto: "ARP", kind: "ARP Poison", kindBi: { ar: "تسمم ARP", en: "ARP Poison" }, srcMac: port.mac, dstMac: victimPort.mac, srcIp: ip, dstIp: targetIp, ttl: 64 }), info(`${targetDev.name}: سُمّم جدول ARP — ${victimIp} يُوجَّه الآن إلى MAC المهاجم!`, `${targetDev.name}: ARP table poisoned — ${victimIp} now points to the attacker MAC!`), true);
+  1456→      }
+  1457→    }
+  1458→  } else if (kind === "ddos") {
+  1459→    for (let i = 0; i < 10; i++) {
+  1460→      const before = ctx.steps.length;
+  1461→      send({ proto: "ICMP", kind: "Echo Request", kindBi: { ar: `طلب Echo #${i + 1}`, en: `Echo Request #${i + 1}` }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: targetIp, ttl: 64 });
+  1462→      const arrived = ctx.steps.slice(before).some((s) => s.deviceId === (findDevByIp(t, targetIp)?.id ?? "") && s.inPort && s.packet.kind === "Echo Request");
+  1463→      if (arrived) reached += 1;
+  1464→    }
+  1465→  } else if (kind === "synflood") {
+  1466→    for (let i = 0; i < 10; i++) {
+  1467→      const before = ctx.steps.length;
+  1468→      send({ proto: "TCP", kind: "TCP SYN", kindBi: { ar: `SYN #${i + 1}`, en: `SYN #${i + 1}` }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: targetIp, ttl: 64, srcPort: 4000 + i, dstPort: 80, flags: "SYN", seq: String(1000 + i) });
+  1469→      const arrived = ctx.steps.slice(before).some((s) => s.deviceId === (findDevByIp(t, targetIp)?.id ?? "") && s.inPort && s.packet.kind === "TCP SYN");
+  1470→      if (arrived) reached += 1;
+  1471→    }
+  1472→  } else {
+  1473→    // scan: probe a small address range
+  1474→    const base = ipToInt(targetIp);
+  1475→    for (let i = 0; i < 6; i++) {
+  1476→      send({ proto: "TCP", kind: "TCP SYN", kindBi: { ar: `مسح ${intToIp(base + i)}:80`, en: `probe ${intToIp(base + i)}:80` }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: intToIp(base + i), ttl: 64, srcPort: 5000 + i, dstPort: 80, flags: "SYN", seq: String(2000 + i) });
+  1477→      const arrived = ctx.steps.some((s) => s.packet.dstIp === intToIp(base + i) && s.inPort && s.deviceId === (findDevByIp(t, intToIp(base + i))?.id ?? ""));
+  1478→      if (arrived) reached += 1;
+  1479→    }
+  1480→  }
+  1481→
+  1482→  const target = findDevByIp(t, targetIp);
+  1483→  const alerts = t.devices.reduce((n, d) => n + (d.idsAlerts?.length ?? 0), 0);
+  1484→  const targetDown = kind === "ddos" ? !!(target?.overloaded) : kind === "synflood" ? (target?.halfOpen ?? 0) >= 6 : intercepted;
+  1485→  const blocked = sent > 0 && reached === 0;
+  1486→  const defended = !targetDown && !intercepted;
+  1487→  const report: import("./types").AttackReport = { blocked, reached, sent, alerts, targetDown, intercepted };
+  1488→
+  1489→  const notes: Record<string, { ar: string; en: string }> = {
+  1490→    defended: { ar: `صدَّت دفاعاتك الهجوم! ${alerts} تنبيه IDS، وصلت ${reached}/${sent} حزمة فقط`, en: `Your defense blocked the attack! ${alerts} IDS alerts, only ${reached}/${sent} packets got through` },
+  1491→    down: { ar: `الهجوم نجح: الهدف ${targetDown ? "سقط (مشبع)" : "مُعترض"} — أضف قواعد جدار ناري أو أمن منافذ`, en: `Attack succeeded: target ${targetDown ? "down (saturated)" : "intercepted"} — add firewall rules or port-security` },
+  1492→  };
+  1493→  return {
+  1494→    steps: ctx.steps,
+  1495→    devices: t.devices,
+  1496→    success: defended,
+  1497→    note: defended ? info(notes.defended.ar, notes.defended.en) : info(notes.down.ar, notes.down.en),
+  1498→    report,
+  1499→  };
+  1500→}
+  1501→
+  1502→/** Restore defaults on devices loaded from old saved topologies (missing v2 fields) */
+  1503→export function normalizeTopology(t: Topology): Topology {
+  1504→  for (const d of t.devices) {
+  1505→    d.acls = Array.isArray(d.acls) ? d.acls : [];
+  1506→    d.defaultDeny = !!d.defaultDeny;
+  1507→    d.attack = d.attack ?? null;
+  1508→    d.idsAlerts = Array.isArray(d.idsAlerts) ? d.idsAlerts : [];
+  1509→    d.statsIn = d.statsIn ?? 0;
+  1510→    d.statsDropped = d.statsDropped ?? 0;
+  1511→    d.overloaded = !!d.overloaded;
+  1512→    d.halfOpen = d.halfOpen ?? 0;
+  1513→    for (const p of d.ports) {
+  1514→      p.secure = !!p.secure;
+  1515→      p.stickyMac = p.stickyMac ?? null;
+  1516→    }
+  1517→    if (!KIND_BASE[d.kind]) d.kind = "pc";
+  1518→  }
+  1519→  return t;
+  1520→}
+  1521→

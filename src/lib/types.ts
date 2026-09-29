@@ -14,12 +14,38 @@ export interface CodeExample {
   snippet: string;
 }
 
+/** Comparison/reference table rendered inside a lesson section */
+export interface LessonTable {
+  caption?: Bi;
+  headers: Bi[];
+  rows: Bi[][];
+}
+
+/** Teaching diagram rendered inside a lesson section */
+export interface LessonDiagram {
+  /** "layers" = stacked boxes (OSI/TCP-IP/encapsulation)
+   *  "flow" = horizontal step arrows (DORA, 3-way handshake, DNS)
+   *  "topology" = mini network graph */
+  kind: "layers" | "flow" | "topology";
+  title?: Bi;
+  /** layers/flow: ordered bilingual captions */
+  items?: Bi[];
+  /** topology: node labels (may be "Router0|راوتر" — first part used when short) */
+  nodes?: string[];
+  /** topology: pairs of node indexes */
+  edges?: [number, number][];
+}
+
 export interface LessonSection {
   heading: Bi;
   /** Paragraphs separated by \n\n. Lines starting with "- " render as bullets. */
   body: Bi;
   code?: CodeExample;
   tip?: Bi;
+  /** Optional table (comparisons, port numbers, protocol summaries) */
+  table?: LessonTable;
+  /** Optional diagram (layers stack, flow arrows, topology graph) */
+  diagram?: LessonDiagram;
 }
 
 export interface QuizQuestion {
@@ -186,6 +212,8 @@ export interface ProgressState {
   projectBookmarks: string[];
   achievements: string[];
   playgroundUsed: string[]; // tool ids used
+  /** challenge ids completed with auto-grading */
+  challengesDone: string[];
 }
 
 export type ViewId =
@@ -196,5 +224,7 @@ export type ViewId =
   | "tools"
   | "projects"
   | "playground"
+  | "challenges"
+  | "integrations"
   | "achievements"
   | "settings";

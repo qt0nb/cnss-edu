@@ -29,6 +29,46 @@ export const m03_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "عرض النطاق والإنتاجية والمُنتَج الصافي", en: "Bandwidth, Throughput, and Goodput" },
+        table: {
+          caption: { ar: "مفردات عالم الإشارات", en: "The vocabulary of the signal world" },
+          headers: [
+            { ar: "المصطلح", en: "Term" },
+            { ar: "معناه", en: "Meaning" },
+            { ar: "قيمة مثال", en: "Example value" },
+          ],
+          rows: [
+            [
+              { ar: "التردد Frequency", en: "Frequency" },
+              { ar: "عدد دورات الموجة في الثانية", en: "Wave cycles per second" },
+              { ar: "2.4 GHz", en: "2.4 GHz" },
+            ],
+            [
+              { ar: "عرض النطاق Bandwidth", en: "Bandwidth" },
+              { ar: "مدى الترددات المتاح لقناة واحدة", en: "The frequency span available to one channel" },
+              { ar: "قناة 20 MHz", en: "A 20 MHz channel" },
+            ],
+            [
+              { ar: "dBm", en: "dBm" },
+              { ar: "قوة الإشارة لوغاريتمياً نسبة إلى ميلي واط", en: "Signal power in log scale relative to 1 mW" },
+              { ar: "-67 dBm", en: "-67 dBm" },
+            ],
+            [
+              { ar: "SNR", en: "SNR" },
+              { ar: "نسبة قوة الإشارة إلى الضجيج", en: "Signal power versus noise power" },
+              { ar: "25 dB", en: "25 dB" },
+            ],
+            [
+              { ar: "Baseband", en: "Baseband" },
+              { ar: "إرسال نبضات رقمية على التردد الأصلي", en: "Digital pulses on the native frequency" },
+              { ar: "الإيثرنت Ethernet", en: "Ethernet" },
+            ],
+            [
+              { ar: "Broadband", en: "Broadband" },
+              { ar: "تقطيف إشارات على عدة حوامل ترددية", en: "Modulating signals onto several carriers" },
+              { ar: "كابل التلفاز CATV", en: "Cable TV (CATV)" },
+            ],
+          ],
+        },
         body: {
           ar: "ثلاثة مصطلحات يخلطها الناس يومياً وتفصل بينها عقود من الدقة:\n\n- عرض النطاق (Bandwidth): السعة النظرية القصوى للوصلة — عرض الطريق نفسه. نقيسها بت في الثانية (والمعايير تصف ترددات الكابل بالميجاهرتز، وهي سعة الموجات التي يحملها بسلام)\n- الإنتاجية (Throughput): ما يمر فعلاً في لحظة معينة — السيارات التي تقطع الطريق الآن. تقل دوماً عن النطاق بسبب الترويسات والبروتوكولات والازدحام\n- المُنتَج الصافي (Goodput): البيانات المفيدة الصافية فقط — الركاب فعلاً، بعد استبعاد الشاحنات الفارغة (الترويسات وإعادة الإرسال والتأكيدات)\n\nتشبيه يثبت في الذهن: طريق بثلاث مسارات (نطاق 3) يمر به الآن مسار ونصف (إنتاجية) تقل حين تصل تصل ركابه الصافيون (مُنتَج).\n\n- وعد البائع على علبة الكابل = عرض نطاق\n- قياس iperf بين جهازين = إنتاجية\n- حجم الملف المنقول فعلاً ÷ الزمن = أقرب قياس للمُنتَج الصافي\n\nومصطلح تاريخي مهم: النطاق الأساسي (Baseband) يعني استخدام الوسط كله لإشارة واحدة كما يفعل الإيثرنت — ومنه حرف B في 10BASE — بينما النطاق العريض (Broadband) يقسم الوسط قنوات متعددة متوازية (كالتلفاز الكبلي والإنترنت عبره).",
           en: "Three terms people mix daily, separated by decades of precision:\n\n- Bandwidth: the link's theoretical maximum capacity — the width of the road itself. We measure it in bits per second (while cable standards describe frequencies in MHz, the wave capacity it carries cleanly)\n- Throughput: what actually passes at a given moment — the cars crossing the road right now. Always below bandwidth due to headers, protocols, and congestion\n- Goodput: the net useful data — the actual passengers, after excluding the empty trucks (headers, retransmissions, acknowledgments)\n\nA mind-anchoring analogy: a three-lane road (bandwidth 3) currently flowing at one and a half lanes (throughput) whose actual passenger count is lower (goodput).\n\n- The vendor's promise on the cable box = bandwidth\n- An iperf measurement between two machines = throughput\n- Actually transferred file size ÷ time = the closest goodput measure\n\nAnd an important historical term: baseband means using the entire medium for one signal as Ethernet does — hence the B in 10BASE — while broadband divides the medium into multiple parallel channels (as cable TV and its Internet do).",
@@ -112,6 +152,10 @@ export const m03_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "بنية UTP: لماذا اللفّ المزدوج عبقرية؟", en: "UTP Anatomy: Why Twisting Is Genius" },
+        tip: {
+          ar: "اللفّ المزدوج ليس زينة: كل زوج ملتف يلغي تشويش التداخل الكهرومغناطيسي عن نفسه — لذا حافظ على اللف حتى نقطة الضغط في الموصل.",
+          en: "The twist is not decoration: each twisted pair cancels electromagnetic interference on itself — keep the twist right up to the crimp point.",
+        },
         body: {
           ar: "زوج مجدول غير محجب (UTP: Unshielded Twisted Pair) هو نجم الشبكات المحلية: داخل غلاف بلاستيكي تسكن أربعة أزواج من أسلاك النحاس، كل زوجين ملتفين حول بعضهما باتجاهين متعاكسين وخطوات لفّ محسوبة، والمجموع ثمانية أسلاك تُقوى في موصل RJ45.\n\nلماذا اللفّ أصلاً؟ السبب إلكتروني أنيق: التشويش الخارجي يصيب كلا السلكين المتجاورين بالتقريب نفسه، لكن لأن كل سلك يتبادل موضعه (مرة قريب من مصدر الضجيج ومرة بعيد) كل نصف لفة، يُلغى الفرق بين السلكين في الرياضيات، فيسقط التشويش عند استقبال الإشارة تفاضلياً.\n\n- كلما زادت كثافة اللفّ (لفات أكثر لكل متر) تحمل الزوج ترددات أعلى بلا تشابك — وهذا جوهر الفرق بين الفئات\n- الأزواج الأربعة ملفوفة بمنحنيات مختلفة الطول حتى لا تتزامن أوضاعها فتزيد التشابك البيني\n- هذه الحيلة تمنح UTP حصانة جيدة بلا أي حجب معدني — وهو سر رخصه وانتشاره",
           en: "Unshielded Twisted Pair (UTP) is the star of local networks: inside a plastic jacket live four copper pairs, each two wires twisted around each other with opposite orientation and calculated twist rates, totaling eight wires terminated in an RJ45 connector.\n\nWhy twist at all? The reason is elegantly electronic: external interference hits both adjacent wires nearly equally, but because each wire swaps position (once near the noise source, once far) every half twist, the difference between the wires mathematically cancels, and the noise drops when the signal is received differentially.\n\n- The denser the twist (more twists per meter), the higher the frequencies a pair carries without crosstalk — the essence of category differences\n- The four pairs use different twist lengths so their positions never synchronize, reducing pair-to-pair crosstalk\n- This trick grants UTP good immunity with zero metallic shielding — the secret of its cheapness and spread",
@@ -119,6 +163,47 @@ export const m03_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "جدول الفئات الرسمي", en: "The Official Category Table" },
+        table: {
+          caption: { ar: "فئات UTP من Cat5e إلى Cat8", en: "UTP categories from Cat5e to Cat8" },
+          headers: [
+            { ar: "الفئة", en: "Category" },
+            { ar: "عرض النطاق", en: "Bandwidth" },
+            { ar: "السرعة القصوى", en: "Max speed" },
+            { ar: "المسافة القصوى", en: "Max distance" },
+          ],
+          rows: [
+            [
+              { ar: "Cat5e", en: "Cat5e" },
+              { ar: "100 MHz", en: "100 MHz" },
+              { ar: "1 Gbps", en: "1 Gbps" },
+              { ar: "100 m", en: "100 m" },
+            ],
+            [
+              { ar: "Cat6", en: "Cat6" },
+              { ar: "250 MHz", en: "250 MHz" },
+              { ar: "1 Gbps (و10G حتى 55 m)", en: "1 Gbps (10G up to 55 m)" },
+              { ar: "100 m", en: "100 m" },
+            ],
+            [
+              { ar: "Cat6a", en: "Cat6a" },
+              { ar: "500 MHz", en: "500 MHz" },
+              { ar: "10 Gbps", en: "10 Gbps" },
+              { ar: "100 m", en: "100 m" },
+            ],
+            [
+              { ar: "Cat7", en: "Cat7" },
+              { ar: "600 MHz", en: "600 MHz" },
+              { ar: "10 Gbps — محجوب بالكامل S/FTP", en: "10 Gbps — fully shielded S/FTP" },
+              { ar: "100 m", en: "100 m" },
+            ],
+            [
+              { ar: "Cat8", en: "Cat8" },
+              { ar: "2000 MHz", en: "2000 MHz" },
+              { ar: "25/40 Gbps", en: "25/40 Gbps" },
+              { ar: "30 m فقط (مراكز البيانات)", en: "30 m only (datacenters)" },
+            ],
+          ],
+        },
         body: {
           ar: "معيار TIA/EIA-568 هو المرجع الذي يصنف فئات كابلات الزوج المجدول. هذا الجدول يستحق الحفظ الحرفي:\n\n- Cat5e (enhanced): ترددات حتى 100 ميجاهرتز — جيجابت واحد حتى 100 متر — الحد الأدنى المقبول اليوم\n- Cat6: حتى 250 ميجاهرتز — جيجابت حتى 100 متر، و10 جيجابت حتى 55 متراً تقريباً (حسب ظروف التشابك الخارجي)\n- Cat6a (augmented): حتى 500 ميجاهرتز — 10 جيجابت كاملة حتى 100 متر — سيد شبكات المكاتب الحديثة\n- Cat7 / Cat7a: حتى 600 / 1000 ميجاهرتز — شبه محجبة بالكامل S/FTP وتتطلب موصلات خاصة غير RJ45 (GG45 أو TERA) — لاحظ أن TIA لم تعتمدهما رسمياً؛ هما معيار ISO\n- Cat8: حتى 2000 ميجاهرتز (2 جيجاهرتز) — 25/40 جيجابت حتى 30 متراً فقط — مخصصة لمراكز البيانات ووصلات الطاقة القصيرة بين الخزانات\n\nلاحظ عمودين يخلطهما الناس: التردد (ميجاهرتز) سعة الموجات، والسرعة (جيجابت) معدل البيانات — الصناعة تلجأ لترميزات ذكية لتسريع البيانات فوق تردد الكابل نفسه، لهذا يحقق Cat6a عشرة أضعاف Cat5e بتردد خمسة أضعاف فقط.",
           en: "The TIA/EIA-568 standard is the reference classifying twisted-pair categories. This table deserves verbatim memorization:\n\n- Cat5e (enhanced): frequencies up to 100 MHz — one gigabit up to 100 m — today's acceptable minimum\n- Cat6: up to 250 MHz — gigabit up to 100 m, and 10 gigabit up to about 55 m (depending on alien crosstalk conditions)\n- Cat6a (augmented): up to 500 MHz — full 10 gigabit up to 100 m — the master of modern office networks\n- Cat7 / Cat7a: up to 600 / 1000 MHz — fully shielded S/FTP requiring special non-RJ45 connectors (GG45 or TERA) — note TIA never ratified them; they are ISO standards\n- Cat8: up to 2000 MHz (2 GHz) — 25/40 gigabit up to 30 meters only — built for datacenters and short rack-to-rack runs\n\nNotice the two columns people confuse: frequency (MHz) is wave capacity, while speed (Gbps) is the data rate — the industry deploys smart coding to push data faster over the same cable frequency, which is how Cat6a achieves ten times Cat5e with only five times the frequency.",
@@ -223,6 +308,31 @@ export const m03_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الكابل المستقيم والمتصالب: فلسفة الإرسال والاستقبال", en: "Straight-Through vs Crossover: The TX/RX Philosophy" },
+        table: {
+          caption: { ar: "أي كابل بين أي جهازين؟", en: "Which cable between which devices?" },
+          headers: [
+            { ar: "النوع", en: "Cable type" },
+            { ar: "الترتيب في الطرفين", en: "Pinout at both ends" },
+            { ar: "يستخدم بين", en: "Use between" },
+          ],
+          rows: [
+            [
+              { ar: "مستقيم Straight-Through", en: "Straight-through" },
+              { ar: "T568B في الطرفين (أو A في الاثنين)", en: "T568B at both ends (or A at both)" },
+              { ar: "جهازين مختلفين: PC ↔ مبدّل", en: "Unlike devices: PC ↔ switch" },
+            ],
+            [
+              { ar: "متقاطع Crossover", en: "Crossover" },
+              { ar: "T568A في طرف و T568B في الآخر", en: "T568A one end, T568B the other" },
+              { ar: "جهازين متماثلين: مبدّل ↔ مبدّل أو حاسوب ↔ حاسوب", en: "Like devices: switch ↔ switch or PC ↔ PC" },
+            ],
+            [
+              { ar: "Auto-MDIX", en: "Auto-MDIX" },
+              { ar: "أي ترتيب — المنفذ يصحح منطقياً", en: "Any pinout — the port corrects it logically" },
+              { ar: "كل المنافذ الحديثة — جعل التقاطع شبه مهمل", en: "All modern ports — made crossover near-obsolete" },
+            ],
+          ],
+        },
         body: {
           ar: "في إيثرنت 10/100 ميجابت، يستخدم الجهاز زوجين فقط من الأزواج الأربعة: الزوج البرتقالي (المسامير 1-2) للإرسال TX والزوج الأخضر (3-6) للاستقبال RX. وهنا نشأت مشكلة تاريخية شهيرة:\n\n- جهازان من نوعين مختلفين (حاسوب ومبدّل): مبدّلاً إرسال أحدهما يستقبل الآخر — توصيل مستقيم (نفس الترتيب في الطرفين) يعمل\n- جهازان من نوع واحد (حاسبان معاً، أو مبدلان معاً): إرسال يصطدم بإرسال! الحل التاريخي: كابل متصالب Crossover يجعل طرفه الثاني بترتيب معاكس — الزوج البرتقالي في طرف يذهب للأخضر في الآخر (تبديل 1↔3 و 2↔6)\n\nقاعدة الحفظ القديمة (قبل 2008 تقريباً):\n\n- أجهزة مختلفة = مستقيم Straight-Through\n- أجهزة متشابهة = متصالب Crossover\n\nثم جاء الجيجابت فغيّر اللعبة: 1000BASE-T يستخدم الأزواج الأربعة كلها إرسالاً واستقبالاً في آن واحد (ثنائية كاملة عبر كل زوج)، فالتقسيم القديم فقد معناه.",
           en: "In 10/100 Mbps Ethernet, a device uses only two of the four pairs: the orange pair (pins 1-2) for TX and the green pair (3-6) for RX. Here a famous historical problem was born:\n\n- Two different device types (computer and switch): one's transmitter feeds the other's receiver — a straight-through cable (same order at both ends) works\n- Two same-type devices (two computers, or two switches): transmitter crashes into transmitter! The historical fix: a crossover cable whose second end reverses the order — the orange pair at one end maps to green at the other (swapping 1↔3 and 2↔6)\n\nThe old memorization rule (before roughly 2008):\n\n- Different devices = straight-through\n- Similar devices = crossover\n\nThen Gigabit changed the game: 1000BASE-T uses all four pairs for both transmitting and receiving simultaneously (full duplex over every pair), so the old division lost its meaning.",
@@ -324,6 +434,36 @@ export const m03_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "المحوري: سلك داخل درع داخل غلاف", en: "Coaxial: A Wire Inside a Shield Inside a Jacket" },
+        table: {
+          caption: { ar: "أنواع الكابل المحوري الشائعة", en: "Common coaxial cable types" },
+          headers: [
+            { ar: "النوع", en: "Type" },
+            { ar: "الموصل", en: "Connector" },
+            { ar: "الاستخدام الشائع", en: "Common use" },
+          ],
+          rows: [
+            [
+              { ar: "RG-58 (Thinnet)", en: "RG-58 (Thinnet)" },
+              { ar: "BNC", en: "BNC" },
+              { ar: "إيثرنت 10BASE2 القديم", en: "Legacy 10BASE2 Ethernet" },
+            ],
+            [
+              { ar: "RG-6", en: "RG-6" },
+              { ar: "F-type", en: "F-type" },
+              { ar: "تلفاز الكابل وإنترنت الكابل", en: "Cable TV and cable Internet" },
+            ],
+            [
+              { ar: "RG-11", en: "RG-11" },
+              { ar: "F-type", en: "F-type" },
+              { ar: "تركيبات خارجية لمسافات أطول", en: "Outdoor runs over longer distances" },
+            ],
+            [
+              { ar: "RS-232 (تسلسلي)", en: "RS-232 (serial)" },
+              { ar: "DB-9", en: "DB-9" },
+              { ar: "كونسول إدارة الراوترات والمبدلات", en: "Router and switch management console" },
+            ],
+          ],
+        },
         body: {
           ar: "الكابل المحوري (Coaxial) بنية طبقية متناظرة حول محور واحد — ومنه اسمه: ناقل نحاسي مركزي يحيط به عزل، ثم درع معدني مضفور أو رقائقي، ثم غلاف خارجي. هذا التصميم المتماثل يمنحه مناعة ممتازة للضجيج، لأن الدرع يعمل كقفص فاراداي حول الإشارة.\n\nالمحاور تأتي بمقاومات (Impedance) قياسية تُطابق المعدات: 50 أوم للبيانات والراديو (التاريخية RG-58 و RG-8)، و75 أوم للفيديو والتلفاز والإنترنت الكبلي (RG-59 و RG-6 الأشهر اليوم).\n\n- RG-58 قاد سابقاً شبكات 10BASE2 (إيثرنت المحوري الرفيع) بقطاعات 185 متراً\n- RG-6 هو وتر إنترنت الكابل المنزلي الحديث عبر موجه الكابل (Cable Modem) ومعيار DOCSIS\n\nالموصلات: BNC رأس دوّار بقفل سريع للمحاور الرفيعة، وF-Type برغي بسيط تعرفه من خلف كل جهاز استقبال منزلي — وربما من مزود الإنترنت الكبلي عندك.",
           en: "The coaxial cable is a layered structure symmetrical around one axis — hence its name: a central copper conductor surrounded by insulation, then a braided or foil metallic shield, then the outer jacket. This symmetric design grants it excellent noise immunity because the shield acts as a Faraday cage around the signal.\n\nCoaxes come in standard impedances matched to equipment: 50 ohm for data and radio (the historical RG-58 and RG-8), and 75 ohm for video, TV, and cable Internet (RG-59 and today's favorite RG-6).\n\n- RG-58 once led 10BASE2 networks (thin coax Ethernet) in 185-meter segments\n- RG-6 is the string of modern home cable Internet via the cable modem and the DOCSIS standard\n\nThe connectors: BNC, a twist-lock quick head for thin coax, and the simple screw-on F-Type you know from behind every home receiver — probably from your own cable ISP.",
@@ -435,6 +575,16 @@ export const m03_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "منبع الضوء وعين الاستقبال", en: "The Light Source and the Receiving Eye" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "رحلة نبضة ضوء عبر الليف الزجاجي", en: "A light pulse's journey through the glass fiber" },
+          items: [
+            { ar: "المحوّل الكهروضوئي يحوّل البتات نبضات ضوء (ليزر أو LED)", en: "The transceiver turns bits into light pulses (laser or LED)" },
+            { ar: "النبضات تسافر في القلب الزجاجي بالانعكاس الكلي", en: "Pulses travel through the glass core by total internal reflection" },
+            { ar: "المضخمات تجدد الإشارة كل عشرات الكيلومترات", en: "Amplifiers renew the signal every tens of kilometers" },
+            { ar: "المستقبِل الضوئي يعيد البتات إشارة كهربائية", en: "The photodetector turns pulses back into electrical bits" },
+          ],
+        },
         body: {
           ar: "النظام الضوئي ثنائي: مرسل (Transmitter) يحول الإشارات الكهربائية إلى نبضات ضوء عبر ديود مضيء LED أو ليزر (و VCSEL الوسيط المشهور في المتعددة الأنماط)، ومستقبل (Receiver) يحول الضوء عودة للكهرباء عبر ثنائي ضوئي (Photodiode).\n\nوالقلب التجاري للقصة: وحدات الإرسال والاستقبال القابلة للتبديل الساخن في المبدلات — أشهرها:\n\n- SFP (Small Form-factor Pluggable) للجيجابت — بحجم إصبع\n- SFP+ لعشرة جيجابت، QSFP+ لأربعين، و QSFP28 لمئة جيجابت\n- تُغرس في منفذ واحد وتحمل معها هوية الليفة والطول الموجي والمدى — اشترِ الوحدة المناسبة لمسافتك وادسها فحسب\n\nهذه الوحدات هي سر مرونة الألياف: المنفذ نفسه يخدم 300 متر أو 10 كيلومترات بتغيير وحدة صغيرة. لاحظ أنها تحتوي مرسلاً ومستقبلاً معاً، والكابل ضوئي ثنائي الليفات (ليفة إرسال واعدة + ليفة استقبال واردة).",
           en: "The optical system is a duo: a transmitter converting electrical signals to light pulses via an LED or laser (and the famous middle option VCSEL in multimode), and a receiver converting light back to electricity via a photodiode.\n\nThe commercial heart of the story: hot-swappable transceiver modules in switches — the most famous:\n\n- SFP (Small Form-factor Pluggable) for gigabit — finger-sized\n- SFP+ for ten gigabit, QSFP+ for forty, QSFP28 for a hundred\n- They plug into one port and carry the fiber type, wavelength, and reach identity — just buy the unit matching your distance and insert it\n\nThese modules are fiber's flexibility secret: the same port serves 300 meters or 10 kilometers by swapping a small unit. Note they contain both transmitter and receiver, and duplex fiber cable is a pair (outbound transmit fiber + inbound receive fiber).",
@@ -525,6 +675,41 @@ export const m03_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "الفرق الجوهري: قطر القلب", en: "The Core Difference: Diameter" },
+        table: {
+          caption: { ar: "أحادية النمط مقابل متعددة الأنماط", en: "Single-mode vs multimode" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "أحادية النمط SM", en: "Single-mode SM" },
+            { ar: "متعددة الأنماط MM", en: "Multimode MM" },
+          ],
+          rows: [
+            [
+              { ar: "قطر القلب", en: "Core diameter" },
+              { ar: "8-10 ميكرومتر", en: "8-10 µm" },
+              { ar: "50 أو 62.5 ميكرومتر", en: "50 or 62.5 µm" },
+            ],
+            [
+              { ar: "الطول الموجي", en: "Wavelength" },
+              { ar: "1310 / 1550 nm", en: "1310 / 1550 nm" },
+              { ar: "850 / 1300 nm", en: "850 / 1300 nm" },
+            ],
+            [
+              { ar: "مصدر الضوء", en: "Light source" },
+              { ar: "ليزر Laser", en: "Laser" },
+              { ar: "LED أو VCSEL", en: "LED or VCSEL" },
+            ],
+            [
+              { ar: "المسافة", en: "Distance" },
+              { ar: "حتى 100+ كم", en: "Up to 100+ km" },
+              { ar: "حتى 550 m تقريباً", en: "Up to roughly 550 m" },
+            ],
+            [
+              { ar: "الاستخدام الأمثل", en: "Best use" },
+              { ar: "الأعمدة الفقرية والاتصالات البعيدة", en: "Backbones and long-haul links" },
+              { ar: "داخل المباني ومراكز البيانات", en: "In-building and datacenter runs" },
+            ],
+          ],
+        },
         body: {
           ar: "كل قرار الألياف يتفرع من رقم واحد: قطر القلب.\n\n- الأحادية النمط (SMF: Single-Mode Fiber): قلب 8-10 ميكرومتر أرفع من الخيط — أدق من أن يحتمل أكثر من مسار ضوئي واحد، فيسير شعاع الليزر مستقيماً متجانساً كليزر متوازٍ\n- المتعددة الأنماط (MMF: Multimode Fiber): قلب 50 أو 62.5 ميكرومتر أعرض — يستوعب مئات المسارات (الأنماط) للضوء نفسه: بعضها ينعطف بزوايا أضيق وبعضها أوسع، فيصل بعضها قبل بعض\n\nوهذه النقطة هي عقبة المتعددة الكبرى المسماة التشتت النمطي (Modal Dispersion): نبضة واحدة تدخل فتتشتت رحلاتها، فتصل مشوهة ممطوطة عند البعد — يضعُف البعد الأقصى إلى مئات الأمتار فقط.\n\nالأحادية لا تعاني هذا أصلاً (نمط واحد فلا تشتت نمطي) فتمشي 10-80 كيلومتراً وأبعد مع الليزر البعيد (1550 نانومتر). الحسم الواقعي: قلبك صغير تدفع ليزراً أدق أغلى، وقلبك كبير تقتنع ببعد أقصر مقابل بثاث أرخص.",
           en: "The entire fiber decision branches from one number: core diameter.\n\n- Single-Mode Fiber (SMF): an 8-10 micrometer core thinner than thread — too fine to host more than one light path, so the laser beam travels uniformly straight like a parallel laser\n- Multimode Fiber (MMF): a 50 or 62.5 micrometer core — wide enough to host hundreds of paths (modes) for the same light: some bounce at tighter angles, some wider, arriving at different times\n\nAnd this is MMF's big obstacle called modal dispersion: a single pulse enters, its journeys scatter, and it arrives distorted and stretched over distance — collapsing the maximum reach to mere hundreds of meters.\n\nSingle-mode never suffers this at all (one mode, no modal dispersion), so it walks 10-80 kilometers and beyond with long-reach lasers (1550 nm). The real-world trade: a small core means paying for a pricier precision laser; a big core means accepting shorter reach for cheaper transceivers.",
@@ -629,6 +814,53 @@ export const m03_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "خط الزمن المجيد: 1980 - 2010", en: "The Glorious Timeline: 1980 - 2010" },
+        table: {
+          caption: { ar: "تطور معايير الإيثرنت عبر العقود", en: "Ethernet standards across the decades" },
+          headers: [
+            { ar: "المعيار", en: "Standard" },
+            { ar: "السرعة", en: "Speed" },
+            { ar: "السنة", en: "Year" },
+            { ar: "الوسيط النموذجي", en: "Typical medium" },
+          ],
+          rows: [
+            [
+              { ar: "10BASE-T", en: "10BASE-T" },
+              { ar: "10 Mbps", en: "10 Mbps" },
+              { ar: "1990", en: "1990" },
+              { ar: "UTP Cat3", en: "UTP Cat3" },
+            ],
+            [
+              { ar: "100BASE-TX", en: "100BASE-TX" },
+              { ar: "100 Mbps", en: "100 Mbps" },
+              { ar: "1995", en: "1995" },
+              { ar: "UTP Cat5", en: "UTP Cat5" },
+            ],
+            [
+              { ar: "1000BASE-T", en: "1000BASE-T" },
+              { ar: "1 Gbps", en: "1 Gbps" },
+              { ar: "1999", en: "1999" },
+              { ar: "UTP Cat5e", en: "UTP Cat5e" },
+            ],
+            [
+              { ar: "10GBASE-T", en: "10GBASE-T" },
+              { ar: "10 Gbps", en: "10 Gbps" },
+              { ar: "2006", en: "2006" },
+              { ar: "UTP Cat6a", en: "UTP Cat6a" },
+            ],
+            [
+              { ar: "40/100GBASE", en: "40/100GBASE" },
+              { ar: "40 / 100 Gbps", en: "40 / 100 Gbps" },
+              { ar: "2010+", en: "2010+" },
+              { ar: "ألياف متوازية (SR4/LR4)", en: "Parallel fiber (SR4/LR4)" },
+            ],
+            [
+              { ar: "400GBASE", en: "400GBASE" },
+              { ar: "400 Gbps", en: "400 Gbps" },
+              { ar: "2017+", en: "2017+" },
+              { ar: "ألياف بموصلات QSFP-DD", en: "Fiber with QSFP-DD optics" },
+            ],
+          ],
+        },
         body: {
           ar: "الإيثرنت الأصلي وُلد 1980 تجريبياً و 1983 معيارياً (IEEE 802.3) على كابل محوري سميك بـ 10 ميجابت. ثم مشى التسريع بتسلسل جبار:\n\n- 1990 — 802.3i و 10BASE-T: نقلة الحياة — الهبوط إلى الزوج المجدول الشهير جعل كل مكتب قادراً على الشبكات، وأطلق النجمة التي تعرفها\n- 1995 — 802.3u و 100BASE-TX: الإيثرنت السريع Fast Ethernet على نفس الكابلات — عشرة أضعاف بلا تغيير تمديد\n- 1999 — 802.3ab و 1000BASE-T: الجيجابت على أربعة أزواج من Cat5e — إنجاز هندسي إذ ابتكر ترميز PAM-5 والثنائية على كل زوج\n- 2002 — 802.3ae: عشرة جيجابت على الألياف\n- 2006 — 802.3an و 10GBASE-T: العشرة جيجابت تهبط للنحاس (Cat6a للمئة متر) — بعد معركة زمن وصول (Latency) حامية\n- 2010 — 802.3ba: نقلة معمارية — 40 و 100 جيجابت معاً لأول مرة في معيار واحد، عبر مسارات متوازية MPO\n\nرقم يلخص المجد: من 10 ميجابت 1990 إلى 400 جيجابت 2017 — أربعون ألف ضعف في جيل بشري واحد.",
           en: "Original Ethernet was born experimental in 1980 and standardized in 1983 (IEEE 802.3) over thick coax at 10 Mbps. Then the acceleration marched in giant strides:\n\n- 1990 — 802.3i and 10BASE-T: the life leap — landing on twisted pair made every office cable-capable and launched the star you know\n- 1995 — 802.3u and 100BASE-TX: Fast Ethernet over the same cables — tenfold with zero recabling\n- 1999 — 802.3ab and 1000BASE-T: gigabit over four Cat5e pairs — an engineering triumph inventing PAM-5 coding and per-pair duplex\n- 2002 — 802.3ae: ten gigabit over fiber\n- 2006 — 802.3an and 10GBASE-T: ten gigabit lands on copper (Cat6a for 100 m) — after a fierce latency battle\n- 2010 — 802.3ba: an architectural leap — 40 and 100 gigabit together in one standard for the first time, over parallel MPO paths\n\nOne number summarizes the glory: from 10 Mbps in 1990 to 400 Gbps in 2017 — forty thousandfold within a single human generation.",
@@ -726,6 +958,31 @@ export const m03_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "التفاوض التلقائي: كيف يتفق الطرفان؟", en: "Autonegotiation: How the Two Sides Agree" },
+        table: {
+          caption: { ar: "سيناريوهات التفاوض والثنائية", en: "Negotiation and duplex scenarios" },
+          headers: [
+            { ar: "الحالة على الطرفين", en: "State on both ends" },
+            { ar: "النتيجة", en: "Result" },
+          ],
+          rows: [
+            [
+              { ar: "كلاهما تفاوض تلقائي", en: "Both autonegotiate" },
+              { ar: "أفضل وضع مشترك — عادة Full Duplex", en: "Best common mode — usually full duplex" },
+            ],
+            [
+              { ar: "طرف تلقائي وطرف مثبت على 100/Full", en: "One auto, one hardcoded 100/Full" },
+              { ar: "الطرف التلقائي يهبط إلى Half — تضار ثنائية وأداء منهار", en: "The auto side falls to half — duplex mismatch, collapsed throughput" },
+            ],
+            [
+              { ar: "سرعتان مختلفتان", en: "Mismatched speeds" },
+              { ar: "لا تنشأ الوصلة أصلاً — لا ضوء ربط", en: "No link at all — no link light" },
+            ],
+            [
+              { ar: "أعراض تضار الثنائية", en: "Duplex-mismatch symptoms" },
+              { ar: "أخطاء CRC/FCS وتصادمات متأخرة وسرعة زحفية", en: "CRC/FCS errors, late collisions, crawling speed" },
+            ],
+          ],
+        },
         body: {
           ar: "عند رفع وصلة، يتبادل الطرفان إعلانات قدراتهما عبر نبضات FLP (Fast Link Pulses) — رسائل صغيرة مرمزة تحمل قائمة ما يدعمه كل طرف: سرعاته، وثنائياته، وتحكمه بالتدفق. ثم يختار الطرفان تلقائياً أعلى تطابق مشترك: كلاهما يدعم 1000/كاملة؟ فهي إذن.\n\nتفصيلة هندسية تفسر نصف الحوادث: السرعة تُكتشف كهربائياً من شكل الإشارة نفسها (حتى لو عُطّل التفاوض)، أما الثنائية فلا تُعرف إلا عبر نبضات FLP المتفاوضة.\n\n- المشهد التاريخي للكوارث: مسؤول يعطّل التفاوض في الطرفين ويضبط يدوياً 100/كامل في الأول — فيؤدي النصف الآخر (ما زال تفاوضياً) القاعدة الافتراضية للسرعة المكتشفة: نصف ثنائية!\n- النتيجة: طرف يظن أنه الوحيد على المسار ويرسل كلاماً كاملاً، وطرف يحسب الآخر ينصت ويتوقف عن الاستماع أثناء إرساله — اصطدامات متأخرة (Late Collisions) وأخطاء CRC وحصيلة أداء مقرفة بلا أي تنبيه واضح\n\nوAuto-MDIX الذي رأيته في درس الكابلات يعيش فوق هذه الطبقة نفسها: يعمل فقط عندما يظل التفاوض مفعلاً.",
           en: "When a link comes up, both sides exchange capability advertisements via FLP (Fast Link Pulses) — small coded messages carrying each side's supported list: speeds, duplex modes, and flow control. Both then automatically pick the highest common match: both support 1000/full? So be it.\n\nAn engineering detail explaining half the incidents: speed is detected electrically from the signal's shape itself (even with negotiation disabled), while duplex is known only through the negotiated FLP pulses.\n\n- The classic disaster scene: an admin disables negotiation on both ends and manually sets 100/full on one — the other end (still negotiating) falls back to the default for the detected speed: half duplex!\n- The result: one side believing it alone owns the path transmits freely, while a side assuming the other is listening stops listening while sending — late collisions, CRC errors, and abysmal performance with no clear alarm\n\nAnd the Auto-MDIX you met in the cabling lesson lives on this very layer: it works only while negotiation remains enabled.",
@@ -820,6 +1077,12 @@ export const m03_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "ما هي التمديدات المنظمة؟", en: "What Is Structured Cabling?" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "هرم التمديد: MDF في القمة وIDF في الطوابق", en: "The cabling pyramid: MDF on top, IDF per floor" },
+          nodes: ["MDF", "IDF-1", "IDF-2", "Outlet A1", "Outlet B1", "PC1", "PC2"],
+          edges: [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]],
+        },
         body: {
           ar: "لو فتحت سقف مبنى قديم لوجدت عشوائية مؤلمة: كابلات معلقة بالصدف، مرمية فوق بعضها بلا أغلفة، تمتد بين الغرف بلا خريطة. التمديدات المنظمة (Structured Cabling) هي الهندسة التي تحل محل ذلك: بنية موحدة قياسية مستقلة عن المعدات، تُممَّد مرة واحدة وتخدم عقوداً من التقنيات المتغيرة.\n\nالفكرة الجوهرية: الكابلات جزء من البناء مثل الكهرباء والسباكة — تصمم وتنفذ وتوثق قبل الجدران، لا أن تُرمى خلفها عند كل حاجة.\n\n- الفائدة الاقتصادية: نقل موظف من مكتب لآخر = وصلة قصيرة جديدة في الخزانة، لا تمديداً جديداً فوق السقف\n- الفائدة التشغيلية: كل عطل له موقع موصّف، وكل كابل له لافتة وهوية\n- الفائدة المستقبلية: وصلات 10 جيجابت غداً على نفس البنية التي مددتها اليوم\n\nالمعيار الحاكم عالمياً: عائلة ANSI/TIA-568 (مع شقيقتها ISO/IEC 11801)، وتحدد الالتزام بها جودة أي مقاول تمديدات.",
           en: "Open an old building's ceiling and you find painful randomness: cables hanging by coincidence, piled unlabeled, stretched between rooms without a map. Structured cabling is the engineering replacing that: a unified vendor-independent standard infrastructure, installed once and serving decades of changing technologies.\n\nThe core idea: cables are part of the building like electricity and plumbing — designed, executed, and documented before the walls, not thrown behind them at every need.\n\n- The economic benefit: moving an employee to another office = a short new patch cord in the closet, not a new ceiling run\n- The operational benefit: every fault has a labeled location, every cable has an identity\n- The future benefit: 10-gigabit links tomorrow over the same infrastructure you install today\n\nThe globally governing standard: the ANSI/TIA-568 family (with its sibling ISO/IEC 11801), and compliance with it defines any cabling contractor's quality.",
@@ -827,6 +1090,39 @@ export const m03_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الأنظمة الفرعية الستة وقاعدة 90 متراً", en: "The Six Subsystems and the 90-Meter Rule" },
+        table: {
+          caption: { ar: "الأنظمة الفرعية للتمديد المنظم", en: "Structured-cabling subsystems" },
+          headers: [
+            { ar: "النظام الفرعي", en: "Subsystem" },
+            { ar: "نطاقه", en: "Scope" },
+          ],
+          rows: [
+            [
+              { ar: "منطقة العمل", en: "Work area" },
+              { ar: "من مخرج الجدار إلى جهاز المستخدم", en: "From the wall outlet to the user device" },
+            ],
+            [
+              { ar: "التمديد الأفقي", en: "Horizontal cabling" },
+              { ar: "من المخرج إلى خزانة الطابق ≤ 90 m", en: "Outlet to floor closet, ≤ 90 m" },
+            ],
+            [
+              { ar: "الخزانة الأرضية IDF", en: "Floor closet (IDF)" },
+              { ar: "لوحات التوصيل ومبدلات الطابق", en: "Patch panels and floor switches" },
+            ],
+            [
+              { ar: "الكابل الفقري", en: "Backbone cabling" },
+              { ar: "بين الخزائن وغرفة المعدات الرئيسية", en: "Between closets and the main equipment room" },
+            ],
+            [
+              { ar: "غرفة المعدات MDF", en: "Equipment room (MDF)" },
+              { ar: "المبدلات والراوترات الرئيسية للمبنى", en: "The building's core switches and routers" },
+            ],
+            [
+              { ar: "مدخل المنشأة", en: "Entrance facility" },
+              { ar: "نقطة دخول مزود الخدمة وحد الحماية", en: "Provider entry point and protection demarc" },
+            ],
+          ],
+        },
         body: {
           ar: "يقسم المعيار المنشأة إلى أنظمة فرعية تشكل مسار الكابل من الجهاز إلى الخزانة إلى غرفة المعدات:\n\n- منطقة العمل (Work Area): من مخرج الحائط إلى جهاز المستخدم — وصلات قصيرة Patch Cords\n- التمديد الأفقي (Horizontal Cabling): من مخرج الحائط حتى لوحة التوصيل في خزانة الاتصالات — النحاس هنا يحد بـ 90 متراً كحد أقصى للرابط الثابت\n- خزانة الاتصالات (Telecommunications Room — TR/IDF): الموزع الأفقي لطابق أو قطاع، وفيها لوحات التوصيل والمبدلات\n- الظهر (Backbone): بين الخزائن وبينها وبين غرفة المعدات — عادة ألياف ضوئية بين الطوابق والمباني\n- غرفة المعدات (Equipment Room — ER/MDF): قلب الشبكة حيث تسكن الموجهات والخوادم والمبدلات الرئيسية\n- منشأ الدخول (Entrance Facility): حيث تعبر خدمات المزود حدّ المبنى — بكرات وحمايات وأطراف التأريض\n\nقاعدة الحساب الذهبية للقناة النحاسية كاملة: 90 متراً رابط ثابت + حتى 10 أمتار وصلات قصيرة (5 في منطقة العمل و5 في الخزانة) = 100 متر قناة قصوى.\n\nوالهيكل المتراتب يسمى هرمياً: نجمة في كل طابق نحو IDF، ونجمة من كل IDF نحو MDF — النجمة فوق النجمة، لا الحلقات أبداً في النحاس.",
           en: "The standard divides the facility into subsystems forming the cable's path from device to closet to equipment room:\n\n- Work Area: from the wall outlet to the user device — short patch cords\n- Horizontal Cabling: from the wall outlet to the patch panel in the telecom closet — copper here is capped at 90 meters maximum for the fixed link\n- Telecommunications Room (TR/IDF): the horizontal distributor for a floor or zone, hosting patch panels and switches\n- Backbone: between closets and toward the equipment room — usually fiber between floors and buildings\n- Equipment Room (ER/MDF): the network heart where routers, servers, and core switches live\n- Entrance Facility: where provider services cross the building boundary — with protectors and grounding terminations\n\nThe golden channel calculation: 90 meters fixed link + up to 10 meters patch cords (5 at the work area, 5 in the closet) = a 100-meter maximum channel.\n\nAnd the tiered structure is called hierarchical: a star per floor toward the IDF, and a star from every IDF toward the MDF — star over star, never rings in copper.",
@@ -924,6 +1220,39 @@ export const m03_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المعايير المقاسة: مفردات المختبر", en: "The Measured Parameters: The Lab Vocabulary" },
+        table: {
+          caption: { ar: "اختبارات الكابلات وما تفحصه", en: "Cable tests and what they examine" },
+          headers: [
+            { ar: "الاختبار", en: "Test" },
+            { ar: "ما يفحص", en: "What it checks" },
+          ],
+          rows: [
+            [
+              { ar: "Wiremap", en: "Wiremap" },
+              { ar: "ترتيب الأسلاك الثمانية والانقسامات المقلوبة", en: "Order of the eight conductors and split pairs" },
+            ],
+            [
+              { ar: "Length", en: "Length" },
+              { ar: "الطول ضمن 90 m بقياس زمني", en: "Length within 90 m via time measurement" },
+            ],
+            [
+              { ar: "NEXT", en: "NEXT" },
+              { ar: "التداخل القريب بين الأزواج المتجاورة", en: "Near-end crosstalk between adjacent pairs" },
+            ],
+            [
+              { ar: "Insertion Loss", en: "Insertion loss" },
+              { ar: "التوهين الكلي للإشارة عبر المسار", en: "Total signal attenuation across the path" },
+            ],
+            [
+              { ar: "Return Loss", en: "Return loss" },
+              { ar: "الانعكاسات الناتجة عن موصلات رديئة", en: "Reflections caused by poor terminations" },
+            ],
+            [
+              { ar: "Delay Skew", en: "Delay skew" },
+              { ar: "فرق التأخير بين الأزواج الأربعة", en: "Timing difference among the four pairs" },
+            ],
+          ],
+        },
         body: {
           ar: "شهادة الاعتماد تختبر مجموعة قياسات محددة كلها بوحدات الديسيبل — هذه أهم مفرداتها:\n\n- خريطة الأسلاك (Wire Map): الترتيب الصحيح للأزواج على المسامير الثمانية — وأخطاؤها: انقطاع Open، تقصير Short، انعكاس Reversed، وأخطرها الأزواج المفصولة Split Pairs (أسلاك من زوجين مختلفين تتزوج خطأً — توصلها سليم وكل شيء آخر فشل)\n- الطول (Length) وانحراف التأخير (Delay Skew): TDR يرسل نبضة ويقيس زمن ارتدادها لتحديد مكان أي عيب وحدّ الطول — واختلاف تأخير الأزواج (حده 50 نانوثانية للقناة) يهلك تقنيات الجيجابت التي تسلّم البيانات على الأربعة معاً\n- فقد الإدخال (Insertion Loss): التوهين الكلي عند أعلى تردد للفئة — كلما قل كان أفضل\n- التشابك الطرفي القريب (NEXT): إشارة تتسرب من زوج مُرسل إلى زوج مجاور عند النهاية نفسها — أخطر قياس يفسد الكابلات المصنوعة يدوياً\n- ارتداد الخسارة (Return Loss): جزء الإشارة المرتد بسبب اختلال الممانعة (75 أوم موصل في كابل 100 أوم مثلاً)\n\nكل قياس له حد أدنى/أقصى محدد بجدول الفئة: Cat6a تُختبر حتى 500 ميجاهرتز وCat6 حتى 250 — ولهذا ترفض شهادة Cat6a كابلاً مرّ سابقاً كـ Cat5e.",
           en: "The certification tests a defined set of measurements, all in decibels — here are its key vocabulary words:\n\n- Wire map: the correct pair order on the eight pins — its faults: open, short, reversed, and the deadliest, split pairs (wires from two different pairs mis-married — continuity looks perfect while everything else fails)\n- Length and delay skew: TDR sends a pulse and measures its echo time to locate any defect and bound the length — and pair delay difference (capped at 50 ns for the channel) kills gigabit technologies delivering data across all four pairs together\n- Insertion loss: total attenuation at the category's top frequency — the lower the better\n- Near-end crosstalk (NEXT): signal leaking from a transmitting pair into an adjacent pair at the same end — the deadliest measurement exposing handmade cables\n- Return loss: the portion of signal reflected back due to impedance discontinuity (a 75-ohm connector on a 100-ohm cable, say)\n\nEvery measurement has a min/max bound in the category table: Cat6a tests up to 500 MHz and Cat6 to 250 — which is why a Cat6a certificate rejects a cable that previously passed as Cat5e.",

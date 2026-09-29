@@ -124,6 +124,23 @@ export function portsForKind(kind: DeviceKind): Port[] {
       return Array.from({ length: 4 }, (_, i) => mkPort(`g0/${i}`, `GigabitEthernet0/${i}`, "ethernet"));
     case "attacker":
       return [mkPort("eth0", "eth0 (Kali)", "ethernet")];
+    // ── v3: peripherals & IoT (host port layouts) + modem bridge ──
+    case "printer":
+    case "ipPhone":
+    case "nas":
+    case "camera":
+      return [mkPort("fa0", "FastEthernet0", "ethernet")];
+    case "tv":
+      return [mkPort("fa0", "FastEthernet0", "ethernet"), mkPort("radio0", "Wireless0", "wireless")];
+    case "thermostat":
+      return [mkPort("radio0", "Wireless0", "wireless")];
+    case "iotSensor":
+      return [mkPort("radio0", "Wireless0", "wireless"), mkPort("fa0", "FastEthernet0", "ethernet")];
+    case "modem":
+      return [
+        mkPort("line0", "Line0 (DSL)", "internet"),
+        ...Array.from({ length: 4 }, (_, i) => mkPort(`fa0/${i + 1}`, `FastEthernet0/${i + 1}`, "ethernet")),
+      ];
   }
 }
 
@@ -142,6 +159,14 @@ const KIND_BASE: Record<DeviceKind, string> = {
   wirelessRouter: "HomeRouter",
   hub: "Hub",
   cloud: "Cloud",
+  printer: "Printer",
+  ipPhone: "IPPhone",
+  nas: "NAS",
+  camera: "Cam",
+  tv: "TV",
+  thermostat: "Thermo",
+  iotSensor: "IoT",
+  modem: "Modem",
 };
 
 let _dev = 0;
@@ -274,7 +299,7 @@ export function connectPorts(
   return link;
 }
 
-const SWITCHY: DeviceKind[] = ["switch", "hub", "cloud", "ap", "l3switch", "ids"];
+const SWITCHY: DeviceKind[] = ["switch", "hub", "cloud", "ap", "l3switch", "ids", "modem"];
 export function autoCable(
   t: Topology,
   aDevId: string,
@@ -283,6 +308,20 @@ export function autoCable(
   const a = findDevice(t, aDevId);
   const b = findDevice(t, bDevId);
   if (!a || !b || a.id === b.id) return null;
+  // modem DSL line ↔ ISP cloud/router/firewall uplink (line0 is the WAN side)
+  if (a.kind === "modem" || b.kind === "modem") {
+    const modem = a.kind === "modem" ? a : b;
+    const other = a.kind === "modem" ? b : a;
+    if (other.kind === "cloud" || other.kind === "router" || other.kind === "firewall" || other.kind === "wirelessRouter") {
+      const line = modem.ports.find((p) => p.id === "line0" && !p.linkId && p.adminUp);
+      const oe = other.ports.find((p) => p.kind === "ethernet" && !p.linkId && p.adminUp);
+      if (line && oe) {
+        return a.kind === "modem"
+          ? { aPortId: line.id, bPortId: oe.id, kind: "copper" }
+          : { aPortId: oe.id, bPortId: line.id, kind: "copper" };
+      }
+    }
+  }
   // wireless: both have free wireless ports + same ssid
   const aw = a.ports.find((p) => p.kind === "wireless" && !p.linkId && p.adminUp);
   const bw = b.ports.find((p) => p.kind === "wireless" && !p.linkId && p.adminUp);
@@ -388,7 +427,7 @@ function step(
 const info = (ar: string, en: string) => ({ ar, en });
 
 // ─────────────── Forwarding ───────────────
-const isBridge = (d: Device) => ["switch", "hub", "cloud", "ap"].includes(d.kind);
+const isBridge = (d: Device) => ["switch", "hub", "cloud", "ap", "l3switch", "ids", "modem"].includes(d.kind);
 
 // LAN bridge ports of a wireless router behave like a switch
 function wrLanPorts(d: Device): Port[] {
@@ -551,7 +590,7 @@ function deliver(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: n
     return;
   }
 
-  // ── hosts (pc/server/laptop/smartphone/attacker)
+  // ── hosts (pc/server/laptop/smartphone/attacker + peripherals & IoT: printer/ipPhone/nas/camera/tv/thermostat/iotSensor)
   hostHandle(ctx, d, inPortId, packet, depth);
 }
 
@@ -560,11 +599,11 @@ function addArp(d: Device, ip: string, mac: string, portId: string) {
 }
 
 export function hostIp(d: Device): { ip: string | null; mask: string | null; port: Port | null } {
-  if (d.kind === "pc" || d.kind === "server") {
+  if (d.kind === "pc" || d.kind === "server" || d.kind === "printer" || d.kind === "ipPhone" || d.kind === "nas" || d.kind === "camera") {
     const p = d.ports[0];
     return { ip: p.ip ?? d.staticIp, mask: p.mask ?? d.staticMask, port: p };
   }
-  // laptop/smartphone: first port with ip
+  // laptop/smartphone/tv/thermostat/iotSensor: first port with ip
   for (const p of d.ports) if (p.ip) return { ip: p.ip, mask: p.mask, port: p };
   return { ip: d.staticIp, mask: d.staticMask, port: d.ports[0] ?? null };
 }
@@ -1217,7 +1256,7 @@ export function releaseIp(d: Device): void {
   d.dnsServer = null;
 }
 
-export const isHostKind = (k: DeviceKind) => ["pc", "server", "laptop", "smartphone", "attacker"].includes(k);
+export const isHostKind = (k: DeviceKind) => ["pc", "server", "laptop", "smartphone", "attacker", "printer", "ipPhone", "nas", "camera", "tv", "thermostat", "iotSensor"].includes(k);
 export const infoBi = info;
 
 // ═══════════════ NetSim v2: ACL / IDS / L3-Switch / Attacks ═══════════════

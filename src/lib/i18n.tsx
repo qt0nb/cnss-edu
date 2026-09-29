@@ -21,6 +21,13 @@ export const UI: Dict = {
   playground: { ar: "المختبر التفاعلي", en: "Playground" },
   achievements: { ar: "الإنجازات", en: "Achievements" },
   settings: { ar: "الإعدادات", en: "Settings" },
+  challenges: { ar: "التحديات", en: "Challenges" },
+  integrations: { ar: "التكاملات", en: "Integrations" },
+  installApp: { ar: "تثبيت التطبيق", en: "Install app" },
+  installDesc: { ar: "ثبّت المنصة على جهازك واستخدمها دون اتصال بالكامل", en: "Install the platform on your device and use it fully offline" },
+  offlineReady: { ar: "جاهز للعمل دون اتصال", en: "Ready to work offline" },
+  offlineMode: { ar: "وضع عدم الاتصال — يعمل محلياً", en: "Offline mode — running locally" },
+  backOnline: { ar: "عاد الاتصال بالإنترنت", en: "Back online" },
   language: { ar: "اللغة", en: "Language" },
   theme: { ar: "المظهر", en: "Theme" },
   dark: { ar: "داكن", en: "Dark" },
@@ -29,8 +36,8 @@ export const UI: Dict = {
   english: { ar: "الإنجليزية", en: "English" },
   menu: { ar: "القائمة", en: "Menu" },
   footerRights: {
-    ar: "منصة تعليمية شاملة — ١٠٠ درس، ٥٠٠ أداة، ٢٠٠ فكرة ربح",
-    en: "Comprehensive learning platform — 100 lessons, 500 tools, 200 money-making ideas",
+    ar: "منصة تعليمية شاملة — ١٠٠ درس، ١٠٦٠ أداة، ٢٠٠ فكرة ربح",
+    en: "Comprehensive learning platform — 100 lessons, 1060 tools, 200 money-making ideas",
   },
 
   // Dashboard

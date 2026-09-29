@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, Search, ChevronLeft, ChevronRight, ArrowLeft, Clock, Lightbulb,
-  CheckCircle2, Terminal, CircleHelp, ListChecks, X,
+  CheckCircle2, Terminal, CircleHelp, ListChecks, X, ArrowDown, ArrowRight, Network,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import { useProgress } from "@/lib/store";
 import { searchLessons } from "@/lib/data";
 import { MODULES, moduleById } from "@/data/modules";
 import { lessonsByModule, lessonById, ALL_LESSONS } from "@/data/lessons";
-import type { Bi, Lesson, LessonSection } from "@/lib/types";
+import type { Bi, Lesson, LessonSection, LessonTable, LessonDiagram } from "@/lib/types";
 import * as Icons from "lucide-react";
 
 const levelColor: Record<string, string> = {
@@ -85,6 +85,220 @@ function CodeBlock({ code }: { code: { lang: string; snippet: string } }) {
   );
 }
 
+// ─── Lesson table + diagram renderers ───────────────────────────────────
+
+/** A cell is rendered mono/LTR when it holds technical notation (no Arabic + digits/symbols) */
+function isTechnicalCell(v: string) {
+  return !/[\u0600-\u06FF]/.test(v) && /[\d./:~-]/.test(v);
+}
+
+function LessonTableBlock({ table }: { table: LessonTable }) {
+  const { bi } = useLang();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ duration: 0.35 }}
+      className="rounded-xl border overflow-hidden bg-card"
+    >
+      <div className="overflow-x-auto">
+        <table className="w-full text-[12px]">
+          {table.caption ? (
+            <caption className="px-3 pt-2.5 text-start text-[10.5px] font-bold text-muted-foreground">{bi(table.caption)}</caption>
+          ) : null}
+          <thead>
+            <tr className="bg-muted/60">
+              {table.headers.map((h, j) => (
+                <th key={j} className="px-3 py-2 text-start font-bold whitespace-nowrap text-foreground/85">{bi(h)}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {table.rows.map((r, i) => (
+              <tr key={i} className={i % 2 === 1 ? "bg-muted/30" : undefined}>
+                {r.map((c, j) => {
+                  const v = bi(c);
+                  const tech = isTechnicalCell(v);
+                  return (
+                    <td
+                      key={j}
+                      dir={tech ? "ltr" : undefined}
+                      className={`px-3 py-1.5 text-start align-top leading-6 text-foreground/85 border-t ${tech ? "font-mono text-[11px]" : ""}`}
+                    >
+                      {v}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </motion.div>
+  );
+}
+
+function DiagramLegend() {
+  return (
+    <div className="flex items-center justify-center gap-1.5 pt-2 text-[10px] font-bold text-muted-foreground/80">
+      <Network className="size-3" />
+      <span>مخطط توضيحي / Illustrative diagram</span>
+    </div>
+  );
+}
+
+/** Vertical stack of boxes (OSI layers, PDU encapsulation) — top→bottom, numbered len-i */
+function DiagramLayers({ d }: { d: LessonDiagram }) {
+  const { bi } = useLang();
+  const items = d.items ?? [];
+  const len = items.length;
+  if (len === 0) return null;
+  return (
+    <div className="max-w-md mx-auto flex flex-col">
+      {items.map((it, i) => {
+        const n = len - i;
+        const hue = 160 + (len > 1 ? Math.round((i / (len - 1)) * 28) : 0);
+        const depth = len > 1 ? i / (len - 1) : 0;
+        return (
+          <Fragment key={i}>
+            {i > 0 && (
+              <div className="flex justify-center py-0.5" aria-hidden>
+                <ArrowDown className="size-3.5 text-muted-foreground" />
+              </div>
+            )}
+            <div
+              className="flex items-center gap-2.5 rounded-lg border p-2.5"
+              style={{
+                background: `hsl(${hue} 65% 45% / ${0.08 + depth * 0.14})`,
+                borderColor: `hsl(${hue} 65% 45% / 0.4)`,
+              }}
+            >
+              <span
+                className="grid size-6 shrink-0 place-items-center rounded-md text-[11px] font-black text-white"
+                style={{ background: `hsl(${hue} 62% 38%)` }}
+              >
+                {n}
+              </span>
+              <span className="text-[12.5px] leading-6 font-semibold">{bi(it)}</span>
+            </div>
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Horizontal pill steps joined by arrows (vertical on small screens) */
+function DiagramFlow({ d }: { d: LessonDiagram }) {
+  const { bi } = useLang();
+  const items = d.items ?? [];
+  if (items.length === 0) return null;
+  return (
+    <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch gap-1.5">
+      {items.map((it, i) => (
+        <Fragment key={i}>
+          <div className="flex-1 min-w-40 rounded-lg border bg-muted/40 p-2.5 flex items-start gap-2">
+            <span className="grid size-5 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground text-[10px] font-black">{i + 1}</span>
+            <span className="text-[12px] leading-6">{bi(it)}</span>
+          </div>
+          {i < items.length - 1 && (
+            <div className="grid shrink-0 place-items-center py-0.5 sm:py-0 sm:px-0.5">
+              <ArrowDown className="size-4 text-muted-foreground sm:hidden" />
+              <ArrowRight className="hidden size-4 text-muted-foreground rtl:rotate-180 sm:block" />
+            </div>
+          )}
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
+/** Mini network graph as inline SVG — circle layout ≤6 nodes, else 2 rows */
+function DiagramTopology({ d }: { d: LessonDiagram }) {
+  const nodes = d.nodes ?? [];
+  const n = nodes.length;
+  if (n === 0) return null;
+  const W = 360;
+  const H = n <= 6 ? 230 : 260;
+  const pos: { x: number; y: number }[] = [];
+  if (n <= 6) {
+    const cx = W / 2;
+    const cy = H / 2;
+    const r = 78;
+    for (let i = 0; i < n; i++) {
+      const ang = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+      pos.push({ x: cx + r * Math.cos(ang), y: cy + r * Math.sin(ang) });
+    }
+  } else {
+    const per = Math.ceil(n / 2);
+    const gapX = (W - 70) / Math.max(1, per - 1);
+    for (let i = 0; i < n; i++) {
+      const row = i < per ? 0 : 1;
+      const col = row === 0 ? i : i - per;
+      pos.push({ x: 40 + col * gapX, y: row === 0 ? H * 0.28 : H * 0.78 });
+    }
+  }
+  const box = (label: string) => {
+    const main = label.split("|")[0].trim();
+    return { w: Math.max(50, main.length * 7.2 + 14), h: 24, label: main };
+  };
+  const edgePoint = (a: { x: number; y: number }, b: { x: number; y: number }, bw: number, bh: number) => {
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    if (dx === 0 && dy === 0) return { x: a.x, y: a.y };
+    const s = Math.min(bw / 2 / Math.abs(dx || 1e-9), bh / 2 / Math.abs(dy || 1e-9));
+    return { x: a.x + dx * s, y: a.y + dy * s };
+  };
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto text-muted-foreground" role="img" aria-label="network topology" style={{ maxWidth: 420, margin: "0 auto" }}>
+      {d.edges?.map(([ai, bi_], i) => {
+        const a = pos[ai];
+        const b = pos[bi_];
+        if (!a || !b) return null;
+        const na = box(nodes[ai]);
+        const nb = box(nodes[bi_]);
+        const p1 = edgePoint(a, b, na.w, na.h);
+        const p2 = edgePoint(b, a, nb.w, nb.h);
+        return (
+          <g key={`e${i}`}>
+            <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="currentColor" strokeWidth={1.4} />
+            <circle cx={p1.x} cy={p1.y} r={2.6} fill="currentColor" />
+            <circle cx={p2.x} cy={p2.y} r={2.6} fill="currentColor" />
+          </g>
+        );
+      })}
+      {nodes.map((raw, i) => {
+        const { w, h, label } = box(raw);
+        const p = pos[i];
+        return (
+          <g key={`n${i}`} transform={`translate(${p.x - w / 2}, ${p.y - h / 2})`}>
+            <rect width={w} height={h} rx={7} ry={7} fill="var(--card)" stroke="var(--border)" strokeWidth={1.2} />
+            <text x={w / 2} y={h / 2 + 4} textAnchor="middle" fontSize={11} fontWeight={700} fill="var(--card-foreground)">{label}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+function LessonDiagramBlock({ d }: { d: LessonDiagram }) {
+  const { bi } = useLang();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ duration: 0.35 }}
+      className="rounded-xl border bg-card/60 p-4 space-y-3"
+    >
+      {d.title ? <div className="text-center text-[12.5px] font-black">{bi(d.title)}</div> : null}
+      {d.kind === "layers" ? <DiagramLayers d={d} /> : d.kind === "flow" ? <DiagramFlow d={d} /> : <DiagramTopology d={d} />}
+      <DiagramLegend />
+    </motion.div>
+  );
+}
+
 function SectionBlock({ s, i }: { s: LessonSection; i: number }) {
   const { t, bi } = useLang();
   return (
@@ -100,6 +314,8 @@ function SectionBlock({ s, i }: { s: LessonSection; i: number }) {
       </h3>
       <div className="ps-8"><Body text={bi(s.body)} /></div>
       {s.code && <div className="ps-8"><CodeBlock code={s.code} /></div>}
+      {s.table && <div className="ps-4 sm:ps-8 pt-1"><LessonTableBlock table={s.table} /></div>}
+      {s.diagram && <div className="ps-4 sm:ps-8 pt-1"><LessonDiagramBlock d={s.diagram} /></div>}
       {s.tip && (
         <div className="ps-8">
           <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 flex gap-2.5 items-start">

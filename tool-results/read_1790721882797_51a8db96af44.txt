@@ -1,0 +1,542 @@
+     1→"use client";
+     2→
+     3→import React, { useEffect, useRef, useState } from "react";
+     4→import {
+     5→  Dialog,
+     6→  DialogContent,
+     7→  DialogHeader,
+     8→  DialogTitle,
+     9→  DialogDescription,
+    10→} from "@/components/ui/dialog";
+    11→import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+    12→import { Button } from "@/components/ui/button";
+    13→import { Input } from "@/components/ui/input";
+    14→import { Label } from "@/components/ui/label";
+    15→import { Switch } from "@/components/ui/switch";
+    16→import { Badge } from "@/components/ui/badge";
+    17→import { ScrollArea } from "@/components/ui/scroll-area";
+    18→import {
+    19→  Globe, Terminal, SlidersHorizontal, ListTree, Server, Wifi, Table2, Trash2, Plus,
+    20→} from "lucide-react";
+    21→import { useLang } from "@/lib/i18n";
+    22→import { toast } from "@/hooks/use-toast";
+    23→import type { Device } from "@/lib/netsim/types";
+    24→import { isValidIp, prefixToMask, isHostKind } from "@/lib/netsim/engine";
+    25→import { runCliLine, runHostLine, initialCliState, promptOf, type CliState } from "@/lib/netsim/cli";
+    26→
+    27→export interface NetSimActions {
+    28→  updateDevice(): void;
+    29→  runPing(srcId: string, ip: string): string[];
+    30→  runDhcp(clientId: string): string[];
+    31→  runDns(srcId: string, name: string): string[];
+    32→  runHttp(srcId: string, host: string): { lines: string[]; page: { title: string; body: string } | null };
+    33→}
+    34→
+    35→export function CliTerminal({
+    36→  device,
+    37→  actions,
+    38→  isHost,
+    39→}: {
+    40→  device: Device;
+    41→  actions: NetSimActions;
+    42→  isHost: boolean;
+    43→}) {
+    44→  const { lang } = useLang();
+    45→  const [lines, setLines] = useState<string[]>([
+    46→    lang === "ar"
+    47→      ? "NetMastery Sim — اكتب ? لعرض الأوامر"
+    48→      : "NetMastery Sim — type ? for commands",
+    49→  ]);
+    50→  const [input, setInput] = useState("");
+    51→  const [cliState, setCliState] = useState<CliState>(initialCliState);
+    52→  const [hist, setHist] = useState<string[]>([]);
+    53→  const [hIdx, setHIdx] = useState(-1);
+    54→  const endRef = useRef<HTMLDivElement>(null);
+    55→
+    56→  useEffect(() => {
+    57→    endRef.current?.scrollIntoView({ block: "end" });
+    58→  }, [lines]);
+    59→
+    60→  const prompt = isHost
+    61→    ? `${device.name}>`
+    62→    : promptOf(device, cliState);
+    63→
+    64→  const submit = () => {
+    65→    const line = input;
+    66→    setInput("");
+    67→    if (line.trim()) setHist((h) => [...h, line]);
+    68→    setHIdx(-1);
+    69→    const promptLine = `${prompt} ${line}`;
+    70→    let out: string[] = [];
+    71→    if (isHost) {
+    72→      const r = runHostLine(device, line);
+    73→      out = r.lines;
+    74→      if (r.action?.type === "ping") out = [...out, ...actions.runPing(device.id, r.action.arg)];
+    75→      else if (r.action?.type === "dhcp-renew") out = [...out, ...actions.runDhcp(device.id)];
+    76→      else if (r.action?.type === "dns") out = [...out, ...actions.runDns(device.id, r.action.arg)];
+    77→      else if (r.action?.type === "http") {
+    78→        const r2 = actions.runHttp(device.id, r.action.arg);
+    79→        out = [...out, ...r2.lines];
+    80→      }
+    81→      actions.updateDevice();
+    82→    } else {
+    83→      const r = runCliLine(device, line, cliState);
+    84→      setCliState(r.state);
+    85→      out = r.lines;
+    86→      if (r.action?.type === "ping") out = [...out, ...actions.runPing(device.id, r.action.arg)];
+    87→      actions.updateDevice();
+    88→    }
+    89→    setLines((ls) => [...ls, promptLine, ...out]);
+    90→  };
+    91→
+    92→  return (
+    93→    <div className="flex flex-col gap-2" dir="ltr">
+    94→      <div className="rounded-lg bg-zinc-950 border border-zinc-800 p-3 h-72 overflow-y-auto text-[12px] font-mono text-emerald-300 leading-relaxed" style={{ whiteSpace: "pre-wrap" }}>
+    95→        {lines.map((l, i) => (
+    96→          <div key={i} className={l.startsWith("%") ? "text-rose-400" : undefined}>{l || "\u00A0"}</div>
+    97→        ))}
+    98→        <div ref={endRef} />
+    99→      </div>
+   100→      <div className="flex items-center gap-2">
+   101→        <span className="text-xs font-mono text-emerald-500 shrink-0">{prompt}</span>
+   102→        <Input
+   103→          value={input}
+   104→          onChange={(e) => setInput(e.target.value)}
+   105→          onKeyDown={(e) => {
+   106→            if (e.key === "Enter") submit();
+   107→            else if (e.key === "ArrowUp") {
+   108→              e.preventDefault();
+   109→              const idx = hIdx === -1 ? hist.length - 1 : Math.max(0, hIdx - 1);
+   110→              if (hist[idx] !== undefined) { setHIdx(idx); setInput(hist[idx]); }
+   111→            } else if (e.key === "ArrowDown") {
+   112→              e.preventDefault();
+   113→              const idx = hIdx === -1 ? -1 : Math.min(hist.length - 1, hIdx + 1);
+   114→              if (idx === hist.length - 1) { setHIdx(-1); setInput(""); }
+   115→              else if (hist[idx] !== undefined) { setHIdx(idx); setInput(hist[idx]); }
+   116→            }
+   117→          }}
+   118→          className="font-mono text-xs h-8 bg-zinc-950 border-zinc-800 text-emerald-200"
+   119→          placeholder="?"
+   120→          autoComplete="off"
+   121→          spellCheck={false}
+   122→        />
+   123→        <Button size="sm" onClick={submit} className="h-8">↵</Button>
+   124→      </div>
+   125→    </div>
+   126→  );
+   127→}
+   128→
+   129→function Field({ label, value, onChange, mono = true, placeholder }: { label: string; value: string; onChange: (v: string) => void; mono?: boolean; placeholder?: string }) {
+   130→  return (
+   131→    <div className="grid grid-cols-[110px_1fr] items-center gap-2">
+   132→      <Label className="text-[11px] text-muted-foreground">{label}</Label>
+   133→      <Input
+   134→        dir="ltr"
+   135→        value={value}
+   136→        placeholder={placeholder}
+   137→        onChange={(e) => onChange(e.target.value)}
+   138→        className={`h-8 text-xs ${mono ? "font-mono" : ""}`}
+   139→      />
+   140→    </div>
+   141→  );
+   142→}
+   143→
+   144→export default function DeviceDialog({
+   145→  device,
+   146→  onClose,
+   147→  actions,
+   148→}: {
+   149→  device: Device | null;
+   150→  onClose: () => void;
+   151→  actions: NetSimActions;
+   152→}) {
+   153→  const { lang, t } = useLang();
+   154→  const [url, setUrl] = useState("");
+   155→  const [page, setPage] = useState<{ title: string; body: string } | null>(null);
+   156→  const [newRecord, setNewRecord] = useState({ name: "", ip: "" });
+   157→  const [linesEcho, setLinesEcho] = useState<string[]>([]);
+   158→  const [dhcp, setDhcp] = useState(device?.dhcpPool ? { ...device.dhcpPool } : null);
+   159→
+   160→  useEffect(() => {
+   161→    setPage(null);
+   162→    setUrl("");
+   163→    if (device?.dhcpPool) setDhcp({ ...device.dhcpPool });
+   164→    else setDhcp(null);
+   165→  }, [device?.id]);
+   166→
+   167→  if (!device) return null;
+   168→  const d = device;
+   169→  const isRouterLike = d.kind === "router" || d.kind === "switch" || d.kind === "hub" || d.kind === "wirelessRouter";
+   170→  const host = isHostKind(d.kind);
+   171→
+   172→  const commit = () => actions.updateDevice();
+   173→
+   174→  const setPortIp = (portId: string, ip: string, mask: string) => {
+   175→    const p = d.ports.find((pp) => pp.id === portId);
+   176→    if (!p) return;
+   177→    p.ip = isValidIp(ip) ? ip : null;
+   178→    p.mask = isValidIp(mask) ? mask : null;
+   179→    commit();
+   180→  };
+   181→
+   182→  const fetchPage = () => {
+   183→    const r = actions.runHttp(d.id, url.trim());
+   184→    setLinesEcho(r.lines);
+   185→    if (r.page) setPage(r.page);
+   186→  };
+   187→
+   188→  return (
+   189→    <Dialog open={!!d} onOpenChange={(o) => !o && onClose()}>
+   190→      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" dir={lang === "ar" ? "rtl" : "ltr"}>
+   191→        <DialogHeader>
+   192→          <DialogTitle className="flex items-center gap-2 text-base">
+   193→            {d.name}
+   194→            <Badge variant="outline" className="text-[10px]">{d.kind}</Badge>
+   195→          </DialogTitle>
+   196→          <DialogDescription className="text-xs">
+   197→            {lang === "ar" ? "إعداد الجهاز كما في Packet Tracer" : "Configure the device like Packet Tracer"}
+   198→          </DialogDescription>
+   199→        </DialogHeader>
+   200→
+   201→        <Tabs defaultValue={host ? "ipconf" : isRouterLike ? "cli" : "ports"} dir={lang === "ar" ? "rtl" : "ltr"}>
+   202→          <TabsList className="flex-wrap h-auto">
+   203→            {host && <TabsTrigger value="ipconf" className="text-xs gap-1"><SlidersHorizontal className="size-3.5" />{lang === "ar" ? "إعداد IP" : "IP Config"}</TabsTrigger>}
+   204→            {(isRouterLike) && <TabsTrigger value="cli" className="text-xs gap-1"><Terminal className="size-3.5" />CLI</TabsTrigger>}
+   205→            {host && <TabsTrigger value="pcmd" className="text-xs gap-1"><Terminal className="size-3.5" />{lang === "ar" ? "سطر الأوامر" : "Command Prompt"}</TabsTrigger>}
+   206→            {host && <TabsTrigger value="browser" className="text-xs gap-1"><Globe className="size-3.5" />{lang === "ar" ? "المتصفح" : "Browser"}</TabsTrigger>}
+   207→            <TabsTrigger value="ports" className="text-xs gap-1"><ListTree className="size-3.5" />{lang === "ar" ? "المنافذ" : "Ports"}</TabsTrigger>
+   208→            {d.kind === "switch" && <TabsTrigger value="mac" className="text-xs gap-1"><Table2 className="size-3.5" />{lang === "ar" ? "جدول MAC" : "MAC Table"}</TabsTrigger>}
+   209→            {(isRouterLike || host) && <TabsTrigger value="arp" className="text-xs gap-1"><Table2 className="size-3.5" />ARP</TabsTrigger>}
+   210→            {d.kind === "server" && <TabsTrigger value="services" className="text-xs gap-1"><Server className="size-3.5" />{lang === "ar" ? "الخدمات" : "Services"}</TabsTrigger>}
+   211→            {(d.kind === "wirelessRouter" || d.kind === "ap") && <TabsTrigger value="wireless" className="text-xs gap-1"><Wifi className="size-3.5" />{lang === "ar" ? "اللاسلكي" : "Wireless"}</TabsTrigger>}
+   212→            {d.kind === "router" && <TabsTrigger value="routes" className="text-xs gap-1"><ListTree className="size-3.5" />{lang === "ar" ? "التوجيه" : "Routing"}</TabsTrigger>}
+   213→          </TabsList>
+   214→
+   215→          {/* ── host IP config ── */}
+   216→          {host && (
+   217→            <TabsContent value="ipconf" className="space-y-3">
+   218→              <div className="flex items-center justify-between rounded-lg border p-3">
+   219→                <div className="text-xs font-semibold">{lang === "ar" ? "استخدام DHCP" : "Use DHCP"}</div>
+   220→                <Switch
+   221→                  checked={d.dhcpClient}
+   222→                  onCheckedChange={(v) => {
+   223→                    d.dhcpClient = v;
+   224→                    if (v) {
+   225→                      for (const p of d.ports) { p.ip = null; p.mask = null; }
+   226→                      d.gateway = null;
+   227→                      d.dnsServer = null;
+   228→                    }
+   229→                    commit();
+   230→                  }}
+   231→                />
+   232→              </div>
+   233→              {d.dhcpClient ? (
+   234→                <div className="space-y-2">
+   235→                  <div className="text-xs text-muted-foreground">
+   236→                    {lang === "ar" ? "الحالة: بانتظار خادم DHCP — استخدم زر الطلب" : "State: waiting for DHCP — use request"}
+   237→                  </div>
+   238→                  <Button size="sm" onClick={() => { const ls = actions.runDhcp(d.id); setLinesEcho(ls); }}>
+   239→                    {lang === "ar" ? "طلب عنوان (DORA)" : "Request address (DORA)"}
+   240→                  </Button>
+   241→                  {linesEcho.length > 0 && (
+   242→                    <div className="rounded-lg bg-zinc-950 border border-zinc-800 p-2 text-[11px] font-mono text-emerald-300" dir="ltr">
+   243→                      {linesEcho.join("\n")}
+   244→                    </div>
+   245→                  )}
+   246→                </div>
+   247→              ) : (
+   248→                <div className="space-y-2">
+   249→                  {d.ports.map((p) => (
+   250→                    <div key={p.id} className="space-y-2 rounded-lg border p-3">
+   251→                      <div className="text-xs font-bold font-mono" dir="ltr">{p.name} — {p.mac}</div>
+   252→                      <Field label="IP" value={p.ip ?? ""} onChange={(v) => setPortIp(p.id, v, p.mask ?? "255.255.255.0")} placeholder="192.168.1.10" />
+   253→                      <Field label={lang === "ar" ? "القناع" : "Mask"} value={p.mask ?? ""} onChange={(v) => setPortIp(p.id, p.ip ?? "192.168.1.10", v)} placeholder="255.255.255.0" />
+   254→                    </div>
+   255→                  ))}
+   256→                  <Field label={lang === "ar" ? "البوابة" : "Gateway"} value={d.gateway ?? ""} onChange={(v) => { if (isValidIp(v)) { d.gateway = v; commit(); } }} placeholder="192.168.1.1" />
+   257→                  <Field label="DNS" value={d.dnsServer ?? ""} onChange={(v) => { if (isValidIp(v)) { d.dnsServer = v; commit(); } }} placeholder="8.8.8.8" />
+   258→                </div>
+   259→              )}
+   260→            </TabsContent>
+   261→          )}
+   262→
+   263→          {/* ── router CLI ── */}
+   264→          {isRouterLike && (
+   265→            <TabsContent value="cli">
+   266→              <CliTerminal device={d} actions={actions} isHost={false} />
+   267→            </TabsContent>
+   268→          )}
+   269→
+   270→          {/* ── host command prompt ── */}
+   271→          {host && (
+   272→            <TabsContent value="pcmd">
+   273→              <CliTerminal device={d} actions={actions} isHost />
+   274→            </TabsContent>
+   275→          )}
+   276→
+   277→          {/* ── browser ── */}
+   278→          {host && (
+   279→            <TabsContent value="browser" className="space-y-3">
+   280→              <div className="flex gap-2" dir="ltr">
+   281→                <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="net.local أو 192.168.1.5" className="font-mono text-xs h-9" />
+   282→                <Button size="sm" onClick={fetchPage}>{lang === "ar" ? "اذهب" : "Go"}</Button>
+   283→              </div>
+   284→              {linesEcho.length > 0 && !page && (
+   285→                <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-2 text-[11px] text-destructive" dir="ltr">
+   286→                  {linesEcho.join("\n")}
+   287→                </div>
+   288→              )}
+   289→              {page ? (
+   290→                <div className="rounded-lg border bg-card">
+   291→                  <div className="border-b bg-muted/60 px-3 py-2 text-xs font-bold flex items-center gap-2">
+   292→                    <Globe className="size-3.5 text-primary" /> {page.title}
+   293→                  </div>
+   294→                  <div className="p-3 text-xs whitespace-pre-wrap leading-relaxed">{page.body}</div>
+   295→                </div>
+   296→              ) : (
+   297→                <div className="text-[11px] text-muted-foreground">
+   298→                  {lang === "ar"
+   299→                    ? "اكتب اسم الموقع (سيُحل عبر DNS ثم HTTP). يحتاج خادم DNS بسجل A وخادم HTTP في الشبكة."
+   300→                    : "Type the site name (resolved via DNS then HTTP). Needs a DNS server with an A record and an HTTP server."}
+   301→                </div>
+   302→              )}
+   303→            </TabsContent>
+   304→          )}
+   305→
+   306→          {/* ── ports ── */}
+   307→          <TabsContent value="ports" className="space-y-2">
+   308→            <ScrollArea className="h-72 rounded-lg border">
+   309→              <table className="w-full text-[11px] font-mono" dir="ltr">
+   310→                <thead className="bg-muted/70 sticky top-0">
+   311→                  <tr>
+   312→                    <th className="p-2 text-start">{lang === "ar" ? "المنفذ" : "Port"}</th>
+   313→                    <th className="p-2 text-start">MAC</th>
+   314→                    <th className="p-2 text-start">IP</th>
+   315→                    <th className="p-2 text-start">{lang === "ar" ? "الحالة" : "State"}</th>
+   316→                    {d.kind === "switch" && <th className="p-2 text-start">VLAN</th>}
+   317→                  </tr>
+   318→                </thead>
+   319→                <tbody>
+   320→                  {d.ports.map((p) => (
+   321→                    <tr key={p.id} className="border-t">
+   322→                      <td className="p-2">{p.name}</td>
+   323→                      <td className="p-2 text-muted-foreground">{p.mac}</td>
+   324→                      <td className="p-2">
+   325→                        {(d.kind === "router" || d.kind === "wirelessRouter" || host) && p.kind !== "wireless" ? (
+   326→                          <input
+   327→                            defaultValue={p.ip ?? ""}
+   328→                            onBlur={(e) => setPortIp(p.id, e.target.value, p.mask ?? "255.255.255.0")}
+   329→                            placeholder="—"
+   330→                            className="w-28 bg-transparent outline-none focus:bg-muted rounded px-1"
+   331→                          />
+   332→                        ) : (
+   333→                          p.ip ?? "—"
+   334→                        )}
+   335→                      </td>
+   336→                      <td className="p-2">
+   337→                        <span className={p.linkId && p.adminUp ? "text-emerald-500" : "text-muted-foreground"}>
+   338→                          {p.linkId ? (p.adminUp ? "up" : "admin down") : "not connected"}
+   339→                        </span>
+   340→                      </td>
+   341→                      {d.kind === "switch" && (
+   342→                        <td className="p-2">
+   343→                          <select
+   344→                            value={p.accessVlan}
+   345→                            onChange={(e) => { p.accessVlan = parseInt(e.target.value, 10); commit(); }}
+   346→                            className="bg-transparent rounded border px-1"
+   347→                          >
+   348→                            {[1, 10, 20, 30, 40, 99].map((v) => <option key={v} value={v}>{v}</option>)}
+   349→                          </select>
+   350→                          <label className="ms-2 inline-flex items-center gap-1 text-[10px]">
+   351→                            <input type="checkbox" checked={p.trunk} onChange={(e) => { p.trunk = e.target.checked; commit(); }} />
+   352→                            trunk
+   353→                          </label>
+   354→                        </td>
+   355→                      )}
+   356→                    </tr>
+   357→                  ))}
+   358→                </tbody>
+   359→              </table>
+   360→            </ScrollArea>
+   361→            {d.kind === "switch" && (
+   362→              <div className="text-[11px] text-muted-foreground">
+   363→                {lang === "ar" ? "غيّر VLAN المنفذ من القائمة أو فعّل trunk لتمرير كل الشبكات (802.1Q)" : "Change port VLAN or enable trunk to carry all VLANs (802.1Q)"}
+   364→              </div>
+   365→            )}
+   366→          </TabsContent>
+   367→
+   368→          {/* ── MAC table ── */}
+   369→          {d.kind === "switch" && (
+   370→            <TabsContent value="mac">
+   371→              <ScrollArea className="h-64 rounded-lg border">
+   372→                <table className="w-full text-[11px] font-mono" dir="ltr">
+   373→                  <thead className="bg-muted/70 sticky top-0">
+   374→                    <tr><th className="p-2 text-start">VLAN</th><th className="p-2 text-start">MAC</th><th className="p-2 text-start">Port</th></tr>
+   375→                  </thead>
+   376→                  <tbody>
+   377→                    {d.macTable.length === 0 && (
+   378→                      <tr><td colSpan={3} className="p-4 text-center text-muted-foreground text-xs">
+   379→                        {lang === "ar" ? "فارغ — شغّل ping أولاً ليتعلم المبدّل" : "Empty — run a ping so the switch learns"}
+   380→                      </td></tr>
+   381→                    )}
+   382→                    {d.macTable.map((e, i) => (
+   383→                      <tr key={i} className="border-t">
+   384→                        <td className="p-2">{e.vlan}</td>
+   385→                        <td className="p-2">{e.mac}</td>
+   386→                        <td className="p-2">{e.portId}</td>
+   387→                      </tr>
+   388→                    ))}
+   389→                  </tbody>
+   390→                </table>
+   391→              </ScrollArea>
+   392→            </TabsContent>
+   393→          )}
+   394→
+   395→          {/* ── ARP ── */}
+   396→          {(isRouterLike || host) && (
+   397→            <TabsContent value="arp">
+   398→              <ScrollArea className="h-64 rounded-lg border">
+   399→                <table className="w-full text-[11px] font-mono" dir="ltr">
+   400→                  <thead className="bg-muted/70 sticky top-0">
+   401→                    <tr><th className="p-2 text-start">IP</th><th className="p-2 text-start">MAC</th><th className="p-2 text-start">Port</th></tr>
+   402→                  </thead>
+   403→                  <tbody>
+   404→                    {d.arp.length === 0 && (
+   405→                      <tr><td colSpan={3} className="p-4 text-center text-muted-foreground text-xs">
+   406→                        {lang === "ar" ? "فارغ — يُملأ تلقائياً بعد ARP" : "Empty — fills automatically after ARP"}
+   407→                      </td></tr>
+   408→                    )}
+   409→                    {d.arp.map((e, i) => (
+   410→                      <tr key={i} className="border-t">
+   411→                        <td className="p-2">{e.ip}</td>
+   412→                        <td className="p-2">{e.mac}</td>
+   413→                        <td className="p-2">{e.portId}</td>
+   414→                      </tr>
+   415→                    ))}
+   416→                  </tbody>
+   417→                </table>
+   418→              </ScrollArea>
+   419→            </TabsContent>
+   420→          )}
+   421→
+   422→          {/* ── routes ── */}
+   423→          {d.kind === "router" && (
+   424→            <TabsContent value="routes" className="space-y-2">
+   425→              {d.routes.filter((r) => r.kind === "static").length === 0 && (
+   426→                <div className="text-xs text-muted-foreground">
+   427→                  {lang === "ar" ? "لا مسارات ثابتة — أضفها من CLI: ip route <net> <mask> <next-hop>" : "No static routes — add via CLI: ip route <net> <mask> <next-hop>"}
+   428→                </div>
+   429→              )}
+   430→              {d.routes.filter((r) => r.kind === "static").map((r, i) => (
+   431→                <div key={i} className="flex items-center justify-between rounded-lg border p-2 text-xs font-mono" dir="ltr">
+   432→                  <span>S {r.network}/{prefixToMask.length ? "" : ""} {r.mask} → {r.nextHop ?? r.iface}</span>
+   433→                  <Button variant="ghost" size="icon" className="size-6" onClick={() => {
+   434→                    d.routes = d.routes.filter((rr) => rr !== r);
+   435→                    commit();
+   436→                  }}><Trash2 className="size-3.5" /></Button>
+   437→                </div>
+   438→              ))}
+   439→            </TabsContent>
+   440→          )}
+   441→
+   442→          {/* ── server services ── */}
+   443→          {d.kind === "server" && (
+   444→            <TabsContent value="services" className="space-y-4">
+   445→              <div className="rounded-lg border p-3 space-y-2">
+   446→                <div className="text-xs font-bold">{lang === "ar" ? "خادم DHCP" : "DHCP Server"}</div>
+   447→                <div className="flex items-center justify-between">
+   448→                  <span className="text-[11px] text-muted-foreground">{lang === "ar" ? "مفعّل؟" : "Enabled?"}</span>
+   449→                  <Switch checked={!!d.dhcpPool} onCheckedChange={(v) => {
+   450→                    d.dhcpPool = v
+   451→                      ? (d.dhcpPool ?? { ifacePortId: "fa0", subnet: "192.168.1.0", mask: "255.255.255.0", from: "192.168.1.20", to: "192.168.1.60", gateway: "192.168.1.1", dns: "192.168.1.5", domain: "net.local", leases: [] })
+   452→                      : null;
+   453→                    setDhcp(d.dhcpPool ? { ...d.dhcpPool } : null);
+   454→                    commit();
+   455→                  }} />
+   456→                </div>
+   457→                {d.dhcpPool && dhcp && (
+   458→                  <div className="space-y-1.5">
+   459→                    <Field label={lang === "ar" ? "الشبكة" : "Subnet"} value={dhcp.subnet} onChange={(v) => { dhcp.subnet = v; d.dhcpPool = { ...dhcp }; commit(); }} />
+   460→                    <Field label={lang === "ar" ? "القناع" : "Mask"} value={dhcp.mask} onChange={(v) => { dhcp.mask = v; d.dhcpPool = { ...dhcp }; commit(); }} />
+   461→                    <Field label={lang === "ar" ? "من" : "From"} value={dhcp.from} onChange={(v) => { dhcp.from = v; d.dhcpPool = { ...dhcp }; commit(); }} />
+   462→                    <Field label={lang === "ar" ? "إلى" : "To"} value={dhcp.to} onChange={(v) => { dhcp.to = v; d.dhcpPool = { ...dhcp }; commit(); }} />
+   463→                    <Field label={lang === "ar" ? "البوابة" : "Gateway"} value={dhcp.gateway} onChange={(v) => { dhcp.gateway = v; d.dhcpPool = { ...dhcp }; commit(); }} />
+   464→                    <Field label="DNS" value={dhcp.dns ?? ""} onChange={(v) => { dhcp.dns = v; d.dhcpPool = { ...dhcp }; commit(); }} />
+   465→                    <div className="text-[10px] text-muted-foreground" dir="ltr">
+   466→                      Leases: {d.dhcpPool.leases.map((l) => `${l.ip}`).join(", ") || "—"}
+   467→                    </div>
+   468→                  </div>
+   469→                )}
+   470→              </div>
+   471→
+   472→              <div className="rounded-lg border p-3 space-y-2">
+   473→                <div className="text-xs font-bold">{lang === "ar" ? "سجلات DNS" : "DNS Records (A)"}</div>
+   474→                {d.dnsZone && Object.entries(d.dnsZone.a).map(([name, ip]) => (
+   475→                  <div key={name} className="flex items-center justify-between rounded-md bg-muted/50 px-2 py-1 text-xs font-mono" dir="ltr">
+   476→                    <span>{name} → {ip}</span>
+   477→                    <Button variant="ghost" size="icon" className="size-5" onClick={() => {
+   478→                      delete d.dnsZone!.a[name];
+   479→                      commit();
+   480→                    }}><Trash2 className="size-3" /></Button>
+   481→                  </div>
+   482→                ))}
+   483→                <div className="flex gap-2" dir="ltr">
+   484→                  <Input value={newRecord.name} onChange={(e) => setNewRecord({ ...newRecord, name: e.target.value })} placeholder="name.local" className="h-8 text-xs font-mono" />
+   485→                  <Input value={newRecord.ip} onChange={(e) => setNewRecord({ ...newRecord, ip: e.target.value })} placeholder="192.168.1.5" className="h-8 text-xs font-mono" />
+   486→                  <Button size="sm" className="h-8" onClick={() => {
+   487→                    if (isValidIp(newRecord.ip) && newRecord.name.trim()) {
+   488→                      d.dnsZone = d.dnsZone ?? { a: {} };
+   489→                      d.dnsZone.a[newRecord.name.trim()] = newRecord.ip;
+   490→                      setNewRecord({ name: "", ip: "" });
+   491→                      commit();
+   492→                    } else {
+   493→                      toast({ title: lang === "ar" ? "بيانات غير صالحة" : "Invalid data", variant: "destructive" });
+   494→                    }
+   495→                  }}><Plus className="size-3.5" /></Button>
+   496→                </div>
+   497→              </div>
+   498→
+   499→              <div className="rounded-lg border p-3 space-y-2">
+   500→                <div className="text-xs font-bold">{lang === "ar" ? "صفحة HTTP" : "HTTP Page"}</div>
+   501→                <Field label={lang === "ar" ? "العنوان" : "Title"} value={d.httpRoot.title} onChange={(v) => { d.httpRoot.title = v; commit(); }} mono={false} />
+   502→                <textarea
+   503→                  value={d.httpRoot.body}
+   504→                  onChange={(e) => { d.httpRoot.body = e.target.value; commit(); }}
+   505→                  className="w-full min-h-24 rounded-lg border bg-transparent p-2 text-xs"
+   506→                />
+   507→              </div>
+   508→            </TabsContent>
+   509→          )}
+   510→
+   511→          {/* ── wireless ── */}
+   512→          {(d.kind === "wirelessRouter" || d.kind === "ap") && (
+   513→            <TabsContent value="wireless" className="space-y-3">
+   514→              <Field label="SSID" value={d.ssid} onChange={(v) => { d.ssid = v; commit(); }} mono={false} />
+   515→              {d.kind === "wirelessRouter" && (
+   516→                <>
+   517→                  <div className="flex items-center justify-between rounded-lg border p-3">
+   518→                    <div className="text-xs font-semibold">NAT / PAT</div>
+   519→                    <Switch checked={d.nat} onCheckedChange={(v) => { d.nat = v; commit(); }} />
+   520→                  </div>
+   521→                  {d.natTable.length > 0 && (
+   522→                    <ScrollArea className="h-28 rounded-lg border">
+   523→                      <table className="w-full text-[11px] font-mono" dir="ltr">
+   524→                        <thead className="bg-muted/70 sticky top-0"><tr><th className="p-2 text-start">LAN IP:Port</th><th className="p-2 text-start">WAN Port</th></tr></thead>
+   525→                        <tbody>
+   526→                          {d.natTable.map((m, i) => (
+   527→                            <tr key={i} className="border-t"><td className="p-2">{m.lanIp}:{m.lanPort}</td><td className="p-2">{m.wanPort}</td></tr>
+   528→                          ))}
+   529→                        </tbody>
+   530→                      </table>
+   531→                    </ScrollArea>
+   532→                  )}
+   533→                </>
+   534→              )}
+   535→            </TabsContent>
+   536→          )}
+   537→        </Tabs>
+   538→      </DialogContent>
+   539→    </Dialog>
+   540→  );
+   541→}
+   542→

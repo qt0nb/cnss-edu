@@ -47,6 +47,36 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "عناوين خاصة تحفظها مدى الحياة", en: "Special Addresses to Memorize Forever" },
+        table: {
+          caption: { ar: "أنواع عناوين MAC ومن يستخدمها", en: "MAC address types and who uses them" },
+          headers: [
+            { ar: "النوع", en: "Type" },
+            { ar: "القيمة/المؤشر", en: "Value / indicator" },
+            { ar: "الاستخدام", en: "Use" },
+          ],
+          rows: [
+            [
+              { ar: "أحادي الإرسال Unicast", en: "Unicast" },
+              { ar: "أقل بت مهم في البايت الأول = 0", en: "Least-significant bit of first byte = 0" },
+              { ar: "جهاز واحد محدد على الوصلة", en: "One specific device on the link" },
+            ],
+            [
+              { ar: "البث Broadcast", en: "Broadcast" },
+              { ar: "FF:FF:FF:FF:FF:FF", en: "FF:FF:FF:FF:FF:FF" },
+              { ar: "كل الأجهزة في نطاق البث — يستخدمه ARP وDHCP", en: "Every device in the broadcast domain — used by ARP and DHCP" },
+            ],
+            [
+              { ar: "البث المتعدد Multicast", en: "Multicast" },
+              { ar: "01:00:5E:xx (IPv4) أو 33:33:xx (IPv6)", en: "01:00:5E:xx (IPv4) or 33:33:xx (IPv6)" },
+              { ar: "المجموعة المشتركة المهتمة فقط", en: "Only the interested group of devices" },
+            ],
+            [
+              { ar: "معرّف المصنّع OUI", en: "Vendor OUI" },
+              { ar: "البايتات الثلاثة الأولى", en: "The first three bytes" },
+              { ar: "سجل IEEE للشركة الصانعة للبطاقة", en: "The vendor's registered IEEE identifier" },
+            ],
+          ],
+        },
         body: {
           ar: "بعض العناوين تتكرر أمامك في كل معمل وكل تحليل حزم، حتى إن حفظها يصبح استثماراً مباشراً في سرعة استيعاب ما يجري في الشبكة:\n\n- FF:FF:FF:FF:FF:FF — عنوان البث Broadcast: إطار يحمله يستقبله كل جهاز في نطاق البث نفسه، وهو أساس طلبات ARP وDHCP الأولى\n- 01:00:5E:00:00:00 حتى 01:00:5E:7F:FF:FF — نطاق الجماعي لـ IPv4 Multicast، تُشتق قيمته من آخر 23 بت من عنوان المجموعة\n- 01:80:C2:00:00:00 — عنوان بروتوكول الشجرة الممتدة STP الذي تتخاطب به المبدّلات (درس l039)\n- 33:33:xx:xx:xx:xx — نطاق الجماعي لـ IPv6 بما فيه اكتشاف الجيران NDP\n\nوعند تكوين IPv6 تلقائياً (SLAAC)، يُشتق عنوان الواجهة بتركيب الـ 48 بت مع الكلمة FF:FE في الوسط لصياغة معرّف 64 بت يسمى EUI-64. لن تحتاجه يومياً، لكن فهم اتصاله بعنوان MAC يزيل الغموض عن هذه الصيغ الطويلة.",
           en: "Certain addresses reappear in every lab and every packet capture, to the point that memorizing them is a direct investment in reading speed:\n\n- FF:FF:FF:FF:FF:FF — the broadcast address: any frame carrying it is received by every device in the broadcast domain, and it is the backbone of ARP and initial DHCP requests\n- 01:00:5E:00:00:00 through 01:00:5E:7F:FF:FF — the IPv4 multicast range, derived from the last 23 bits of the group IP\n- 01:80:C2:00:00:00 — the STP address switches speak over (lesson l039)\n- 33:33:xx:xx:xx:xx — the IPv6 multicast range including Neighbor Discovery\n\nWhen IPv6 autoconfigures itself (SLAAC), the interface identifier is built by inserting FF:FE into the middle of the 48-bit MAC to craft a 64-bit EUI-64 identifier. You will not need it daily, but knowing its MAC lineage demystifies those long addresses.",
@@ -146,6 +176,51 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الحقول حقلاً حقلاً", en: "Field by Field" },
+        table: {
+          caption: { ar: "حقول إطار الإيثرنت وأحجامها ووظائفها", en: "Ethernet frame fields, sizes, and roles" },
+          headers: [
+            { ar: "الحقل", en: "Field" },
+            { ar: "الحجم", en: "Size" },
+            { ar: "وظيفته", en: "Purpose" },
+          ],
+          rows: [
+            [
+              { ar: "Preamble المقدمة", en: "Preamble" },
+              { ar: "7 bytes", en: "7 bytes" },
+              { ar: "تزامن ساعة المستقبِل مع المرسل", en: "Synchronizes the receiver's clock" },
+            ],
+            [
+              { ar: "SFD محدد البدء", en: "SFD" },
+              { ar: "1 byte", en: "1 byte" },
+              { ar: "يعلن بداية الإطار الفعلية", en: "Marks the actual start of the frame" },
+            ],
+            [
+              { ar: "Destination MAC", en: "Destination MAC" },
+              { ar: "6 bytes", en: "6 bytes" },
+              { ar: "عنوان المستقبِل على الوصلة", en: "The receiver's address on this link" },
+            ],
+            [
+              { ar: "Source MAC", en: "Source MAC" },
+              { ar: "6 bytes", en: "6 bytes" },
+              { ar: "عنوان المرسل — ما يتعلمه المبدّل", en: "The sender's address — what a switch learns from" },
+            ],
+            [
+              { ar: "EtherType", en: "EtherType" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "هوية البروتوكول المحمول (0x0800 = IPv4)", en: "The carried protocol's identity (0x0800 = IPv4)" },
+            ],
+            [
+              { ar: "Payload الحمولة", en: "Payload" },
+              { ar: "46-1500 bytes", en: "46-1500 bytes" },
+              { ar: "البيانات المغلّفة من الطبقات العليا", en: "Encapsulated upper-layer data" },
+            ],
+            [
+              { ar: "FCS فحص التكامل", en: "FCS" },
+              { ar: "4 bytes", en: "4 bytes" },
+              { ar: "بصمة CRC — الإطار الفاسد يُرمى بصمت", en: "The CRC checksum — corrupt frames are dropped silently" },
+            ],
+          ],
+        },
         body: {
           ar: "يبدأ الإطار بـ 8 بايتات لا تُحسب ضمن طوله: سبع بايتات مقدمة (Preamble) بنمط 10101010 وبايت بدء محدد الدفق SFD بنمط 10101011. وظيفتها إيقاع الاستقبال: تتيح لدوائر المستقبِل مزامنة ساعتها مع سرعة المرسِل قبل وصول البيانات الحقيقية — كطبّال يضبط الإيقاع قبل الأغنية.\n\nثم تأتي الحقول المحسوبة: عنوان الوجهة (6 بايتات)، عنوان المصدر (6)، ثم حقل الطول/النوع (2)، ثم الحمولة من 46 إلى 1500 بايت، وأخيراً FCS بأربعة بايتات. أصغر إطار قانوني 64 بايتاً وأكبر إطار قياسي 1518 — وإذا وُسم بوسم VLAN ارتفع إلى 1522.\n\n- إذا كانت الحمولة أقل من 46 بايتاً تُحشى بالحشو (Padding) للوصول إلى الحد الأدنى\n- الحد الأدنى 64 بايتاً ليس تعسفياً: إنه شرط كشف التصادمات في CSMA/CD كما سنرى في الدرس التالي\n- فجوة بين الإطارات (Interframe Gap) مقدارها 12 بايت زمنياً تمنح الدوائر مهلة استرخاء بين إطار وإطار",
           en: "The frame opens with 8 bytes that do not count toward its size: seven preamble bytes of the 10101010 pattern plus a Start Frame Delimiter (SFD) byte of 10101011. Their job is receiver rhythm: they let the receiving circuitry clock-sync to the sender's rate before the real data arrives — a drummer counting in the song.\n\nThen come the counted fields: destination MAC (6 bytes), source MAC (6), a Length/Type field (2), the payload from 46 to 1500 bytes, and finally the 4-byte FCS. The smallest legal frame is 64 bytes, the largest standard frame 1518 — rising to 1522 with a VLAN tag.\n\n- Payloads under 46 bytes get padded up to the minimum\n- The 64-byte minimum is not arbitrary: it is the CSMA/CD collision-detection requirement we meet next lesson\n- An interframe gap of 12 bytes' worth of time gives circuits a breather between frames",
@@ -157,6 +232,17 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "EtherType: بطاقة تعريف الحمولة", en: "EtherType: The Payload's ID Card" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "حقول الإطار بترتيبها على السلك", en: "Frame fields in their on-wire order" },
+          items: [
+            { ar: "المقدمة + محدد البدء: تزامن المستقبِل", en: "Preamble + SFD: receiver synchronization" },
+            { ar: "MAC الوجهة ثم MAC المصدر", en: "Destination MAC then source MAC" },
+            { ar: "EtherType: من يركب داخل هذا الإطار؟", en: "EtherType: what rides inside this frame?" },
+            { ar: "الحمولة 46-1500 بايت", en: "Payload, 46-1500 bytes" },
+            { ar: "FCS: بصمة التحقق في الذيل", en: "FCS: the verification checksum in the trailer" },
+          ],
+        },
         body: {
           ar: "بعد عنوان المصدر مباشرة يأتي حقل بطول 2 بايت يقرر هوية الإطار كله. في صيغة Ethernet II يُقرأ هذا الحقل كنوع (Type) يصرّح بما في الحمولة؛ وفي الصيغة القديمة 802.3 القائمة على LLC يُقرأ كطول. التمييز آلي: إذا كانت القيمة 1536 (0x0600) أو أكبر فهي نوع، وإن كانت أقل فهي طول.\n\nالقيم التي ستراها كل يوم في التحليلات: 0x0800 لحزم IPv4، و0x0806 لرسائل ARP، و0x86DD لـ IPv6، و0x8100 لوسم VLAN المدرج في درس الجذوع، و0x88CC لبروتوكول LLDP الذي تكتشف به المبدّلات جيرانها.\n\n- هذه القيم هي أول ما يفحصه المبدّل ليعرف هل يوجد وسم 802.1Q بعد عنوان المصدر\n- Wireshark يعرض الحقل تحت اسم EtherType مع تحويله تلقائياً إلى اسم البروتوكول\n- معرفة هذه الخريطة تختصر عليك دقائق عند تشخيص حركة مرور غريبة أو مُكرّرة",
           en: "Right after the source address comes a 2-byte field that decides the entire frame's identity. In Ethernet II it is read as a Type declaring the payload; in the older LLC-based 802.3 form it is read as a length. The disambiguation is automatic: a value of 1536 (0x0600) or more means type, less means length.\n\nThe values you will meet daily in captures: 0x0800 for IPv4 packets, 0x0806 for ARP messages, 0x86DD for IPv6, 0x8100 for the VLAN tag covered in the trunking lesson, and 0x88CC for LLDP, the protocol switches use to discover neighbors.\n\n- These values are the first thing a switch checks to know whether an 802.1Q tag follows the source address\n- Wireshark displays the field as EtherType and resolves it to a protocol name for you\n- Knowing this map saves you minutes whenever you triage strange or duplicate traffic",
@@ -271,6 +357,17 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "خوارزمية CSMA/CD خطوة بخطوة", en: "The CSMA/CD Algorithm Step by Step" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "قرار الإرسال في الوسط المشترك", en: "The transmit decision on a shared medium" },
+          items: [
+            { ar: "استمع: هل الوسط مشغول؟", en: "Listen: is the medium busy?" },
+            { ar: "أرسل وراقب التصادم أثناء الإرسال", en: "Transmit while watching for a collision" },
+            { ar: "تصادم؟ أرسل نبضة التشويش Jam", en: "Collision? Send the jam signal" },
+            { ar: "انتظر زمن تراجع عشوائي يتضاعف", en: "Wait a random, exponentially growing backoff" },
+            { ar: "أعد المحاولة حتى 16 مرة ثم أعلن الفشل", en: "Retry up to 16 times, then declare failure" },
+          ],
+        },
         body: {
           ar: "البروتوكول رقصة من خمس خطوات: (1) استمع قبل الكلام — الحامل مشغول؟ انتظر حتى يهدأ. (2) أرسل إطاراتك وراقب الأسلاك أثناء الإرسال نفسه — الاستماع الذاتي المتواصل هو جوهر الكشف. (3) اكتشفت جهد التصادم؟ أوقف الإرسال فوراً وأرسل إشارة تشويش Jam لمدة 32 بتاً لتضمن أن كل المرسِلين الآخرين يكتشفون التصادم أيضاً. (4) تراجع زمناً عشوائياً وفق التراجع الأسي الثنائي. (5) أعد المحاولة حتى 16 مرة ثم أعلن الفشل وارمِ الحزمة.\n\nالتراجع الأسي الثنائي ذكي بامتياز: عند التصادم الأول ينتظر كل طرف عدداً عشوائياً من الفتحات من 0 إلى 1، وعند الثاني من 0 إلى 3، ثم 0-7، ثم 0-15... حتى 0-1023. العشوائية تفرّق المتصادمين، والاتساع الأسي يمنح الشبكة فرصة للاستقرار تدريجياً.\n\n- الفتحة الزمنية = 512 زمن-بت، ومن هنا وُلد الحد الأدنى 64 بايتاً للإطار\n- الفكرة الفيزيائية: يجب أن يستمر الإرسال طويلاً كفاية ليصل نبض التصادم إلى المرسِل قبل أن ينهي كلامه — وإلا كشف متأخر فاسد\n- الشبكات القانونية حسبت أقصى قطر (وهذا مصدر قاعدة الـ 100 متر لكل قطعة كابل تقريباً)",
           en: "The protocol is a five-step dance: (1) listen before talking — carrier busy? wait for silence. (2) Transmit while monitoring the wire during the transmission itself — continuous self-listening is the heart of detection. (3) Sensed the collision voltage? Abort immediately and send a 32-bit jam signal guaranteeing every other transmitter also detects it. (4) Wait a random time under binary exponential backoff. (5) Retry up to 16 times, then declare failure and drop the packet.\n\nBinary exponential backoff is brilliantly simple: after the first collision each party waits a random 0-1 slots, next collision 0-3, then 0-7, then 0-15... up to 0-1023. Randomness separates the colliders; exponential widening lets the network stabilize gradually.\n\n- One slot = 512 bit-times — which is exactly where the 64-byte frame minimum was born\n- The physics: a transmission must last long enough for the collision pulse to reach its sender before he finishes talking — otherwise detection comes too late and corrupted\n- Legal networks computed a maximum diameter (the root of the roughly 100-meters-per-cable-segment rule)",
@@ -278,6 +375,40 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "نطاق التصادم مقابل نطاق البث", en: "Collision Domain vs Broadcast Domain" },
+        table: {
+          caption: { ar: "نطاقان يخلط بينهما الجميع", en: "Two domains everyone confuses" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "نطاق التصادم", en: "Collision domain" },
+            { ar: "نطاق البث", en: "Broadcast domain" },
+          ],
+          rows: [
+            [
+              { ar: "ما هو", en: "What it is" },
+              { ar: "أجهزة تتنافس على الوسط نفسه فتتصادم", en: "Devices contending for the same medium" },
+              { ar: "مناطق يصلها إطار البث FF:FF:FF:FF:FF:FF", en: "The reach of an FF:FF:FF:FF:FF:FF frame" },
+            ],
+            [
+              { ar: "من يقسمه", en: "What splits it" },
+              { ar: "كل منفذ مبدّل (وكل راوتر)", en: "Every switch port (and every router)" },
+              { ar: "الراوتر أو VLAN منفصلة فقط", en: "Only a router or separate VLANs" },
+            ],
+            [
+              { ar: "المجمّع Hub", en: "A hub" },
+              { ar: "منفذه الواحد نطاق واحد للجميع", en: "Its single port = one domain for all" },
+              { ar: "يمرر البث أيضاً — لا يقسمه", en: "Forwards broadcasts too — does not split it" },
+            ],
+            [
+              { ar: "المبدّل Switch", en: "A switch" },
+              { ar: "كل منفذ نطاق مستقل", en: "Each port is an independent domain" },
+              { ar: "كل VLAN نطاق بث مستقل", en: "Each VLAN is an independent broadcast domain" },
+            ],
+          ],
+        },
+        tip: {
+          ar: "قاعدة سريعة للمقابلات: المبدّل يقسم نطاقات التصادم ولا يقسم نطاقات البث (إلا بVLAN)، والراوتر يقسم النوعين دائماً.",
+          en: "Interview rule of thumb: a switch splits collision domains but not broadcast domains (except via VLANs); a router always splits both.",
+        },
         body: {
           ar: "هذان المصطلحان يشكّلان أهم زوج تمييزي في الطبقة الثانية، ومردهما سؤالان مختلفان: نطاق التصادم يجيب عن «من قد يتعارك إرساله معي؟» ونطاق البث يجيب عن «من سيستقبل بثّي حتماً؟».\n\n- المكرّر (Hub): منفذ واحد منطقياً — كل المنافذ نطاق تصادم واحد ونطاق بث واحد\n- المبدّل (Switch): كل منفذ نطاق تصادم مستقل (الحل الشامل للتصادمات مع الازدواج الكامل)، أما البث فينتشر في كل منافذ الـ VLAN نفسه = نطاق بث لكل VLAN\n- الموجّه (Router): يفصل نطاقات البث — إطاره الأول فقط لكل قطاع، لا يمرر البث أبداً\n\nبعبارة جاهزة للحفظ: المبدّل يقسّم نطاقات التصادم ويوسّع نطاق البث؛ الموجّه يقسّم نطاقات البث. الـ VLAN — كما سنرى — تقسّم نطاق البث داخل المبدّل نفسه دون موجّه، وهذه ميزتها التاريخية الكبرى.",
           en: "These two terms form the most important distinction pair in Layer 2, answering different questions: a collision domain answers «who can collide with me?» while a broadcast domain answers «who necessarily receives my broadcast?»\n\n- Hub: logically one port — all ports are one collision domain and one broadcast domain\n- Switch: each port is its own collision domain (with full duplex, collisions are extinct), while broadcasts spread across every port of the same VLAN = one broadcast domain per VLAN\n- Router: separates broadcast domains — it never forwards broadcasts, period\n\nThe memorization-ready line: a switch splits collision domains and extends broadcast domains; a router splits broadcast domains. VLANs — as we will see — split broadcast domains inside a single switch with no router, which was their historic selling point.",
@@ -392,6 +523,21 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المصائر الثلاثة للإطار", en: "The Three Fates of a Frame" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "منطق قرار المبدّل لكل إطار وارد", en: "The switch's decision logic for every arriving frame" },
+          items: [
+            { ar: "الإطار يرد على منفذ ما", en: "The frame arrives on a port" },
+            { ar: "تعلّم: سجّل MAC المصدر مع المنفذ وVLAN", en: "Learn: record the source MAC with its port and VLAN" },
+            { ar: "ابحث عن MAC الوجهة في الجدول", en: "Look up the destination MAC in the table" },
+            { ar: "موجود؟ مرّر على ذلك المنفذ فقط (ترشيح)", en: "Found? Forward out that one port only (filtering)" },
+            { ar: "مجهول أو بث؟ أغرق كل المنافذ عدا الوارد", en: "Unknown or broadcast? Flood every port except the ingress" },
+          ],
+        },
+        tip: {
+          ar: "الإغراق ليس خللاً بل سلوك مؤقت سليم — لكن استمراره على وجه معروف يعني جدول MAC لم يتعلمه بعد، أو منفذاً معطلاً، أو حركة تتجاوز عمر المؤقت.",
+          en: "Flooding is not a fault but healthy temporary behavior — yet its persistence on a known destination means an unlearned MAC, a disabled port, or traffic older than the aging timer.",
+        },
         body: {
           ar: "لكل إطار وارد ثلاث حالات ممكنة لا رابع لها. أولاً — التوجيه (Forward): عنوان الوجهة موجود في الجدول ومنفذه مختلف عن منفذ الدخول، فيُنسخ الإطار إلى ذلك المنفذ وحده. هذا هو الحال الصحي السائد في الشبكة المستقرة.\n\nثانياً — الترشيح (Filter): عنوان الوجهة موجود في الجدول لكن منفذه هو نفسه منفذ الدخول؛ أي أن الوجهة على نفس القطاع الذي جاء منه الإطار. لا داعي لإرساله أصلاً فيُرمى بلا نسخ — المبدّل يوفر عرض النطاق بضربة ذكاء واحدة. ثالثاً — الإغراق (Flood): الوجهة مجهولة أو بث أو جماعي غير مُدار، فيُنسخ الإطار إلى كل منافذ الـ VLAN عدا منفذ الدخول.\n\n- القرار يستغرق زمناً ثابتاً في العتاد: البحث في CAM عملية موازية كهربائية لا بحث برمجي\n- لاحظ عدم التماثل: التعلم من المصدر والتمرير للوجهة — حقلان مختلفان في الإطار الواحد\n- نتيجة عملية: فور اكتمال التعلم المتبادل، تتوقف حركة الإغراق تماماً وتصبح الشبكة نقية تمريراً",
           en: "Every incoming frame has exactly three possible fates. First — Forward: the destination is in the table on a port different from ingress, so the frame is copied out that one port. This is the healthy steady state of a stable network.\n\nSecond — Filter: the destination is in the table but on the very ingress port itself — the destination lives on the same segment the frame came from. No need to send anything, so it is silently dropped — one clever move saves bandwidth. Third — Flood: the destination is unknown, broadcast, or unmanaged multicast, so the frame is copied to every VLAN port except the ingress.\n\n- The decision takes constant time in silicon: a CAM lookup is a parallel electrical match, not a software search\n- Note the asymmetry: learning from the source, forwarding by the destination — two different fields in one frame\n- Practical outcome: once mutual learning completes, flooding ceases entirely and the network becomes pure forwarding",
@@ -410,6 +556,36 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "أسلوبا التبديل: خزّن ثم مرّر مقابل قصّ ومرّر", en: "Switching Styles: Store-and-Forward vs Cut-Through" },
+        table: {
+          caption: { ar: "أسلوبا التبديل داخل المبدّل", en: "The two switching styles inside a switch" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "خزّن ثم مرّر", en: "Store-and-forward" },
+            { ar: "قصّ ومرّر", en: "Cut-through" },
+          ],
+          rows: [
+            [
+              { ar: "متى يبدأ الإرسال", en: "When forwarding starts" },
+              { ar: "بعد استلام الإطار كاملاً وفحص FCS", en: "After the full frame arrives and FCS is verified" },
+              { ar: "بعد قراءة عنوان الوجهة فقط", en: "Right after reading the destination address" },
+            ],
+            [
+              { ar: "كشف الإطارات الفاسدة", en: "Bad-frame handling" },
+              { ar: "يرفضها ولا يمررها أبداً", en: "Drops them, never forwards" },
+              { ar: "يمررها قبل معرفة فسادها", en: "Forwards them before knowing they are corrupt" },
+            ],
+            [
+              { ar: "الكمون", en: "Latency" },
+              { ar: "أعلى نسبياً بحجم الإطار", en: "Relatively higher, frame-size dependent" },
+              { ar: "أدنى ثابت تقريباً", en: "Lowest, nearly constant" },
+            ],
+            [
+              { ar: "الاستخدام الأمثل", en: "Best use" },
+              { ar: "المعيار الحاكم في المبدلات الحديثة", en: "The standard in modern switches" },
+              { ar: "بيئات التداول عالي التردد قديماً", en: "Legacy ultra-low-latency trading floors" },
+            ],
+          ],
+        },
         body: {
           ar: "خزّن ثم مرّر (Store-and-Forward): يستقبل المبدّل الإطار كاملاً في الذاكرة، يتحقق من FCS، ثم يمرّره. الكلفة: زمن الكمون يساوي زمن استقبال الإطار كله (عند 1Gbps وحد أقصى 12 ميكروثانية تقريباً — هامش ضئيل). المكافأة: الإطارات الفاسدة تُرمى هنا فلا تسافر عبر الشبكة، وتصبح تصنيفات الجودة QoS المبنية على محتوى الحزمة ممكنة لأن كل شيء متاح للفحص. هذا الأسلوب افتراضي في مبدّلات Cisco الحديثة.\n\nقصّ ومرّر (Cut-Through): يقرأ المبدّل الوجهة فقط (أول بايتات الإطار بعد المقدمة) ويبدأ الدفع خارج المنفذ فوراً بينما ما زال باقي الإطار يصل. الكمون يهبط إلى الحد الأدنى المطلق (ميكروثانية جزئية) — لكن الإطار الفاسد مرّ كما هو، بل قد تُمرَّر قطع قزمية (Runts) ناقصة أصل التصادمات. نمط وسيط اسمه Fragment-Free يقرأ أول 64 بايتاً (حجم التصادم القانوني) قبل التمرير: يستبعد القطع الناقصة بكمون زائد قليل.\n\n- القاعدة العملية الحديثة: سرعات الخطوط العالية جعلت كلفة store-and-forward ضئيلة، فانتشر افتراضياً\n- أنصار cut-through: أقمشة مراكز البيانات فائقة السرعة (عمليات مالية عالية التردد، أقمشة leaf-spine) حيث تُقاس الكمونات بالميكروثانية\n- في نمط cut-through يُقاس الكمون من أول بت داخلاً إلى أول بت خارجاً، وليس من نهاية الإطار",
           en: "Store-and-Forward: the switch receives the entire frame into memory, verifies the FCS, then forwards. The cost: latency equals the full frame's arrival time (at 1 Gbps roughly 12 microseconds maximum — a tiny margin). The reward: corrupt frames die here and never travel the network, and QoS classification based on packet content becomes possible since everything is inspectable. This style is the default on modern Cisco switches.\n\nCut-Through: the switch reads only the destination (the first frame bytes after the preamble) and begins pushing bits out the egress while the rest of the frame is still arriving. Latency drops to the absolute minimum — but a corrupt frame passes untouched, and even runts (collision fragments) may be forwarded. A middle style, Fragment-Free, reads the first 64 bytes (the legal collision size) before forwarding: it excludes fragments at a slightly higher latency.\n\n- The practical modern rule: high line speeds made store-and-forward's cost negligible, so it won the default\n- Cut-through's champions: ultra-low-latency data center fabrics (high-frequency trading, leaf-spine) where microseconds matter\n- In cut-through mode, latency is measured first-bit-in to first-bit-out, not from frame end",
@@ -506,6 +682,17 @@ export const m04_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "كيف يتعلم المبدّل؟ من حقل المصدر فقط", en: "How a Switch Learns: From the Source Field Only" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "دورة حياة تعلم عنوان MAC", en: "The life cycle of a learned MAC entry" },
+          items: [
+            { ar: "يرد إطار بمصدر غير معروف بعد", en: "A frame with an unknown source arrives" },
+            { ar: "يُسجل الثلاثي (MAC، VLAN، المنفذ) في الجدول", en: "The (MAC, VLAN, port) triple is recorded" },
+            { ar: "مؤقّت 300 ثانية يبدأ العد", en: "A 300-second aging timer starts counting" },
+            { ar: "إطار آخر من المصدر نفسه يصفّر المؤقّت", en: "Any newer frame from the same source resets the timer" },
+            { ar: "صمت كامل حتى انتهاء المهلة = حذف الصف", en: "Silence until expiry = the row is deleted" },
+          ],
+        },
         body: {
           ar: "التعلم عمل أحادي الاتجاه: المبدّل يقرأ حقل مصدر كل إطار يدخل منفذاً ما، ثم يسجّل ثلاثية (عنوان MAC + منفذ الدخول + VLAN) في الجدول إن لم تكن موجودة. الجهاز الذي لا يرسل شيئاً لا يتعلم عنه أحد أبداً — أما جهاز يستقبل ويجيب فقد تعلّم عنه الجميع من مجرد إجاباته.\n\nهذه اللاتماثلية (تعلم من المصدر، قرار بالوجهة) هي التي تجعل شبكة الإيثرنت ذاتية التهيئة: صل أي أجهزة بأي مبدّل وشغّلها؛ خلال ثوانٍ من المرور الأول يكتمل الجدول وتصبح معظم الإطارات موجَّهة بدقة. لا مسؤول يضبط شيئاً يدوياً في الشبكات الصغيرة.\n\n- التعلم لا يمس الإطارات نفسها: لا تعديل ولا تأخير زائد ملموس — مجرد تسجيل موازٍ في الذاكرة\n- إطار يدخل بمنفذ مسجل لعنوان آخر؟ الإدخال يُحدَّث لآخر منفذ رأينا المصدر عليه (سلوك المهاجرة)\n- كل التعلمات الديناميكية تضيع عند إعادة التشغيل — الشبكة تبنيها من جديد خلال ثوانٍ",
           en: "Learning is one-directional: the switch reads the source field of every frame entering a port, then records the triple (MAC + ingress port + VLAN) in the table if absent. A device that never transmits is never learned by anyone — while a device that receives and replies is learned everywhere by its mere replies.\n\nThis asymmetry (learn from source, decide by destination) is what makes Ethernet self-configuring: plug anything into any switch, power up, and seconds after first traffic the table completes and most frames become precisely forwarded. No admin hand-enters anything in small networks.\n\n- Learning touches the frames themselves not at all: no modification, no perceptible delay — just a parallel memory write\n- A frame arriving on a port while the table maps that source elsewhere? The entry updates to the latest port (migration behavior)\n\n- All dynamic entries vanish on reboot — the network rebuilds them within seconds",
@@ -634,6 +821,41 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "القاعدة الذهبية: VLAN واحدة = شبكة فرعية واحدة", en: "Golden Rule: One VLAN = One Subnet" },
+        table: {
+          caption: { ar: "خطة VLAN نموذجية لمؤسسة صغيرة", en: "A typical VLAN plan for a small organization" },
+          headers: [
+            { ar: "VLAN ID", en: "VLAN ID" },
+            { ar: "الاسم", en: "Name" },
+            { ar: "الشبكة الفرعية", en: "Subnet" },
+            { ar: "الغرض", en: "Purpose" },
+          ],
+          rows: [
+            [
+              { ar: "10", en: "10" },
+              { ar: "MGMT", en: "MGMT" },
+              { ar: "10.10.10.0/24", en: "10.10.10.0/24" },
+              { ar: "إدارة المبدلات والراوترات فقط", en: "Switch and router management only" },
+            ],
+            [
+              { ar: "20", en: "20" },
+              { ar: "STAFF", en: "STAFF" },
+              { ar: "10.10.20.0/24", en: "10.10.20.0/24" },
+              { ar: "حواسيب موظفي المكتب", en: "Office employee computers" },
+            ],
+            [
+              { ar: "30", en: "30" },
+              { ar: "VOICE", en: "VOICE" },
+              { ar: "10.10.30.0/24", en: "10.10.30.0/24" },
+              { ar: "هواتف VoIP بأولوية QoS", en: "VoIP phones with QoS priority" },
+            ],
+            [
+              { ar: "40", en: "40" },
+              { ar: "GUEST", en: "GUEST" },
+              { ar: "10.10.40.0/24", en: "10.10.40.0/24" },
+              { ar: "زوار بإنترنت معزول بلا وصول داخلي", en: "Guests with isolated Internet, no internal access" },
+            ],
+          ],
+        },
         body: {
           ar: "احفظ هذه القاعدة قبل أي إعداد: كل VLAN هي نطاق بث مستقل في الطبقة الثانية، والتخاطب داخل نطاق البث يتطلب عناوين IP من الشبكة الفرعية نفسها. لذلك يُصمَّم الزواج المقدس: VLAN 10 = شبكة 192.168.10.0/24، وVLAN 20 = 192.168.20.0/24 — رقم الـ VLAN يتكرر في أوكتت الشبكة لتسهيل الحياة والقراءة.\n\nجهازان في VLANs مختلفة على المبدّل نفسه؟ هما في عالمين منفصلين تماماً: لا بث مشتركاً ولا عناوين متقاربة ولا سماع متبادل. التواصل بينهما يستوجب صعوداً إلى الطبقة الثالثة — موجّهاً أو مبدّلاً ثلاثي الطبقات — وهذا موضوع درس l038 كاملاً.\n\n- الخلط القاتل في المعامل: جهاز في VLAN 10 بعنوان من شبكة VLAN 20 — لا يصل لأحد ويتعذّر تشخيصه إن نسيت القاعدة\n- مساحة المعرفات: 12 بت = 4096 قيمة نظرياً، ومنها 4094 قابلة للاستخدام (0 و4095 محجوزتان)\n- نطاقات عناوية قياسية شائعة في التصاميم: VLAN 10 للإدارة، 20 للمستخدمين، 30 للـ VoIP، 99 للنقل الأصلي، ومئات للضيوف",
           en: "Memorize this rule before any configuration: every VLAN is an independent Layer 2 broadcast domain, and conversation inside a broadcast domain requires IP addresses from the same subnet. Hence the sacred marriage: VLAN 10 = network 192.168.10.0/24, VLAN 20 = 192.168.20.0/24 — the VLAN number repeating in the network octet to keep life readable.\n\nTwo devices in different VLANs on the same switch? They exist in separate worlds: no shared broadcast, no adjacent addresses, no mutual hearing. Communicating requires rising to Layer 3 — a router or L3 switch — which is lesson l038 in full.\n\n- The lab-fatal mistake: a device in VLAN 10 carrying an address from VLAN 20's subnet — it reaches nobody and resists diagnosis if you forget the rule\n- Identifier space: 12 bits = 4096 values, of which 4094 usable (0 and 4095 reserved)\n- Common design address conventions: VLAN 10 management, 20 users, 30 VoIP, 99 native transit, hundreds for guests",
@@ -645,6 +867,12 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "منافذ الوصول: بوابات VLAN واحدة", en: "Access Ports: Gateways of a Single VLAN" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "شبكتان افتراضيتان VLAN 10 وVLAN 20 عبر مبدّلين", en: "Two virtual networks, VLAN 10 and VLAN 20, across two switches" },
+          nodes: ["SW1", "SW2", "PC1-V10", "PC2-V10", "PC3-V20", "PC4-V20"],
+          edges: [[0, 1], [0, 2], [0, 3], [1, 4], [1, 5]],
+        },
         body: {
           ar: "منفذ الوصول (Access Port) هو البوابة التي يدخل منها جهاز طرفي إلى عالم VLAN واحدة: يحمل إطارات تلك الـ VLAN فقط، ويستقبلها ويرسلها بلا أي وسم (Untagged) — فالجهاز الطرفي لا يعرف بوجود VLANs أصلاً، وهذا هو المقصود بـ«شفافية» التقسيم.\n\nعند إقلاع المبدّل من المصنع، كل منافذه تعمل كمنافذ وصول في VLAN 1 — «الـ VLAN الافتراضية» التي تربط الجميع في نطاق بث واحد. هذا سلوك آمن للمكتب الصغير الأولي وخطير في الإنتاج: أي جهاز جديد يوصل يرى الجميع فوراً. أول انضباط تصميمي: أخرج المستخدمين من VLAN 1 واتركها للبروتوكولات الإدارية فقط.\n\n- إطار يدخل منفذ وصول دائماً يُنسب إلى VLAN المنفذ مهما كان محتواه\n- البث/الإغراق في منفذ الوصول محصور في منافذ الـ VLAN نفسها حصراً\n- حالة خاصة شائعة: منفذ وصول يحمل VLAN بيانات + VLAN صوتية (Voice VLAN) معاً للهاتف — سنمر عليها عملياً",
           en: "An access port is the gate through which an endpoint enters a single VLAN's world: it carries only that VLAN's frames, sending and receiving them untagged — the endpoint never knows VLANs exist, which is precisely segmentation's «transparency».\n\nFactory-fresh switches place every port as an access port in VLAN 1 — the default VLAN uniting everyone in one broadcast domain. That is safe behavior for a first tiny office and dangerous in production: any newly plugged device instantly sees everything. The first design discipline: move users out of VLAN 1 and reserve it for management protocols only.\n\n- A frame entering an access port always inherits the port's VLAN regardless of content\n- Broadcast/flooding from an access port stays strictly within that VLAN's ports\n- A common special case: an access port carrying a data VLAN plus a voice VLAN for a phone — we will touch it hands-on",
@@ -755,6 +983,36 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "تشريح وسم 802.1Q", en: "Anatomy of the 802.1Q Tag" },
+        table: {
+          caption: { ar: "منفذ الوصول مقابل منفذ الجذع", en: "Access port vs trunk port" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "منفذ وصول Access", en: "Access port" },
+            { ar: "منفذ جذع Trunk", en: "Trunk port" },
+          ],
+          rows: [
+            [
+              { ar: "عدد VLANs", en: "VLAN count" },
+              { ar: "واحدة فقط", en: "Exactly one" },
+              { ar: "متعددة في الوقت نفسه", en: "Many simultaneously" },
+            ],
+            [
+              { ar: "الوسم", en: "Tagging" },
+              { ar: "بلا وسم — إطار عادي للمستخدم", en: "Untagged — a plain frame for the end device" },
+              { ar: "وسم 4 بايتات مع VLAN ID من 12 بتاً", en: "A 4-byte tag with a 12-bit VLAN ID" },
+            ],
+            [
+              { ar: "VLAN الأصلية", en: "Native VLAN" },
+              { ar: "غير منطبق", en: "Not applicable" },
+              { ar: "حركة غير موسومة — يُنصح بتغييرها عن 1", en: "Untagged traffic — best changed from 1" },
+            ],
+            [
+              { ar: "يتصل بـ", en: "Connects to" },
+              { ar: "حواسيب وطابعات وهواتف", en: "PCs, printers, phones" },
+              { ar: "مبدّل ↔ مبدّل أو مبدّل ↔ راوتر", en: "Switch ↔ switch or switch ↔ router" },
+            ],
+          ],
+        },
         body: {
           ar: "الوسم يقبع بين عنوان المصدر وحقل EtherType الأصلي. يتكون من 4 بايتات: بايتان الأولان هما TPID بقيمة ثابتة 0x8100 تعلن «هذا إطار موسوم» — وهي القيمة التي يفحصها المبدّل فور قراءة العناوين. البايتان الثانيان هما TCI وتضم معلومات الخدمة: أولوية PCP بثلاث بتات لجودة الخدمة (قيم 0-7)، وبت DEI واحدة لاحتمال الإسقاط، و12 بت لمعرّف VLAN.\n\n12 بت = 4096 قيمة ممكنة، والقيمتان 0 و4095 محجوزتان للبروتوكولات فيبقى 4094 VLAN قابلة للاستخدام — رقم رأيته في درس VLANs ويعود هنا بمعناه العتادي الأصيل. وبما أن الوسم يضيف 4 بايتات فعلية، يُعاد حساب FCS كاملاً ويكبر الحد الأقصى للإطار الموسوم إلى 1522 بايتاً (يسميه البعض baby giant).\n\n- الحقل الأصلي EtherType يزاح بعد الوسم فيقرأ المبدّل: وسم → ثم نوع الحمولة الحقيقي\n- كان لـ Cisco بروتوكول قديم منافس اسمه ISL يغلّف الإطار بـ26 بايت ترويسة زائدة — مات واندثر، و802.1Q المعيار الوحيد الحي اليوم\n- أولوية PCP في الوسم هي أداة QoS الأساسية في الطبقة الثانية: إطار صوت بأولوية 5 يسبق إطار نقل ملفات بأولوية 0 في قوائم الانتظار",
           en: "The tag sits between the source address and the original EtherType. It consists of 4 bytes: the first two are the TPID holding the fixed value 0x8100 declaring «this frame is tagged» — the value a switch checks immediately after reading addresses. The second two bytes form the TCI carrying service information: a 3-bit PCP priority for QoS (values 0-7), one DEI bit for drop eligibility, and 12 bits of VLAN ID.\n\n12 bits = 4096 possible values, with 0 and 4095 reserved for protocols, leaving 4094 usable VLANs — the number you met in the VLAN lesson, returning here in its authentic hardware meaning. Since the tag adds 4 real bytes, the FCS is fully recomputed and the tagged frame's ceiling rises to 1522 bytes (some call it a baby giant).\n\n- The original EtherType shifts behind the tag, so the switch reads: tag → then the true payload type\n- Cisco once had a rival protocol called ISL wrapping frames in 26 extra header bytes — dead and gone; 802.1Q is the sole living standard today\n- The tag's PCP priority is Layer 2's core QoS tool: a voice frame at priority 5 beats a file transfer at priority 0 in the queues",
@@ -880,6 +1138,12 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الحل الأول: الراوتر على العصا", en: "Solution One: Router-on-a-Stick" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "راوتر واحد بوصلة موسومة واحدة يوجّه بين VLANs", en: "One router on one tagged link routing between VLANs" },
+          nodes: ["R1", "SW1", "PC1-V10", "PC2-V20", "Internet"],
+          edges: [[0, 1], [1, 2], [1, 3], [0, 4]],
+        },
         body: {
           ar: "التسمية صورية بامتياز: موجّه واحد يتدلى من «عصا» — وصلة فيزيائية وحيدة تصله بالمبدّل، بينما تتفرع منها الواجهات الفرعية المنطقية كفروع الشجرة. الوصلة الوحيدة تُضبط جذعاً 802.1Q، ثم ينشأ لكل VLAN واجهة فرعية (Subinterface) تحمل عنوان بوابة تلك الشبكة وتُعرّف تغليفها بوسمها: encapsulation dot1Q 10.\n\nتسلسل العمل عند إرسال حزمة من VLAN 10 إلى VLAN 20: الجهاز المصدر يرسل إلى بوابة VLAN 10 (عنوان الواجهة الفرعية)؛ يصل الإطار الموسوم بالجذع إلى الموجّه؛ الواجهة الفرعية الصحيحة تقشر الوسم وترفع الحزمة إلى الطبقة الثالثة؛ الموجّه يقرر الخروج نحو شبكة VLAN 20 عبر الواجهة الفرعية الأخرى؛ يُغلف الحزمة بوسم 20 ويعيدها للجذع — والمبدّل يسلمها للوجهة.\n\n- كل حزمة بين VLANs تعبر الوصلة مرتين (دخولاً وخروجاً) — قيد النطاق الترددي الحاكم لهذا الحل\n- الواجهة الفيزيائية بلا عنوان IP: العناوين تتوزع على الفرعيات فقط\n- يلزم no shutdown على الفيزيائية الأم وإلا ماتت كل الفرعيات معها",
           en: "The name is pure imagery: a single router dangling from a «stick» — one physical link to the switch — with logical subinterfaces branching off it like tree limbs. That single link is configured as an 802.1Q trunk, then one subinterface per VLAN carries that network's gateway address and declares its tag: encapsulation dot1Q 10.\n\nThe sequence when a packet travels from VLAN 10 to VLAN 20: the source host sends to VLAN 10's gateway (the subinterface's address); the tagged frame reaches the router over the trunk; the correct subinterface strips the tag and lifts the packet to Layer 3; the router decides to exit toward VLAN 20's network via the other subinterface; the packet is re-framed with tag 20 and returned down the trunk — and the switch delivers it.\n\n- Every inter-VLAN packet crosses the link twice (in and out) — the bandwidth bottleneck governing this design\n- The physical interface carries no IP: addresses distribute across subinterfaces only\n- The physical parent needs no shutdown or every subinterface dies with it",
@@ -906,6 +1170,36 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المقارنة الهندسية بين الحلين", en: "Engineering Comparison of the Two" },
+        table: {
+          caption: { ar: "الراوتر على العصا مقابل مبدّل الطبقة الثالثة", en: "Router-on-a-stick vs Layer-3 switch" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "راوتر على العصا", en: "Router-on-a-stick" },
+            { ar: "مبدّل L3 (SVI)", en: "L3 switch (SVIs)" },
+          ],
+          rows: [
+            [
+              { ar: "الوصلات", en: "Links" },
+              { ar: "وصلة فيزيائية موسومة واحدة", en: "One tagged physical link" },
+              { ar: "واجهات SVI داخلية بلا كابلات", en: "Internal SVIs, no cables" },
+            ],
+            [
+              { ar: "الأداء", en: "Performance" },
+              { ar: "محصور بسعة الراوتر ووصلته", en: "Bounded by the router and its link" },
+              { ar: "توجيه بالعتاد بسرعة الأسلاك", en: "Hardware routing at wire speed" },
+            ],
+            [
+              { ar: "الكلفة", en: "Cost" },
+              { ar: "زهيدة للأحمال الخفيفة", en: "Cheap for light loads" },
+              { ar: "أعلى — لكنها معيار المؤسسات", en: "Higher — but the enterprise standard" },
+            ],
+            [
+              { ar: "ملاحظة تصميمية", en: "Design note" },
+              { ar: "كل حركة بيني تغادر إلى الراوتر وتعود", en: "Inter-VLAN traffic exits to the router and returns" },
+              { ar: "التوجيه داخلي فوري داخل الهيكل نفسه", en: "Routing happens instantly inside the same chassis" },
+            ],
+          ],
+        },
         body: {
           ar: "متى تختار أياً منهما؟ فكّر بأربعة محاور. الأداء: مبدّل L3 يوجه على عتاد ASIC متخصص بمعدلات أسلاك، بينما يمر الراوتر على العصا بكل حزمة عبر وصلة واحدة مرتين وبسعة معالجة موجّه أضيق — فارق يظهر فوراً مع مئات المستخدمين العابرة بين VLANs. التكلفة: موجّه صغير رخيص لكنه عنق زجاجة؛ مبدّل L3 أغلى لكنه يشتري أداء بكثافة منافذ مزدوجة.\n\nالمرونة المكانية: العصا تعمل حيث يوجد موجّه مستقل أصلاً (فرع صغير، حدود إنترنت)؛ أما التصميم المركزي فـ SVI تجلس في مبدّل التوزيع نفسه حيث تلتقي كل VLANs. قابلية التوسع: العصا تصلح حتى بضع VLANs وسرعات متوسطة، ثم تصطدم بجدار الوصلة الوحيدة؛ SVI تتوسع إلى مئات VLANs ومعدلات نسيج كاملة — مع خيارات زائدة كالتوجيه بين مباني الحرم عبر منافذ L3 نقية.\n\n- الرصيد العملي: الشبكات الحديثة تجعل مبدّل التوزيع موجّهاً (SVI + ip routing) وتترك الراوتر المتخصص لحدود الإنترنت وVPN والأمان المتقدم\n- العصا لا تزال ممتازة تعليمياً وللشبكات الصغيرة جداً والمواقع النائية بموجّه واحد متعدد الأدوار\n- كلا الحلين يكمل بالتكرار: بوابتان لكل VLAN ببروتوكولات HSRP/VRRP — فصل قادم في وحدة التوفر العالي",
           en: "When to choose which? Think along four axes. Performance: an L3 switch routes on dedicated ASIC silicon at wire rates, while the stick passes every packet twice over one link through a narrower router engine — a gap that surfaces instantly with hundreds of users crossing VLANs. Cost: a small router is cheap yet a bottleneck; an L3 switch costs more but buys performance with doubled port density.\n\nLocational flexibility: the stick works wherever a standalone router already exists (small branch, internet edge); centralized design seats SVIs in the distribution switch itself where all VLANs converge. Scalability: the stick suits a handful of VLANs at moderate rates before hitting the single-link wall; SVIs scale to hundreds of VLANs at full fabric rates — plus extras like inter-building campus routing over pure L3 ports.\n\n- The practical verdict: modern networks make the distribution switch the router (SVI + ip routing) and leave the specialized router to internet edge, VPN, and advanced security\n- The stick remains excellent pedagogy, for very small networks, and remote sites with one multi-role router\n- Both solutions complete with redundancy: two gateways per VLAN via HSRP/VRRP — a future chapter in the high-availability module",
@@ -998,6 +1292,12 @@ export const m04_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "الفخ: التكرار في الطبقة الثانية", en: "The Trap: Layer-2 Redundancy" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "حلقة مبدلات: وصلة واحدة ستحجبها STP", en: "A switch ring: one link will be blocked by STP" },
+          nodes: ["SW1-Root", "SW2", "SW3", "PC1", "PC2", "PC3"],
+          edges: [[0, 1], [0, 2], [1, 2], [0, 3], [1, 4], [2, 5]],
+        },
         body: {
           ar: "في الشبكات الجادة نضيف وصلات احتياطية: مبدّلان بينهما وصلة تالفة؟ وصلة ثانية تحمل الراكب. لكن الطبقة الثانية بُنيت بلا آلية عدّ حياة: حزمة IP تحمل TTL ينقص عند كل قفزة، أما إطار الإيثرنت فلا يحمل شيئاً من هذا — وهنا يفتح الفخ فكّه.\n\nإطار بث يصل إلى المبدّل الأول فينسخ إلى الوصلتين؛ يصله من كل واحدة نسخة فينسخ لكل الأخرى عدا القادمة — فتتوالد النسخ أُسّياً وتدور في الحلقة إلى الأبد: عاصفة بث (Broadcast Storm) تلتهم نطاق الشبكة كله. ومعها يذهب جدول MAC ضحية ثانية: النسخ العائدة من الحلقة تحمل مصادر بعناوين ظهرت للتو على منفذ آخر، فتقفز الإدخالات بين المنافذ بجنون (MAC Flapping) ويتصدع القرار في كل مبدّل.\n\n- الأعراض الميدانية للحلقة: مرور يتوقف كلياً، أضواء منافذ تتوهج ثابتة، وأجهزة تبدو موصولة لا تجيب\n- تشخيص سريع: ارتفاع مذهل في العدادات + سجلات MAC flapping في المبدّلات\n- الحل الفوري عند اكتشاف عاصفة: افصل وصلة واحدة من الحلقة — فتصمت الشبكة فوراً، وتؤكد التشخيص",
           en: "Serious networks add backup links: a failed link between two switches? A second one carries the passengers. But Layer 2 was built with no life counter: an IP packet carries a TTL decremented per hop, while an Ethernet frame carries nothing of the sort — and there the trap springs.\n\nA broadcast frame reaches the first switch and is copied to both links; copies return from each and are copied to every port except the arrival port — multiplying exponentially and spinning in the loop forever: a broadcast storm devouring the network's entire span. The MAC table falls as a second victim: copies returning from the loop carry sources just seen on another port, so entries flap between ports madly (MAC Flapping) and every switch's decision-making shatters.\n\n- Field symptoms of a loop: traffic halts completely, port LEDs glow solid, devices appear connected yet unresponsive\n- Rapid diagnosis: astronomical counter growth + MAC flapping logs on the switches\n- The instant remedy upon discovering a storm: unplug one link from the loop — the network falls silent immediately, confirming the diagnosis",
@@ -1005,6 +1305,17 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الحل: شجرة منطقية بجسر جذري", en: "The Solution: A Logical Tree with a Root Bridge" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "مسار تقارب STP خطوة بخطوة", en: "STP convergence, step by step" },
+          items: [
+            { ar: "انتخاب الجسر الجذري: أقل Bridge ID يفوز", en: "Elect the root bridge: lowest Bridge ID wins" },
+            { ar: "كل مبدّل يختار منفذه الجذري نحو الجذر", en: "Every switch picks its root port toward the root" },
+            { ar: "كل وصلة تنتخب منفذاً معيناً للإرسال", en: "Every link elects a designated port" },
+            { ar: "المنافذ المتبقية تُحجب — الحلقة تنكسر", en: "The remaining ports block — the loop is broken" },
+            { ar: "عند تغيّر الطوبولوجيا: BPDU جديدة تعيد الحساب بسرعة", en: "On topology change: fresh BPDUs recompute quickly" },
+          ],
+        },
         body: {
           ar: "فكرة STP (Spanning Tree Protocol) من هندسة الرسوم البيانية: من شبكة مليئة بالحلقات، احسب شجرة ممتدة واحدة تصل كل المبدّلات بلا دورة، ثم عطّل منطقياً المنافذ الزائدة عن الشجرة — وصلة احتياطية جاهزة للصعود إذا سقطت أخرى. تحتفظ بالتكرار الفيزيائي وتحظر التكرار المنطقي في آن واحد.\n\nالديمقراطية التي تختار قمة الشجرة تجري عبر رسائل BPDU (Bridge Protocol Data Units) تتبادلها المبدّلات كل ثانيتين. كل مبدّل يعلن معرّفه الجسري (Bridge ID) = أولوية (16 بت) + معرف VLAN الموسّع + عنوان MAC، والفوز لأدناها. الأولوية الافتراضية 32768 للجميع، فيُحسم التعادل غالباً بعنوان MAC الأدنى — نتيجة عشوائية التقسيم يجب ألا تركبها أبداً: خطّط جذرك بنفسك.\n\n- الجسر الجذري (Root Bridge) يصبح مركز الشجرة: كل مسارات الشبكة تنحدر منه\n- تعديل الأولوية بقيم مضاعفات 4096 (مثلاً 4096 أو 8192) — أدنى قيمة أعلى من «الجذري الثانوي»\n- كل شيء يُحسب لكل VLAN في وضع PVST+ السائد على Cisco: جذور مختلفة لشبكات افتراضية مختلفة — أداة هندسية لضبط مسارات الحمل",
           en: "STP's (Spanning Tree Protocol) idea comes from graph theory: from a network full of loops, compute one spanning tree connecting every switch with no cycle, then logically disable ports surplus to the tree — a backup link ready to rise if another falls. You retain physical redundancy while banning logical redundancy simultaneously.\n\nThe democracy choosing the tree's apex runs over BPDU (Bridge Protocol Data Units) messages exchanged every 2 seconds. Each switch announces its Bridge ID = priority (16 bits) + extended VLAN identifier + MAC address, with the lowest winning. Default priority is 32768 for everyone, so ties usually resolve by lowest MAC — a random outcome you must never ride: plan your root yourself.\n\n- The Root Bridge becomes the tree's center: every network path descends from it\n- Tune priority in multiples of 4096 (say 4096 or 8192) — lowest value above your «secondary root»\n- Everything is computed per-VLAN in the PVST+ mode dominant on Cisco: different roots for different virtual networks — an engineering tool for load pathing",
@@ -1016,6 +1327,31 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "أدوار المنافذ وحساب المسار", en: "Port Roles and Path Calculation" },
+        table: {
+          caption: { ar: "أدوار منافذ STP ومهامها", en: "STP port roles and their duties" },
+          headers: [
+            { ar: "الدور", en: "Role" },
+            { ar: "وظيفته", en: "Function" },
+          ],
+          rows: [
+            [
+              { ar: "الجسر الجذري Root Bridge", en: "Root bridge" },
+              { ar: "مرجع الشجرة — كل المسافات تُحسب منه", en: "The tree's reference — all distances measure from it" },
+            ],
+            [
+              { ar: "منفذ جذري Root Port", en: "Root port" },
+              { ar: "أفضل منفذ نحو الجذر على كل مبدّل غير جذري", en: "Each non-root switch's best port toward the root" },
+            ],
+            [
+              { ar: "منفذ معين Designated Port", en: "Designated port" },
+              { ar: "المنفذ المسؤول عن الإرسال على كل وصلة نحو الجذر", en: "The forwarding port on each link toward the root" },
+            ],
+            [
+              { ar: "منفذ محجوب Non-Designated", en: "Non-designated (blocked)" },
+              { ar: "يستقبل BPDU فقط ولا يمرر بيانات — كاسر الحلقة", en: "Listens to BPDUs, forwards nothing — the loop breaker" },
+            ],
+          ],
+        },
         body: {
           ar: "بعد التتويج تتوزع الأدوار. على الجسر الجذري: كل المنافذ «معيّنة» (Designated) — فلماذا لا، وهو القمة. على كل مبدّل آخر: منفذ واحد فقط يُنتخب «منفذاً جذرياً» (Root Port): أفضل طريق إلى الجذري بأقل تكلفة تراكمية؛ وبقية المنافذ المتصلة بقطاعات أخرى تتنافس على «المعيّن» لكل قطاع، والخاسر في القطاع الفائض يصبح «بديلاً» (Alternate/Blocking) — منطقياً مطفأ وحامل وثيقة استعداد.\n\nتكلفة المسار (Path Cost) مستمدة من سرعة الوصلة — بطريقة IEEE القصيرة السائدة: 100Mbps = 19، و1Gbps = 4، و10Gbps = 2. المبدّل يجمع تكاليف مساره إلى الجذري عبر كل منفذ محتمل ويختار الأدنى، والتعادل يحسم بمعايير متدرجة: أدنى Bridge ID للجسر المجاور، ثم أدنى معرّف منفذ (Port ID) عند التطابق الكامل — حالة الوصلات المتوازية بين مبدّلين اثنين فقط.\n\n- منفذ التسلسل للهاتف أو الكمبيوتر لا يجب أن يشارك هذه الانتخابات أصلاً — سيأتي PortFast ليخرجه منها\n- الأدوار لكل VLAN مستقلة في PVST+: وصلة قد تكون جذورية لحركة VLAN 10 وبديلة لحركة VLAN 20 — توازن حمل مجاني بذكاء تصميمي\n- القراءة العملية: show spanning-tree تعرض الدور والتكلفة والحالة لكل منفذ — قائمة قراءتها يومية لمهندس الحرم الجامعي",
           en: "After the coronation, roles distribute. On the root bridge: every port is «Designated» — why not, it is the summit. On every other switch: exactly one port gets elected «Root Port»: the best path to the root at lowest cumulative cost; remaining ports facing other segments compete for «Designated» per segment, and the loser on surplus segments becomes «Alternate» (Blocking) — logically dark yet holding a standby warrant.\n\nPath cost derives from link speed — under the prevailing IEEE short method: 100 Mbps = 19, 1 Gbps = 4, 10 Gbps = 2. Each switch sums its path costs to the root via every candidate port and picks the lowest, with ties resolved by graduated criteria: lowest neighbor Bridge ID, then lowest Port ID on full match — the case of parallel links between exactly two switches.\n\n- Phone and PC edge ports should never join this election at all — PortFast arrives to exempt them\n- Roles are per-VLAN independent under PVST+: a link may be root for VLAN 10's traffic and alternate for VLAN 20's — free load balancing through design intelligence\n- Practical reading: show spanning-tree displays role, cost, and state per port — daily reading for the campus engineer",
@@ -1023,6 +1359,41 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "حالات المنافذ: من 50 ثانية إلى أجزاء الثانية", en: "Port States: From 50 Seconds to Sub-Second" },
+        table: {
+          caption: { ar: "حالات منفذ STP التقليدي وتوقيتاتها", en: "Classic STP port states and their timing" },
+          headers: [
+            { ar: "الحالة", en: "State" },
+            { ar: "هل يتعلم MAC؟", en: "Learns MACs?" },
+            { ar: "هل يمرر البيانات؟", en: "Forwards data?" },
+          ],
+          rows: [
+            [
+              { ar: "Blocking", en: "Blocking" },
+              { ar: "لا", en: "No" },
+              { ar: "لا — يستمع إلى BPDU فقط", en: "No — listens to BPDUs only" },
+            ],
+            [
+              { ar: "Listening", en: "Listening" },
+              { ar: "لا", en: "No" },
+              { ar: "لا — يبني الطوبولوجيا", en: "No — builds the topology" },
+            ],
+            [
+              { ar: "Learning", en: "Learning" },
+              { ar: "نعم — يبني جدول MAC", en: "Yes — fills the MAC table" },
+              { ar: "لا", en: "No" },
+            ],
+            [
+              { ar: "Forwarding", en: "Forwarding" },
+              { ar: "نعم", en: "Yes" },
+              { ar: "نعم — يمرر البيانات كاملة", en: "Yes — full data forwarding" },
+            ],
+            [
+              { ar: "Disabled", en: "Disabled" },
+              { ar: "لا", en: "No" },
+              { ar: "لا — المنفذ مطفأ إدارياً", en: "No — port shut down" },
+            ],
+          ],
+        },
         body: {
           ar: "الإصدار الأصلي 802.1D يمرّ كل منفذ غير جذري بأربع حالات: تعطيل (Blocking) يستمع للـ BPDU بلا مرور؛ ثم استماع (Listening) 15 ثانية يبني الأدوار؛ ثم تعلم (Learning) 15 ثانية يبني جدول MAC بلا تمرير؛ وأخيراً تمرير (Forwarding). المؤقتات: Hello ثانيتان، Forward Delay 15، Max Age 20 — تقارب كامل عند تغيّر الطبولوجيا يستغرق 30-50 ثانية: عمر كامل في زمن الشبكات الحديث.\n\nRSTP (802.1w — ووضع rapid-pvst على Cisco) يعيد كتابة القصة: ثلاث حالات فقط (Discarding، Learning، Forwarding) وأدوار إضافية (Backup بجانب Alternate)، والأهم آلية المصافحة (Proposal/Agreement) بين المبدّلات المتجاورة: يتفقان على انتقال فوري بدل انتظار المؤقتات العمياء. المنافذ الطرفية (Edge/PortFast) تصعد فوراً، والمنافذ البديلة تعيد الحساب خلال أجزاء ثانية — التقارب يهبط من 50 ثانية إلى ما دون الثانية غالباً.\n\n- انتقل إلى rapid-pvst في كل شبكة حديثة: صراحة التكوين بسطر واحد وربح هائل بلا كلفة\n- المنفذ الذي يتسلم BPDU فجأة وهو PortFast يدخل الانتخابات فوراً — وهنا مخاطرة BPDU Guard الآتية\n- حالة Discarding تجمع Blocking والاستماع القديمين في اسم واحد: مطفأ لكنه مُتنبّه",
           en: "The original 802.1D walks every non-root port through four states: Blocking, listening for BPDUs with no traffic; then Listening (15 seconds) building roles; then Learning (15 seconds) building the MAC table without forwarding; finally Forwarding. Timers: Hello 2 seconds, Forward Delay 15, Max Age 20 — full convergence on topology change takes 30-50 seconds: an entire era in modern network time.\n\nRSTP (802.1w — rapid-pvst mode on Cisco) rewrites the story: only three states (Discarding, Learning, Forwarding), additional roles (Backup beside Alternate), and above all the handshake mechanism (Proposal/Agreement) between neighboring switches: agreeing on immediate transition instead of blind timer waits. Edge ports (PortFast) rise instantly, alternate ports recompute in fractions of a second — convergence drops from 50 seconds to typically under one.\n\n- Move to rapid-pvst in every modern network: one line of configuration for an enormous gain at no cost\n- A PortFast port suddenly receiving a BPDU joins the election immediately — hence the coming BPDU Guard precaution\n- Discarding merges old Blocking and Listening into one name: dark yet watchful",
@@ -1123,6 +1494,12 @@ export const m04_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "المعضلة: أيهما يعرف من؟", en: "The Dilemma: Who Knows Whom?" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "استعلام ARP داخل قطاع واحد", en: "An ARP exchange within one segment" },
+          nodes: ["PC1", "SW1", "PC2", "PC3", "R1-GW"],
+          edges: [[0, 1], [1, 2], [1, 3], [1, 4]],
+        },
         body: {
           ar: "طبقات الشبكة تتكلم لغتين لا تترجمان إحداهما للأخرى تلقائياً: التطبيقات والتوجيه يفكرون بعناوين IP (الطبقة الثالثة)، بينما توصيل الإيثرنت لا يفهم إلا عناوين MAC (الطبقة الثانية). عندما يعزم جهازك إرسال حزمة IP، يجب أن يكتب على مغلف الإيثرنت عنوان MAC للمستقبِل — فمن أين يأتي به؟\n\nالجواب هو ARP (Address Resolution Protocol): خدمة استعلام تبث سؤالاً على نطاق البث كله — «من يملك العنوان 192.168.1.20؟ ليخبرني بعنوان MAC الخاص به» — فيردّ المالك وحده بجواب موجه. الافتراض الفلسفي الحاكم: الثقة. من يجيب يُصدَّق دون تحقق، والجواب يُحفظ في ذاكرة مؤقتة لتسريع الجولات القادمة — وهذا بالضبط ما سيستغله المهاجم لاحقاً في هذا الدرس.\n\n- ARP خاص بعائلة IPv4؛ عائلة IPv6 تستبدله بآلية NDP (اكتشاف الجيران) الأغنى والآمنة نسبياً\n- الجسر يعمل للجهاز التالي في المسار فقط لا للوجهة النهائية البعيدة — نقطة جوهرية تلي\n- الجولات مكررة ومكلفة نسبياً (بث في كل مرة) — لذلك وُجدت ذاكرة ARP المؤقتة",
           en: "The network layers speak two languages with no automatic translation: applications and routing think in IP addresses (Layer 3), while Ethernet delivery understands nothing but MACs (Layer 2). When your device resolves to send an IP packet, it must write the recipient's MAC on the Ethernet envelope — so where does it find it?\n\nThe answer is ARP (Address Resolution Protocol): a query service broadcasting a question across the entire broadcast domain — «who owns 192.168.1.20? Tell me your MAC» — and the owner alone replies with a directed answer. The governing philosophical assumption: trust. Whoever answers is believed without verification, and the answer is cached to accelerate future rounds — precisely what the attacker exploits later in this lesson.\n\n- ARP belongs to IPv4; the IPv6 family replaces it with the richer and slightly safer NDP (Neighbor Discovery)\n- The bridge serves only the next hop, never the far final destination — a crucial point ahead\n- Rounds are repeated and relatively costly (broadcast each time) — hence the ARP cache",
@@ -1130,6 +1507,17 @@ export const m04_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الآلية خطوة بخطوة: من البث إلى الخريطة", en: "The Mechanism Step by Step: From Broadcast to Map" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "حوار ARP: طلب ثم رد ثم تخزين", en: "The ARP exchange: request, reply, then caching" },
+          items: [
+            { ar: "PC1 يريد IP لـ PC2 ولا يعرف MACه", en: "PC1 wants PC2's IP but lacks its MAC" },
+            { ar: "يبث طلب ARP: من يملك 192.168.1.20؟", en: "Broadcasts: who has 192.168.1.20?" },
+            { ar: "كل الأجهزة تسمع — PC2 وحده يجيب رداً أحادياً بـ MACه", en: "Everyone hears — only PC2 replies unicast with its MAC" },
+            { ar: "PC1 يخزن الربط في كاش ARP ويبني الإطار", en: "PC1 caches the binding and builds the frame" },
+            { ar: "PC2 يتعلم أيضاً ربط PC1 من الطلب نفسه", en: "PC2 also learns PC1's binding from the request itself" },
+          ],
+        },
         body: {
           ar: "المشهد الكامل لرسالة من جهاز A (192.168.1.10) إلى جهاز B (192.168.1.20) في الشبكة المحلية نفسها: يفحص A جدول ARP — لا إدخال؟ فيبني طلباً (ARP Request) وجهته عنوان البث FF:FF:FF:FF:FF:FF يسأل عن مالك 1.20، وتكتبه كل بطاقات نطاق البث ويرفضه الجميع إلا B الذي يرد بجواب (ARP Reply) أحادي موجه إلى A يحمل عنوان MAC الخاص به.\n\nيرتدب عند المستقبِل أثر مهم: B تعلّم من الطلب نفسه عنوان A (الموجود في حقلي المرسل) فتخزنه — جولتان بمعلومة ذاتية الاكتمال. ثم يخزن A الجواب في جدوله ويبدأ الإرسال الفعلي بالإطار الذي يحمل MAC الجديد. الإدخالات تسكن الجدول دقائق معدودة قبل التقادم (تعتمد على النظام) فتضطر الشبكة إلى جولة عابرة كل فترة — والطرفية تنام في هذه الفجوات دون مرور إضافي.\n\n- انظر الجدول الحي على نظامك الآن: arp -a في ويندوز وip neigh show في لينكس\n- الطلب بث والجواب دائماً أحادي موجه — تذكر هذا في تحليلات Wireshark: مرئي للجميع مقابل سري للسائل\n- وحدات الطلب/الجواب بسيطة بشفافية بروتوكول قديم 1982: لا توقيع ولا تحقق — ثقة عمياء صممها زمن بريء",
           en: "The complete scene of a message from host A (192.168.1.10) to host B (192.168.1.20) on the same LAN: A checks its ARP table — no entry? It builds an ARP Request destined to FF:FF:FF:FF:FF:FF asking for 1.20's owner; every NIC in the broadcast domain reads it and all decline except B, which replies with a unicast ARP Reply aimed at A carrying its MAC.\n\nA valuable side-effect unfolds at the receiver: B learns A's address from the request itself (present in the sender fields) and caches it — one round, self-completing information. Then A caches the reply and begins actual transmission with the fresh MAC. Entries dwell in the table only minutes before aging (system-dependent), forcing a transient round each period — endpoints sleeping through these gaps with zero extra traffic.\n\n- See your live table now: arp -a on Windows, ip neigh show on Linux\n- The request is broadcast; the reply is always directed unicast — remember this in Wireshark: public question, private answer\n- The request/reply units are simple with 1982-grade transparency: no signature, no verification — blind trust from an innocent era",

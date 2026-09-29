@@ -29,6 +29,16 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "التعريف بنموذج OSI", en: "Meet the OSI Model" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "قصة ميلاد النماذج المرجعية", en: "The story of how reference models were born" },
+          items: [
+            { ar: "مشكلة: كل مصنع يبني بروتوكولاته المغلقة — لا تفاهم بين الأجهزة", en: "Problem: every vendor ran proprietary stacks — devices could not talk" },
+            { ar: "1977: ISO تبدأ مشروع نموذج مرجعي موحد", en: "1977: ISO starts a unified reference-model project" },
+            { ar: "1983: TCP/IP يصبح معيار الإنترنت العملي", en: "1983: TCP/IP becomes the Internet's de facto standard" },
+            { ar: "1984: اعتماد OSI مرجعاً عالمياً للتعليم والتشخيص", en: "1984: OSI adopted worldwide for teaching and troubleshooting" },
+          ],
+        },
         body: {
           ar: "OSI اختصار لـ Open Systems Interconnection، وهو نموذج مرجعي من سبع طبقات أصدرته المنظمة الدولية للتوحيد القياسي (ISO) عام 1984 في المعيار ISO 7498. الهدف كان ثورياً وقتها: أي نظام يفتح بابه للتواصل مع أي نظام آخر مهما اختلف المصنّع.\n\nالطبقات السبع من الأعلى إلى الأسفل:\n\n- 7 التطبيقات (Application): حيث تسكن HTTP و DNS وغيرها\n- 6 العرض (Presentation): الصيغ والتشفير والضغط\n- 5 الجلسة (Session): بدء الحوار وإدارته وإنهاؤه\n- 4 النقل (Transport): التوصيل من طرف إلى طرف (TCP/UDP)\n- 3 الشبكة (Network): العنونة المنطقية والتوجيه (IP)\n- 2 الوصل (Data Link): الإطارات وعناوين MAC\n- 1 الفيزيائية (Physical): الإشارات والكابلات\n\nللحفظ بالإنجليزية من الأسفل للأعلى استخدم العبارة الشهيرة: Please Do Not Throw Sausage Pizza Away (كلمة لكل حرف: Physical, Data Link, Network, Transport, Session, Presentation, Application).",
           en: "OSI stands for Open Systems Interconnection, a seven-layer reference model released by the International Organization for Standardization (ISO) in 1984 as standard ISO 7498. The goal was revolutionary at the time: any system opens its doors to communicate with any other system regardless of vendor.\n\nThe seven layers from top to bottom:\n\n- 7 Application: where HTTP, DNS and friends live\n- 6 Presentation: formats, encryption, compression\n- 5 Session: starting, managing, and ending dialogs\n- 4 Transport: end-to-end delivery (TCP/UDP)\n- 3 Network: logical addressing and routing (IP)\n- 2 Data Link: frames and MAC addresses\n- 1 Physical: signals and cables\n\nTo memorize them in English bottom-up, use the famous phrase: Please Do Not Throw Sausage Pizza Away (one word per letter).",
@@ -140,6 +150,41 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الطبقة 2 الوصل: من البتات إلى الإطارات", en: "Layer 2 Data Link: From Bits to Frames" },
+        table: {
+          caption: { ar: "الطبقة الفيزيائية مقابل طبقة الوصل", en: "Physical layer vs data link layer" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "الطبقة 1 الفيزيائية", en: "Layer 1 Physical" },
+            { ar: "الطبقة 2 الوصل", en: "Layer 2 Data Link" },
+          ],
+          rows: [
+            [
+              { ar: "وحدة البيانات PDU", en: "PDU" },
+              { ar: "بتات Bits", en: "Bits" },
+              { ar: "إطار Frame", en: "Frame" },
+            ],
+            [
+              { ar: "العنونة", en: "Addressing" },
+              { ar: "لا عناوين — إشارة فقط", en: "No addresses — just signal" },
+              { ar: "عنوان MAC للجهازين المتجاورين", en: "MAC addresses of the two neighbors" },
+            ],
+            [
+              { ar: "الأجهزة النموذجية", en: "Typical devices" },
+              { ar: "مكرر Repeater، مجمّع Hub", en: "Repeater, hub" },
+              { ar: "مبدّل Switch، جسر Bridge", en: "Switch, bridge" },
+            ],
+            [
+              { ar: "كشف الأخطاء", en: "Error detection" },
+              { ar: "لا شيء", en: "None" },
+              { ar: "حقل FCS بفحص CRC", en: "FCS field with a CRC check" },
+            ],
+            [
+              { ar: "الوظيفة الجوهرية", en: "Core job" },
+              { ar: "نقل الإشارة عبر الوسيط", en: "Carrying the signal over the medium" },
+              { ar: "تأطير البيانات والتحكم بالوصول للوسط", en: "Framing data and controlling medium access" },
+            ],
+          ],
+        },
         body: {
           ar: "لماذا نحتاج طبقة فوق الفيزيائية؟ لأن مجرد إرسال بتات لا يكفي: من يجب أن يستلم هذه البتات؟ متى يبدأ الإرسال؟ وماذا لو فسدت البيانات في الطريق؟ طبقة الوصل (Data Link) تجيب عن هذه الأسئلة الثلاثة.\n\nمهامها الجوهرية:\n\n- التأطير (Framing): تجميع البتات في وحدات محددة الحواف تسمى إطارات (Frames) ليستطيع المستقبل معرفة البداية والنهاية\n- العنونة المادية: عنوان MAC (48 بت) يحدد بطاقة الشبكة المقصودة على الوصلة نفسها\n- كشف الأخطاء: حساب CRC يوضع في ذيل الإطار (FCS) ليكشف أي تلف في الطريق\n- الوصول للوسط (Media Access): قواعد من يرسل ومتى — تاريخياً CSMA/CD في الإيثرنت القديم\n\nنقطة مفصلية: طبقة الوصل توصل من جهاز إلى جيرانه المباشر فقط (Hop-to-Hop) على الوصلة الواحدة. الوصول للجهاز الذي يبعد عشر شبكات ليس عملها — ذلك عمل الطبقة 3. ووحدة بياناتها (PDU) اسمها: إطار (Frame).",
           en: "Why need a layer above the physical? Because sending raw bits is not enough: who should receive these bits? When may transmission start? What if data corrupts in transit? The Data Link layer answers these three questions.\n\nIts core duties:\n\n- Framing: grouping bits into clearly delimited units called frames so the receiver knows start and end\n- Physical addressing: a MAC address (48 bits) identifying the target NIC on the same link\n- Error detection: a CRC computation placed in the frame trailer (FCS) revealing any corruption en route\n- Media access: rules for who transmits and when — historically CSMA/CD in old Ethernet\n\nOne pivotal point: the Data Link delivers device-to-direct-neighbor (hop-to-hop) on a single link only. Reaching a device ten networks away is not its job — that is layer 3. Its PDU is called: the Frame.",
@@ -255,6 +300,41 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الطبقة 4 النقل: من جهاز إلى عملية", en: "Layer 4 Transport: From Device to Process" },
+        table: {
+          caption: { ar: "الطبقة 3 مقابل الطبقة 4", en: "Layer 3 vs layer 4" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "الطبقة 3 الشبكة", en: "Layer 3 Network" },
+            { ar: "الطبقة 4 النقل", en: "Layer 4 Transport" },
+          ],
+          rows: [
+            [
+              { ar: "العنونة", en: "Addressing" },
+              { ar: "منطقية: عنوان IP", en: "Logical: IP address" },
+              { ar: "المنافذ Ports", en: "Ports" },
+            ],
+            [
+              { ar: "نطاق التسليم", en: "Delivery scope" },
+              { ar: "من جهاز إلى جهاز", en: "Host to host" },
+              { ar: "من عملية إلى عملية", en: "Process to process" },
+            ],
+            [
+              { ar: "الموثوقية", en: "Reliability" },
+              { ar: "لا ضمان (Best Effort)", en: "No guarantee (best effort)" },
+              { ar: "TCP يضمن، UDP لا", en: "TCP guarantees, UDP does not" },
+            ],
+            [
+              { ar: "أمثلة البروتوكولات", en: "Protocol examples" },
+              { ar: "IP، ICMP، OSPF", en: "IP, ICMP, OSPF" },
+              { ar: "TCP، UDP، QUIC", en: "TCP, UDP, QUIC" },
+            ],
+            [
+              { ar: "الجهاز المرتبط", en: "Associated device" },
+              { ar: "الراوتر Router", en: "Router" },
+              { ar: "لا جهاز — وظيفة في نظام التشغيل", en: "No device — an OS function" },
+            ],
+          ],
+        },
         body: {
           ar: "وصلت الرزمة أخيراً إلى جهازك — لكن إلى أي برنامج بالضبط؟ المتصفح؟ لعبة أونلاين؟ تحديث النظام؟ طبقة النقل (Transport Layer) هي من يفرز:\n\n- التوصيل من طرف إلى طرف (End-to-End): بين التطبيق المرسل والتطبيق المستقبل مهما تباعدت الشبكات\n- التعدد الإرسال (Multiplexing): أرقام المنافذ (Ports) — 16 بت أي 0 إلى 65535 — تحدد العملية المقصودة على كل جهاز\n- التجزئة وإعادة التجميع: تقسيم البيانات الكبيرة إلى قطع (Segments) قابلة للإرسال ثم إعادة بنائها بالترتيب عند الوصول\n\nبروتوكولاها الشهيران يلخصان فلسفتين متعاكستين:\n\n- TCP: مهذب متأنٍّ — مصافحة قبل الكلام، تأكيد كل شيء، إعادة إرسال الفاقد، ضبط التدفق\n- UDP: فوضوي سريع — أرسل واهرب؛ مثالي للبث الحي والألعاب و DNS",
           en: "The packet finally reaches your device — but which program exactly? The browser? An online game? A system update? The Transport Layer is the sorter:\n\n- End-to-end delivery: between the sending application and the receiving one, however far apart\n- Multiplexing: port numbers — 16 bits, i.e. 0 to 65535 — identify the intended process on each device\n- Segmentation and reassembly: splitting large data into transmittable segments, then rebuilding them in order at arrival\n\nIts two famous protocols embody opposite philosophies:\n\n- TCP: polite and patient — handshake before talking, acknowledge everything, retransmit losses, control flow\n- UDP: chaotic and fast — fire and forget; ideal for live streaming, games, and DNS",
@@ -367,6 +447,31 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "لماذا تتلاشى الثلاث طبقات في TCP/IP", en: "Why the Three Layers Blur in TCP/IP" },
+        table: {
+          caption: { ar: "الطبقات العليا الثلاث: الوظائف والأمثلة", en: "The three upper layers: roles and examples" },
+          headers: [
+            { ar: "الطبقة", en: "Layer" },
+            { ar: "وظيفتها", en: "Function" },
+            { ar: "أمثلة واقعية", en: "Real examples" },
+          ],
+          rows: [
+            [
+              { ar: "الطبقة 5 الجلسة", en: "Layer 5 Session" },
+              { ar: "فتح الحوار ومزامنته واستعادته بعد الانقطاع", en: "Opening, synchronizing, and resuming dialogs" },
+              { ar: "NetBIOS، RPC، SOCKS", en: "NetBIOS, RPC, SOCKS" },
+            ],
+            [
+              { ar: "الطبقة 6 العرض", en: "Layer 6 Presentation" },
+              { ar: "الترميز والضغط والتشفير المشترك", en: "Shared encoding, compression, encryption" },
+              { ar: "TLS (تاريخياً)، JPEG، ASCII", en: "TLS (historically), JPEG, ASCII" },
+            ],
+            [
+              { ar: "الطبقة 7 التطبيقات", en: "Layer 7 Application" },
+              { ar: "خدمات المستخدم النهائي مباشرة", en: "Direct end-user services" },
+              { ar: "HTTP، DNS، SMTP، FTP", en: "HTTP, DNS, SMTP, FTP" },
+            ],
+          ],
+        },
         body: {
           ar: "حين بنيت عائلة TCP/IP اختار مهندسوها الدمج البديل للتفكيب الدقيق: طبقة تطبيقات واحدة تبتلع وظائف 5 و6 و7 معاً. النتيجة العملية: جلسات وضغط وتشفير أصبحت تُدار داخل بروتوكولات التطبيقات ذاتها (TLS يعمل تحت HTTP/2 مثلاً، والضغط جزء من بروتوكول الاتصال).\n\nفي الواقع العملي الحديث:\n\n- مفاتيح الجلسة يديرها TLS بين عميل وخادم\n- وظائف العرض (الضغط والتشفير والصيغ) موزعة في TLS وHTTP وبرامج الترميز\n- كتب التعليم المعاصرة تستخدم OSI لتعليم التصنيف، وTCP/IP لوصف الواقع\n\nستسمع المصطلحين معاً طوال مسيرتك: (هذه مشكلة طبقة 7) بلسان OSI، بينما تعمل فعلياً على حزمة TCP/IP. تعلم الاثنين ليس ترفاً؛ إنه كلام أهل المهنة.",
           en: "When the TCP/IP family was built, its engineers chose pragmatic merging over fine decomposition: a single Application layer absorbs the functions of 5, 6, and 7 together. The practical outcome: sessions, compression, and encryption became managed inside the application protocols themselves (TLS runs beneath HTTP/2, and compression is part of the connection protocol).\n\nIn modern practice:\n\n- Session keys are managed by TLS between client and server\n- Presentation functions (compression, encryption, formats) are spread across TLS, HTTP, and codecs\n- Modern textbooks use OSI to teach classification and TCP/IP to describe reality\n\nYou will hear both terms throughout your career: (that is a layer 7 problem) in OSI tongue while practically working over the TCP/IP suite. Learning both is not luxury; it is how the profession speaks.",
@@ -457,6 +562,17 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الرحلة رقمياً: من Data إلى Bits", en: "The Journey Digitally: From Data to Bits" },
+        diagram: {
+          kind: "layers",
+          title: { ar: "برج التغليف: من البيانات حتى البتات", en: "The encapsulation tower: from data down to bits" },
+          items: [
+            { ar: "بيانات Data — خام من طبقات التطبيقات", en: "Data — raw from the application layers" },
+            { ar: "مقطع Segment = بيانات + ترويسة TCP/UDP (L4)", en: "Segment = data + TCP/UDP header (L4)" },
+            { ar: "حزمة Packet = مقطع + ترويسة IP (L3)", en: "Packet = segment + IP header (L3)" },
+            { ar: "إطار Frame = حزمة + ترويسة وذيل إيثرنت (L2)", en: "Frame = packet + Ethernet header & trailer (L2)" },
+            { ar: "بتات Bits — إشارات كهربائية/ضوئية (L1)", en: "Bits — electrical or optical signals (L1)" },
+          ],
+        },
         body: {
           ar: "الآن نفس الرحلة بأرقام دقيقة يجب أن تحفظها كمَهر شبكات. جهازك يريد إرسال طلب صفحة ويب:\n\n- الطبقة 7-5: الطلب نص HTTP يسمى بيانات (Data) — ليست له ترويسة بعد في مفهومنا\n- الطبقة 4: ترويسة TCP بحجم 20 بايت (في الحالة القياسية) تضاف أمام البيانات؛ الناتج قطعة (Segment)\n- الطبقة 3: ترويسة IP بحجم 20 بايت (IPv4 القياسية) تضاف أمام القطعة؛ الناتج رزمة (Packet)\n- الطبقة 2: ترويسة Ethernet بحجم 14 بايت تضاف أمام الرزمة وذيل FCS بحجم 4 بايت خلفها؛ الناتج إطار (Frame)\n- الطبقة 1: الإطار يتحول بتاً بتاً إلى إشارات كهربائية أو ضوئية أو لاسلكية\n\nعند الاستلام يعاد فك كل شيء بالترتيب العكسي نفسه، وكل طبقة تنزع ترويستها وتقرأها ثم تسلّم ما تحتها للطبقة الأعلى.",
           en: "Now the same journey with precise numbers you must memorize as a networking craftsman. Your device wants to send a web page request:\n\n- Layers 7-5: the HTTP request text is called data — no header yet in our model\n- Layer 4: a 20-byte TCP header (standard case) is prepended to the data; the result is a Segment\n- Layer 3: a 20-byte IPv4 header is prepended to the segment; the result is a Packet\n- Layer 2: a 14-byte Ethernet header is prepended to the packet and a 4-byte FCS trailer appended; the result is a Frame\n- Layer 1: the frame becomes bits converted into electrical, optical, or radio signals\n\nOn reception, everything is unwrapped in the exact reverse order, each layer stripping its header, reading it, then passing the remainder upward.",
@@ -475,6 +591,41 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "جدول PDU: تسمية صحيحة أم خلط مشهور؟", en: "The PDU Table: Right Naming or a Famous Mix-Up?" },
+        table: {
+          caption: { ar: "مراحل التغليف وما يضاف في كل منها", en: "Encapsulation stages and what each adds" },
+          headers: [
+            { ar: "المرحلة", en: "Stage" },
+            { ar: "ما يُضاف", en: "What is added" },
+            { ar: "PDU الناتج", en: "Resulting PDU" },
+          ],
+          rows: [
+            [
+              { ar: "التطبيقات (7-5)", en: "Application (7-5)" },
+              { ar: "لا شيء — البيانات الخام", en: "Nothing — raw data" },
+              { ar: "Data", en: "Data" },
+            ],
+            [
+              { ar: "النقل (4)", en: "Transport (4)" },
+              { ar: "ترويسة TCP أو UDP مع المنافذ", en: "TCP or UDP header with ports" },
+              { ar: "Segment", en: "Segment" },
+            ],
+            [
+              { ar: "الشبكة (3)", en: "Network (3)" },
+              { ar: "ترويسة IP مع العناوين", en: "IP header with addresses" },
+              { ar: "Packet", en: "Packet" },
+            ],
+            [
+              { ar: "الوصل (2)", en: "Data link (2)" },
+              { ar: "ترويسة إيثرنت + ذيل FCS", en: "Ethernet header + FCS trailer" },
+              { ar: "Frame", en: "Frame" },
+            ],
+            [
+              { ar: "الفيزيائية (1)", en: "Physical (1)" },
+              { ar: "تحويل إلى إشارات على الوسيط", en: "Conversion to signals on the medium" },
+              { ar: "Bits", en: "Bits" },
+            ],
+          ],
+        },
         body: {
           ar: "وحدة بيانات البروتوكول (PDU: Protocol Data Unit) هي الاسم الرسمي لما تحمله كل طبقة. هذا الجدول يُسأل عنه في كل اختبار من CCNA إلى المقابلات:\n\n- الطبقة 7-5: Data (بيانات)\n- الطبقة 4: Segment (قطعة) — في TCP تحديداً؛ مع UDP يسميها كثيرون Datagram\n- الطبقة 3: Packet (رزمة)\n- الطبقة 2: Frame (إطار)\n- الطبقة 1: Bits (بتات)\n\nالخلط الشائع القاتل: قول (إطار IP) أو (رزمة Ethernet). الصحيح: IP يصنع الرزم، وEthernet يصنع الإطارات. إذا رأيت عنوان MAC حولها فأنت أمام إطار؛ إذا رأيت عنوان IP حولها فأنت أمام رزمة.\n\nقاعدة لسان سريعة: الطبقات الأربع العليا تعمل بالـ Ports، والوسطى بالـ IP، والسفلى بالـ MAC — وهذا شكل هرم المسؤوليات كله.",
           en: "The Protocol Data Unit (PDU) is the official name for what each layer carries. This table is asked in every exam from CCNA to interviews:\n\n- Layers 7-5: Data\n- Layer 4: Segment — specifically in TCP; with UDP many call it a Datagram\n- Layer 3: Packet\n- Layer 2: Frame\n- Layer 1: Bits\n\nThe killer common mix-up: saying (IP frame) or (Ethernet packet). Correct: IP builds packets, Ethernet builds frames. If you see a MAC address around it, you face a frame; an IP address around it, you face a packet.\n\nA quick tongue rule: the upper four layers work with Ports, the middle with IP, the bottom with MAC — the whole pyramid of responsibility in one line.",
@@ -482,6 +633,10 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "MTU: حدود الصندوق الكبير", en: "MTU: The Big Box Limit" },
+        tip: {
+          ar: "MTU الإيثرنت القياسي 1500 بايت. إذا لاحظت مواقع تفتح وping ينجح لكن التحميل يعلق فابحث عن مشكلة MTU أو ICMP المحجوب في منتصف المسار.",
+          en: "Standard Ethernet MTU is 1500 bytes. If sites open and ping works but transfers hang, suspect an MTU black hole or ICMP being filtered mid-path.",
+        },
         body: {
           ar: "لكل وصلة حد أقصى لحجم ما تحمله من بيانات المستخدم يسمى MTU (Maximum Transmission Unit). في الإيثرنت القياسي: 1500 بايت للحمولة.\n\nإذا سلمت الطبقة 4 للطبقة 3 قطعة أكبر من MTU الوصلة القادمة، فإن IPv4 يجزئها (Fragmentation) إلى رزم أصغر تُجمع مجدداً عند الوجهة — عملية مكلفة تستحق التجنب.\n\nحيلة عملية لتقدير MTU مسار كامل من ويندوز: أرسل ping بحجم محدد ومنع التجزئة؛ إن نجح فالمسار يحتمله:\n\n- ping -f -l 1472 8.8.8.8 : يرسل 1472 بايت بيانات + 28 بايت (20 IP + 8 ICMP) = 1500 بالضبط\n- فشل الرسالة (Packet needs to be fragmented) يعني وجود وصلة أضيق في المسار",
           en: "Every link has a maximum payload size called MTU (Maximum Transmission Unit). In standard Ethernet: 1500 bytes of payload.\n\nIf layer 4 hands layer 3 a segment larger than the next link MTU, IPv4 fragments it into smaller packets reassembled at the destination — a costly process worth avoiding.\n\nA practical trick to probe the whole path MTU from Windows: send a ping with a set size and forbid fragmentation; if it succeeds, the path accommodates it:\n\n- ping -f -l 1472 8.8.8.8 : sends 1472 data bytes + 28 bytes (20 IP + 8 ICMP) = exactly 1500\n- A (Packet needs to be fragmented) failure means a narrower link exists somewhere along the path",
@@ -565,6 +720,16 @@ export const m02_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "الاستقبال: صعود البصلة", en: "Reception: Climbing the Onion" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "فك التغليف عند المستقبِل طبقة بعد طبقة", en: "Decapsulation at the receiver, layer by layer" },
+          items: [
+            { ar: "الوصل: فحص FCS ورفض الفاسد ثم نزع ترويسة الإيثرنت", en: "Link: check FCS, drop corrupt frames, strip the Ethernet header" },
+            { ar: "الشبكة: قراءة IP والتأكد أن الحزمة لي", en: "Network: read the IP address and confirm the packet is mine" },
+            { ar: "النقل: المنافذ تحدد التطبيق صاحب البيانات", en: "Transport: the ports identify which app owns the payload" },
+            { ar: "الطبقات العليا: فك الترميز والتشفير حتى تظهر البيانات", en: "Upper layers: decode and decrypt until the data appears" },
+          ],
+        },
         body: {
           ar: "كل ما تغلف في الدرس السابق يُفك الآن بترتيب معاكس دقيق. عند وصول الإشارات إلى بطاقة الشبكة (NIC):\n\n- الطبقة 1 تلتقط الإشارات وتحوّلها بتات، وتتحقق من التزامن مع مقدمة الإطار (Preamble)\n- الطبقة 2 تجمع البتات إطاراً؛ تفحص عنوان MAC الوجهة: هل هو أنا؟ هل هو بث عام؟ إن لا — فاسده من فوره بصمت\n- تحسب CRC وتقارن بحقل FCS في الذيل: أي اختلاف يعني إطاراً فاسداً فيُرمى كذلك بصمت\n- الطبقة 3 تقرأ عنوان IP: لي أنا؟ ثم تنقص TTL وتفحص ترويسة IPv4، وتسلّم لبروتوكول الطبقة العليا المذكور في حقل Protocol\n- الطبقة 4 يطابق رقم المنفذ مع جدول المنافذ المفتوحة فيسلم البيانات للعملية صاحبة المقبس\n- الطبقات العليا تفك التشفير والضغط والصيغ وصولاً للنص الذي يعرضه المتصفح\n\nاللافت للنظر: طبقة النقل عند المرسل مالت رأسها شحاً من كثرة الأعباء، وعند المستقبل تكلفت كل هذه الفحوص بصمت تام — لا إعلانات ولا أخطاء وسيطة.",
           en: "Everything wrapped in the previous lesson now unwinds in a precise reverse order. When signals reach the NIC:\n\n- Layer 1 captures the signals, converts them to bits, and synchronizes using the frame preamble\n- Layer 2 assembles bits into a frame; checks the destination MAC: is it me? is it broadcast? If neither — discard instantly and silently\n- It computes CRC and compares with the FCS trailer: any mismatch means a corrupt frame, dropped equally silently\n- Layer 3 reads the IP address: mine? then decrements TTL, verifies the IPv4 header, and hands up to the protocol named in the Protocol field\n- Layer 4 matches the port number against the table of open ports and delivers data to the process owning that socket\n- Upper layers unwrap encryption, compression, and formats down to the text your browser renders\n\nThe striking part: the layers performed all these checks in total silence — no announcements, no intermediate errors.",
@@ -669,6 +834,16 @@ export const m02_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "قصة نموذجين متعاكسين", en: "A Tale of Two Opposite Models" },
+        diagram: {
+          kind: "layers",
+          title: { ar: "نموذج TCP/IP العملي بأربع طبقات", en: "The practical four-layer TCP/IP model" },
+          items: [
+            { ar: "التطبيقات Application — HTTP و DNS و SMTP", en: "Application — HTTP, DNS, SMTP" },
+            { ar: "النقل Transport — TCP و UDP", en: "Transport — TCP and UDP" },
+            { ar: "الإنترنت Internet — IP و ICMP", en: "Internet — IP and ICMP" },
+            { ar: "الوصلة Network Access — الإيثرنت و Wi-Fi", en: "Network Access — Ethernet and Wi-Fi" },
+          ],
+        },
         body: {
           ar: "TCP/IP وُلد في الميدان قبل أن يولد في المراجع. في سبعينيات القرن الماضي، مُوّل من وزارة الدفاع الأمريكية (نموذج DoD) لبناء ARPANET؛ وفي 1974 نشر فينت سيرف وبوب خان ورقتهما التأسيسية. التجربة العملية أولاً، ثم استُخلص النموذج النظري لاحقاً من الشيء الذي يعمل فعلاً.\n\nOSI جاء بالاتجاه المعاكس تماماً: لجنة ISO رسمت بين 1977 و1984 نموذجاً مثالياً كاملاً (سبع طبقات، بروتوكولات مرافقة)، ثم دُعي العالم لتطبيقه. بعض بروتوكولات OSI طُبقت فعلاً (X.400 للبريد و X.500 للدليل — جد LDAP) لكن الموجة الكاسرة لم تصل قط.\n\nالسبب الحاسم في انتصار TCP/IP: حين احتاجت الجامعات والحكومات ربطاً جاهزاً رخيصاً، كانت حزمة TCP/IP قد صارت مفتوحة ومجانية ومجرَّبة على ARPANET الذي صار الإنترنت — فانضم الجميع إلى ما يعمل.",
           en: "TCP/IP was born in the field before being born in textbooks. In the 1970s it was funded by the US Department of Defense (the DoD model) to build ARPANET; in 1974 Vint Cerf and Bob Kahn published their foundational paper. Practice first, then the theoretical model was distilled from what actually works.\n\nOSI came from the opposite direction: an ISO committee drew an ideal complete model between 1977 and 1984 (seven layers plus companion protocols), then invited the world to implement it. Some OSI protocols did ship (X.400 mail, X.500 directory — the ancestor of LDAP) but the sweeping wave never arrived.\n\nThe decisive reason for TCP/IP's victory: when universities and governments needed ready cheap interconnection, the TCP/IP suite was already open, free, and battle-tested on ARPANET — which became the Internet — so everyone joined what works.",
@@ -676,6 +851,41 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المقارنة الطبقية وجهاً لوجه", en: "Layer-by-Layer Face-off" },
+        table: {
+          caption: { ar: "OSI مقابل TCP/IP: الفروقات الجوهرية", en: "OSI vs TCP/IP: the essential differences" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "OSI", en: "OSI" },
+            { ar: "TCP/IP", en: "TCP/IP" },
+          ],
+          rows: [
+            [
+              { ar: "عدد الطبقات", en: "Number of layers" },
+              { ar: "7", en: "7" },
+              { ar: "4 (وأحياناً 5)", en: "4 (sometimes 5)" },
+            ],
+            [
+              { ar: "الطابع", en: "Nature" },
+              { ar: "نظري مرجعي للفهم", en: "Theoretical reference for understanding" },
+              { ar: "عملي — هو ما يشغّل الإنترنت", en: "Practical — it runs the Internet" },
+            ],
+            [
+              { ar: "الجلسة والعرض", en: "Session & presentation" },
+              { ar: "طبقتان مستقلتان", en: "Two separate layers" },
+              { ar: "مدمجتان ضمن التطبيقات", en: "Merged into the application layer" },
+            ],
+            [
+              { ar: "الوصل والفيزيائية", en: "Data link & physical" },
+              { ar: "طبقتان منفصلتان", en: "Two separate layers" },
+              { ar: "مدمجتان في الوصلة", en: "Merged into network access" },
+            ],
+            [
+              { ar: "الاستخدام الأمثل", en: "Best use" },
+              { ar: "التعليم والتشخيص والنقاش", en: "Teaching, troubleshooting, discussion" },
+              { ar: "التصميم والتشغيل الفعلي", en: "Actual design and operations" },
+            ],
+          ],
+        },
         body: {
           ar: "TCP/IP الكلاسيكي من أربع طبقات، وإليك خريطة التطابق مع OSI:\n\n- Application (تطبيقات): تبتلع طبقات OSI الثلاث العليا 5 + 6 + 7\n- Transport (نقل): توازي OSI 4 — TCP و UDP هنا كما هما\n- Internet (إنترنت): توازي OSI 3 — IP و ICMP هنا\n- Network Access / Link (الوصول للشبكة): تبتلع OSI 1 + 2 — الإيثرنت و Wi-Fi هنا\n\nفي الطرف الآخر يتخذ كثير من المدرسين والكتب نموذجاً هجيناً بخمس طبقات: نفس TCP/IP لكن مع فصل L1 عن L2 — الأسهل رسماً وشرحاً وأقرب لما تراه في أوامر التشخيص اليومية.\n\n- الخلاصة العملية: OSI = 7 طبقات مرجعية تعليمية؛ TCP/IP = 4 طبقات هي بنية الإنترنت الفعلية؛ والهجين 5 طبقات = أداة التدريس المفضلة",
           en: "Classic TCP/IP has four layers, and here is the mapping onto OSI:\n\n- Application: absorbs OSI's three upper layers 5 + 6 + 7\n- Transport: parallels OSI 4 — TCP and UDP live here as they are\n- Internet: parallels OSI 3 — IP and ICMP live here\n- Network Access / Link: absorbs OSI 1 + 2 — Ethernet and Wi-Fi live here\n\nOn the other side, many instructors and books adopt a five-layer hybrid: same as TCP/IP but splitting L1 from L2 — easiest to draw, to explain, and closest to what daily diagnostic commands show.\n\n- Practical summary: OSI = a 7-layer educational reference; TCP/IP = the 4-layer actual Internet architecture; the 5-layer hybrid = the preferred teaching tool",
@@ -780,6 +990,41 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المنهجية 1: من الأسفل للأعلى (Bottom-Up)", en: "Method 1: Bottom-Up" },
+        table: {
+          caption: { ar: "خريطة التشخيص: الطبقة، الأعراض، الأدوات", en: "A troubleshooting map: layer, symptoms, tools" },
+          headers: [
+            { ar: "الطبقة", en: "Layer" },
+            { ar: "أعراض شائعة", en: "Common symptoms" },
+            { ar: "أدوات الفحص", en: "Check tools" },
+          ],
+          rows: [
+            [
+              { ar: "الفيزيائية L1", en: "Physical L1" },
+              { ar: "لا إضاءة وصلة، كابل مفكوك، تلف", en: "No link light, loose or damaged cable" },
+              { ar: "فاحص كابلات، ethtool، بدائل", en: "Cable tester, ethtool, spare cables" },
+            ],
+            [
+              { ar: "الوصل L2", en: "Data link L2" },
+              { ar: "MAC غير متعلم، VLAN خاطئة، أخطاء FCS", en: "MAC not learned, wrong VLAN, FCS errors" },
+              { ar: "show mac address-table، show vlan", en: "show mac address-table, show vlan" },
+            ],
+            [
+              { ar: "الشبكة L3", en: "Network L3" },
+              { ar: "ping يفشل، مسار مفقود، لا بوابة", en: "Ping fails, missing route, no gateway" },
+              { ar: "ping، traceroute، show ip route", en: "ping, traceroute, show ip route" },
+            ],
+            [
+              { ar: "النقل L4", en: "Transport L4" },
+              { ar: "المنفذ مقفل، الاتصال يُرفض", en: "Closed port, connection refused" },
+              { ar: "ss -tlnp، telnet، nmap", en: "ss -tlnp, telnet, nmap" },
+            ],
+            [
+              { ar: "التطبيقات L7", en: "Application L7" },
+              { ar: "الخدمة ترد بأخطاء أو بطء", en: "Service replies with errors or slowness" },
+              { ar: "curl -v، سجلات الخدمة", en: "curl -v, service logs" },
+            ],
+          ],
+        },
         body: {
           ar: "تبدأ من الطبقة 1 وتصعد. المسار القياسي خطوة خطوة:\n\n- L1: هل ضوء الربط مضاء؟ الكابل موصول بالطرفين؟ جرب كبلاً بديلاً أو منفذاً آخر — حل 50% من الحالات هنا\n- L2: هل حالة المنفذ up/up؟ أخطاء CRC أو التصادمات المتأخرة (duplex mismatch)؟ هل VLAN صحيح؟\n- L3: هل للجهاز عنوان صحيح وقناع وبوابة؟ ping البوابة ثم ping عنوان خارجي\n- L4: هل المنفذ المطلوب مفتوح في الجدار الناري؟ هل الخدمة تستمع أصلاً؟\n- L7: هل DNS يحل الاسم؟ هل الخدمة تجيب (curl)؟\n\nمزاياه: شمول بلا استثناء — لن تفوتك مشكلة فيزيائية مهما كانت مخفية. عيبه: البطء النسبي حين يكون العطل معروفاً أنه في الأعلى.\n\nمتى تختاره؟ عطل غامض تماماً، أو مستخدم جديد لا يعمل عنده شيء إطلاقاً (غالباً فيزيائي أو إعدادات).",
           en: "You start at layer 1 and climb. The standard path step by step:\n\n- L1: is the link LED lit? Cable seated at both ends? Try a spare cable or another port — solving 50% of cases right here\n- L2: is the port state up/up? CRC errors or late collisions (duplex mismatch)? Is the VLAN correct?\n- L3: does the device have a valid address, mask, and gateway? Ping the gateway, then ping an external address\n- L4: is the needed port open in the firewall? Is the service even listening?\n- L7: does DNS resolve the name? Does the service answer (curl)?\n\nIts strengths: exhaustive coverage — no physical issue escapes. Its weakness: relative slowness when the fault is clearly up high.\n\nWhen to choose it: a totally mysterious fault, or a new user for whom nothing works at all (usually physical or settings).",
@@ -794,6 +1039,17 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "سيناريو كامل: لا يفتح الموقع!", en: "A Full Scenario: The Site Will Not Open!" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "تشخيص منظم لموقع لا يفتح", en: "An orderly diagnosis of a site that will not open" },
+          items: [
+            { ar: "هل تعمل مواقع أخرى؟ — حدد نطاق المشكلة", en: "Do other sites work? — scope the problem" },
+            { ar: "ping البوابة 192.168.1.1: هل الوصول محلي؟", en: "Ping the gateway 192.168.1.1: is the local path alive?" },
+            { ar: "ping 8.8.8.8: هل الوصول للإنترنت سليم؟", en: "Ping 8.8.8.8: is Internet reachability fine?" },
+            { ar: "nslookup للموقع: هل DNS يحل الاسم؟", en: "nslookup the site: does DNS resolve the name?" },
+            { ar: "curl -v https://example.com: أين تتوقف المعاملة؟", en: "curl -v https://example.com: where does the transaction stall?" },
+          ],
+        },
         body: {
           ar: "موظفة تتصل: الإنترنت لا يعمل! إليك مساراً منضبطاً كاملاً كما يفعله مهندس حقيقي، مع تفسير كل خطوة:\n\n- 1) ipconfig /all : عنوان IP صحيح؟ لو ظهر عنوان يبدأ بـ 169.254.x.x فالجهاز لم يستلم DHCP — طبقة 3 فاشلة من الجذر\n- 2) ping 192.168.1.1 (البوابة): ناجح؟ إذن L1 وL2 وL3 المحلية سليمة — أغلقت ثلاث طبقات بضغطة واحدة\n- 3) ping 8.8.8.8 : ناجح؟ الإنترنت واصل؛ فشل؟ فتش عند البوابة/المزود\n- 4) nslookup www.example.com : يحل الاسم؟ فشل الحل = مشكلة DNS (طبقة 7) مع اتصال سليم تماماً\n- 5) curl -v https://www.example.com : رد HTTP؟ هنا يظهر كود الخطأ ومرحلة TLS إن كانت المشكلة أعلى\n\nلاحظ الجمال: خمس أوامر صنّفت العطل بدقة جراحية. لو كانت المشكلة كابلاً مقطوعاً لتوقفت عند الخطوة 2 وذهبت تمشي نحو الخزانة.",
           en: "An employee calls: the Internet is down! Here is the disciplined full path a real engineer takes, with each step explained:\n\n- 1) ipconfig /all : is the IP valid? If it starts with 169.254.x.x the device never got DHCP — layer 3 failed at the root\n- 2) ping 192.168.1.1 (the gateway): success? Then local L1, L2, L3 are healthy — three layers closed with one keystroke\n- 3) ping 8.8.8.8 : success? The Internet is reachable; failure? Investigate the gateway/provider\n- 4) nslookup www.example.com : does the name resolve? Resolution failure = a DNS problem (layer 7) with perfectly fine connectivity\n- 5) curl -v https://www.example.com : HTTP reply? The error code and the TLS stage reveal the upper problem\n\nNotice the beauty: five commands classified the fault with surgical precision. Had it been a severed cable you would have stopped at step 2 and walked toward the cabinet.",
@@ -896,6 +1152,41 @@ export const m02_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "أجهزة الطبقة 3 وما فوق: العقل والحراسة", en: "Layer 3 and Beyond: The Mind and the Guard" },
+        table: {
+          caption: { ar: "الأجهزة عبر الطبقات وما تفحصه", en: "Devices across the layers and what they inspect" },
+          headers: [
+            { ar: "الجهاز", en: "Device" },
+            { ar: "طبيقته", en: "Layer" },
+            { ar: "ما يفحصه لاتخاذ القرار", en: "What it inspects to decide" },
+          ],
+          rows: [
+            [
+              { ar: "Hub", en: "Hub" },
+              { ar: "L1", en: "L1" },
+              { ar: "لا شيء — يكرر الإشارة للجميع", en: "Nothing — repeats the signal to all" },
+            ],
+            [
+              { ar: "Switch", en: "Switch" },
+              { ar: "L2", en: "L2" },
+              { ar: "عنوان MAC الوجهة", en: "Destination MAC" },
+            ],
+            [
+              { ar: "Router", en: "Router" },
+              { ar: "L3", en: "L3" },
+              { ar: "عنوان IP الوجهة وأطول بادئة", en: "Destination IP and longest prefix" },
+            ],
+            [
+              { ar: "موازن الأحمال", en: "Load balancer" },
+              { ar: "L4-L7", en: "L4-L7" },
+              { ar: "المنافذ والمسارات والمحتوى", en: "Ports, URLs, and content" },
+            ],
+            [
+              { ar: "الجدار الناري", en: "Firewall" },
+              { ar: "L3-L7", en: "L3-L7" },
+              { ar: "القواعد وحالة الاتصال", en: "Policy and connection state" },
+            ],
+          ],
+        },
         body: {
           ar: "الموجّه (Router) يجلس فوق الجميع في العالم المحلي: كل واجهة له تنهي نطاق بث وتبدأ آخر؛ قلبه جدول توجيه يقرر ببرودة أي مسار للخارج. المبدّل متعدد الطبقات (Layer 3 Switch) يجمع سرعة المبدّل وعقل الموجّه في صندوق واحد — سيد شبكات المؤسسات الحديثة.\n\nفوق ذلك تسكن أجهزة متقدمة تقرأ أعمق في الحزم:\n\n- جدار الحماية (Firewall): يقرر سماحاً أو منعاً وفق IP والمنافذ (3-4) وصولاً لفحص المحتوى في الجيل الحديث (طبقة 7)\n- موازن الأحمال (Load Balancer): يوزع الطلبات على خوادم متعددة (4-7) — لا غنى عنه لأي خدمة ضخمة\n- الوكيل (Proxy): وسيط تطبيقي يعلم باسمك ويجلس عند 7\n- IDS/IPS: عيون أمنية تتفحص الحزم بحثاً عن بصمات هجمات\n\nقاعدة العمر الوظيفي: كلما صعدت الطبقات انخفض عدد الأجهزة وارتفع ثمنها وذكاؤها — من مئات المبدلات إلى بضعة موازنات أحمال ذهبية في البنية.",
           en: "The Router sits above everyone in the local world: each of its interfaces terminates one broadcast domain and starts another; its heart is a routing table that coldly picks the outbound path. The Layer 3 Switch merges switch speed with router brains in one box — the master of modern enterprise networks.\n\nAbove that dwell advanced devices reading deeper into packets:\n\n- Firewall: allows or denies by IP and ports (3-4) up to content inspection in the modern generation (layer 7)\n- Load balancer: distributes requests across servers (4-7) — indispensable for any large service\n- Proxy: an application-level middleman that knows your name and sits at 7\n- IDS/IPS: security eyes scanning packets for attack fingerprints\n\nA career-scale rule: as you climb the layers, device count drops while price and intelligence rise — from hundreds of switches to a handful of golden load balancers in the architecture.",
@@ -979,6 +1270,17 @@ export const m02_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "المشهد الافتتاحي: أنت والمتصفح", en: "Opening Scene: You and the Browser" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "رحلة حزمة حقيقية من متصفحك إلى خادم عالمي", en: "A real packet's journey from your browser to a world server" },
+          items: [
+            { ar: "المتصفح يستعلم DNS عن عنوان الخادم", en: "The browser resolves the server's address via DNS" },
+            { ar: "ARP يحدد MAC البوابة الافتراضية", en: "ARP finds the default gateway's MAC" },
+            { ar: "التغليف الكامل وإطار أول قفزة نحو البوابة", en: "Full encapsulation and a first-hop frame toward the gateway" },
+            { ar: "الراوترات توجّه الحزمة قفزة بعد قفزة عبر BGP", en: "Routers forward the packet hop by hop via BGP" },
+            { ar: "الخادم يفك التغليف ويرد بالطريق نفسه", en: "The server decapsulates and replies along the same path" },
+          ],
+        },
         body: {
           ar: "تفتح متصفحك وتكتب عنوان موقع أخبار عالمي، ثم تضغط Enter. خلال أجزاء من الثانية تنطلق سلسلة أحداث كاملة:\n\nأولاً يوقف المتصفح عند حقيقة: لا يعرف عنوان IP للخادم. فيرسل سؤالاً لخادم DNS — إن لم يكن الجواب مخزناً في ذاكرة النظام المؤقتة أصلاً. سؤال UDP صغير نحو المنفذ 53، ويعود بالجواب: مثلاً 93.184.216.34.\n\nثانياً يفتح المتصفح قناة TCP نحو الخادم: المصافحة الثلاثية الشهيرة — SYN ثم SYN-ACK ثم ACK — تُسلّم المفاتيح بين الطرفين قبل أي كلمة واحدة من المحتوى. وإن كان الموقع حديثاً فبعد فتح القناة تجري مصافحة TLS تتفقان فيها على التشفير وتبادل الشهادات.\n\nثالثاً — والآن فقط — يُرسل طلب HTTP/GET محتوياً اسم الصفحة المطلوبة.",
           en: "You open the browser, type a global news site address, and press Enter. Within fractions of a second a full chain of events launches:\n\nFirst the browser stops at a fact: it does not know the server's IP. So it asks a DNS server — unless the answer already sits in the system cache. A tiny UDP question toward port 53 returns the answer: say 93.184.216.34.\n\nSecond, the browser opens a TCP channel to the server: the famous three-way handshake — SYN, then SYN-ACK, then ACK — keys handed over before a single word of content. And on a modern site, right after the channel opens, a TLS handshake agrees on encryption and exchanges certificates.\n\nThird — only now — an HTTP GET request goes out carrying the wanted page's name.",

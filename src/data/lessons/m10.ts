@@ -32,6 +32,47 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "القنوات في 2.4 و 5 و 6 GHz", en: "Channels in 2.4, 5 and 6 GHz" },
+        table: {
+          caption: { ar: "النطاقات اللاسلكية الثلاثة مقارنةً", en: "The three wireless bands compared" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "2.4 GHz", en: "2.4 GHz" },
+            { ar: "5 GHz", en: "5 GHz" },
+            { ar: "6 GHz", en: "6 GHz" },
+          ],
+          rows: [
+            [
+              { ar: "قنوات 20 MHz غير متداخلة", en: "Non-overlapping 20 MHz channels" },
+              { ar: "3 فقط (1 / 6 / 11)", en: "Only 3 (1 / 6 / 11)" },
+              { ar: "~24 عبر UNII-1/2/2e/3", en: "~24 across UNII-1/2/2e/3" },
+              { ar: "حتى 59", en: "Up to 59" },
+            ],
+            [
+              { ar: "المسافة والاختراق", en: "Range & penetration" },
+              { ar: "الأطول والأفضل عبر الجدران", en: "Longest, best through walls" },
+              { ar: "أقصر", en: "Shorter" },
+              { ar: "الأقصر — حساس للانحجاب", en: "Shortest — obstruction-sensitive" },
+            ],
+            [
+              { ar: "الازدحام والتداخل", en: "Congestion & interference" },
+              { ar: "رهيب — أجهزة منزلية وجيران", en: "Severe — household devices and neighbors" },
+              { ar: "متوسط مع DFS", en: "Moderate, with DFS" },
+              { ar: "شبه معدوم اليوم", en: "Near zero today" },
+            ],
+            [
+              { ar: "DFS (تجنب الرادار)", en: "DFS (radar avoidance)" },
+              { ar: "غير مطلوب", en: "Not required" },
+              { ar: "مطلوب في UNII-2/2e", en: "Required in UNII-2/2e" },
+              { ar: "لا DFS للطاقة المنخفضة", en: "No DFS for low-power" },
+            ],
+            [
+              { ar: "الاستخدام الأمثل", en: "Best use" },
+              { ar: "IoT والأجهزة القديمة", en: "IoT and legacy devices" },
+              { ar: "المكاتب والمنازل الحديثة", en: "Modern offices and homes" },
+              { ar: "البيئات عالية الكثافة", en: "High-density environments" },
+            ],
+          ],
+        },
         body: {
           ar: "القناة ليست شيئاً مادياً؛ هي نافذة من عرض 20 MHz تقسم النطاق. في 2.4 GHz يوجد 14 قناة متباعدة 5 MHz فقط، أي أن كل قناة 20 MHz تتداخل مع جيرانها! القنوات غير المتداخلة الوحيدة هي 1 و 6 و 11 — ثلاث قنوات فقط لكل المبنى.\n\nفي 5 GHz الوضع أفضل بكثير: نطاقات UNII-1/2/2e/3 تمنح نحو 24 قناة غير متداخلة بعرض 20 MHz، لكن بعضها يتطلب DFS (تجنب الرادار) لأن النطاق مشترك مع رادارات الطقس والعسكرية، فتفرغ نقطة الوصول القناة عند كشف رادار.\n\nفي 6 GHz يحصل WiFi 6E/7 على ما يصل إلى 59 قناة 20 MHz إضافية دون DFS في أنظمة القوى المنخفضة، وهو أكبر توسيع طيفي في تاريخ WiFi.\n\n- 2.4 GHz: قنوات 1/6/11 فقط لشبكة نظيفة\n- 5 GHz: تخطيط قنوات متناثر مع مراعاة DFS\n- 6 GHz: ازدحام شبه معدوم في معظم المباني اليوم",
           en: "A channel is not a physical thing; it is a 20 MHz window slicing the band. In 2.4 GHz there are 14 channels spaced only 5 MHz apart, meaning every 20 MHz channel overlaps its neighbors! The only non-overlapping set is 1, 6 and 11 — three channels for the entire building.\n\nIn 5 GHz the picture is far better: UNII-1/2/2e/3 grant roughly 24 non-overlapping 20 MHz channels, but some require DFS (radar avoidance) because the band is shared with weather and military radar, so the AP must vacate the channel when radar is detected.\n\nIn 6 GHz, WiFi 6E/7 gets up to 59 additional 20 MHz channels with no DFS for low-power systems — the largest spectrum expansion in WiFi history.\n\n- 2.4 GHz: channels 1/6/11 only for a clean network\n- 5 GHz: wider channel plan with DFS awareness\n- 6 GHz: near-zero congestion in most buildings today",
@@ -159,6 +200,41 @@ export const m10_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "لماذا ظهرت تسميات WiFi 4 و 5 و 6؟", en: "Why WiFi 4/5/6 Numbering Exists" },
+        table: {
+          caption: { ar: "الميزة المميزة لكل جيل من WiFi 4 إلى WiFi 7", en: "The defining feature of each generation from WiFi 4 to WiFi 7" },
+          headers: [
+            { ar: "الجيل", en: "Generation" },
+            { ar: "الميزة المميزة", en: "Defining feature" },
+            { ar: "الفائدة العملية", en: "Practical benefit" },
+          ],
+          rows: [
+            [
+              { ar: "WiFi 4 (802.11n)", en: "WiFi 4 (802.11n)" },
+              { ar: "MIMO وتشغيل مزدوج للنطاقين", en: "MIMO and dual-band operation" },
+              { ar: "سعة مضاعفة بلا طيف إضافي", en: "Doubled capacity without extra spectrum" },
+            ],
+            [
+              { ar: "WiFi 5 (802.11ac)", en: "WiFi 5 (802.11ac)" },
+              { ar: "MU-MIMO هابط وعروض 80/160 MHz", en: "Downlink MU-MIMO and 80/160 MHz" },
+              { ar: "سرعات جيجابت في 5 GHz", en: "Gigabit speeds in 5 GHz" },
+            ],
+            [
+              { ar: "WiFi 6 (802.11ax)", en: "WiFi 6 (802.11ax)" },
+              { ar: "OFDMA و TWT و BSS Color", en: "OFDMA, TWT and BSS Color" },
+              { ar: "كفاءة في الازدحام وعمر بطارية أطول", en: "Efficiency under congestion plus battery life" },
+            ],
+            [
+              { ar: "WiFi 6E", en: "WiFi 6E" },
+              { ar: "طيف 6 GHz نظيف (1200 MHz)", en: "Clean 6 GHz spectrum (1200 MHz)" },
+              { ar: "قنوات واسعة بلا أجهزة قديمة", en: "Wide channels with zero legacy" },
+            ],
+            [
+              { ar: "WiFi 7 (802.11be)", en: "WiFi 7 (802.11be)" },
+              { ar: "MLO و 320 MHz و 4096-QAM", en: "MLO, 320 MHz and 4096-QAM" },
+              { ar: "موثوقية وتوزيع حمل عبر الروابط", en: "Reliability and load balancing across links" },
+            ],
+          ],
+        },
         body: {
           ar: "منذ 1999 وحتى 2018 كانت المعايير تسمى بأسماء IEEE الغامضة: 802.11b ثم 802.11g ثم 802.11n ثم 802.11ac — أسماء لا تخبر المستخدم أيها أحدث ولا بأي ميزة.\n\nفي 2018 اعتمد تحالف WiFi (Wi-Fi Alliance) إعادة تسمية تسويقية بسيطة: كل جيل يأخذ رقماً متسلسلاً. وهكذا صار 802.11n هو WiFi 4، و 802.11ac هو WiFi 5، و 802.11ax هو WiFi 6، و 802.11be هو WiFi 7.\n\nهذه الأرقام ليست سرعات: WiFi 6 ليس بالضرورة أسرع من WiFi 5 في بيئة هادئة بمستخدم واحد؛ قوته الحقيقية في البيئات المزدحمة. فهمك لماذا يتفوق كل جيل يفصلك عن المهندس الذي يحفظ الأرقام فقط.",
           en: "From 1999 to 2018 the standards carried cryptic IEEE names: 802.11b, then g, then n, then ac — names that told users nothing about which is newer or better.\n\nIn 2018 the Wi-Fi Alliance adopted simple marketing numbering: each generation gets a sequential digit. 802.11n became WiFi 4, 802.11ac became WiFi 5, 802.11ax became WiFi 6, and 802.11be became WiFi 7.\n\nThese numbers are not speeds: WiFi 6 is not automatically faster than WiFi 5 in a quiet single-user environment; its real power shows in dense deployments. Understanding why each generation wins is what separates you from engineers who only memorize numbers.",
@@ -308,6 +384,12 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "قواعد توضع نقاط الوصول", en: "AP Placement Rules" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "نمط إعادة استخدام القنوات بين نقاط وصول متجاورة", en: "The channel reuse pattern between neighboring APs" },
+          nodes: ["AP1-CH36", "AP2-CH149", "AP3-CH36", "AP4-CH149", "مستخدمون متنقلون"],
+          edges: [[0, 1], [1, 2], [2, 3], [0, 3], [0, 4], [1, 4], [2, 4], [3, 4]],
+        },
         body: {
           ar: "ارتفاع التركيب المثالي 4-6 أمتار (سقف المكاتب القياسي)؛ أعلى من ذلك تتحول الهوائيات إلى تغطية طابقين فوق المطلوب وتضعف الخدمة في الطابق المستهدف. تجنب القرب من المعادن والأسقف المعدنية وغرف المصاعد ومولدات البث.\n\nالتداخل الخلوي المطلوب للتجوال السلس 10-15% من نطاق الخلية: أقل منه تنقطع الجلسة أثناء الانتقال، وأكثر منه يخلق منطقة رمادية يتنازع فيها جهازان على العميل (منطقة Ping-Pong). مقياس عملي: عند أسوأ نقطة تجوال يجب ألا تقل قوة الخلية التالية عن -67 dBm أيضاً.\n\nالشبكة القابلة لإعادة الاستخدام (Channel Reuse) في 5 GHz: 1-3-6-9 قنوات متباعدة (40 MHz) في نمط شطرنجي بين الخلايا المتجاورة. في 6 GHz المرونة أكبر بكثير؛ وفي 2.4 GHz لا مفر من نمط 1-6-11 مع طاقة منخفضة.\n\n- لا تضع نقطة وصول داخل كابينة معدنية أو خلف جدار خرساني مواجه\n- الهوائيات الأحادية الاتجاه للدهاليز الطويلة بدلاً من هوائيات مسطحة\n- عدّ الأسقف المستعارة والمواسير عند حساب الارتفاع الفعلي",
           en: "Optimal mounting height is 4-6 meters (standard office ceilings); above that, antennas start illuminating the wrong floor and coverage on the target floor weakens. Avoid proximity to metal, metallic ceilings, elevator shafts and broadcast equipment.\n\nTarget cell overlap for seamless roaming is 10-15% of the cell radius: less breaks sessions mid-transition, more creates a gray zone where two APs fight over the client (the ping-pong effect). Practical rule: at the worst roaming point, the next cell must also be at -67 dBm or better.\n\nChannel reuse in 5 GHz: 1-3-6-9 spacing (40 MHz) in a chessboard pattern between adjacent cells. In 6 GHz you have far more freedom; in 2.4 GHz there is no escape from a 1-6-11 pattern with low power.\n\n- Never mount an AP inside a metal cabinet or behind a facing concrete wall\n- Use directional antennas for long corridors instead of omnis\n- Count drop ceilings and ductwork when computing effective height",
@@ -420,6 +502,41 @@ export const m10_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "مشكلة الشبكة التقليدية الموزعة", en: "The Problem with Traditional Distributed Networks" },
+        table: {
+          caption: { ar: "الشبكة التقليدية مقابل الشبكة المعرّفة بالبرمجيات", en: "Traditional network vs software-defined network" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "التقليدية الموزعة", en: "Traditional distributed" },
+            { ar: "SDN المركزية", en: "Centralized SDN" },
+          ],
+          rows: [
+            [
+              { ar: "موضع التحكم", en: "Control location" },
+              { ar: "نسخة على كل جهاز", en: "A copy on every device" },
+              { ar: "متحكم مركزي واحد", en: "One central controller" },
+            ],
+            [
+              { ar: "تغيير سياسة", en: "Policy change" },
+              { ar: "تسجيل دخول جهازاً جهازاً", en: "Login box by box" },
+              { ar: "مرة واحدة توزّع آلياً", en: "Once, auto-distributed" },
+            ],
+            [
+              { ar: "رؤية الشبكة", en: "Network visibility" },
+              { ar: "لا نقطة ترى الكل", en: "No point sees the whole" },
+              { ar: "طوبولوجيا حية فورية", en: "Instant live topology" },
+            ],
+            [
+              { ar: "الأتمتة", en: "Automation" },
+              { ar: "CLI نصي لا يناسبها", en: "Text CLI, ill-suited" },
+              { ar: "واجهات REST/Northbound أصلاً", en: "REST/northbound APIs natively" },
+            ],
+            [
+              { ar: "حدود التجريب", en: "Experimentation limits" },
+              { ar: "بروتوكولات ثابتة", en: "Fixed protocols" },
+              { ar: "برمجة السلوك بلغة عالية", en: "Programming behavior in high-level form" },
+            ],
+          ],
+        },
         body: {
           ar: "في الشبكة الكلاسيكية يحمل كل موجّه ومبدّل نسخته الخاصة من مستوى التحكم: بروتوكولات التوجيه (OSPF، BGP) وشجرة STP وACLs موزعة على كل جهاز، وكل واحد يقرر محلياً ما يفعله بالحزم. هذا التصميم صنع الإنترنت — لكنه صار عبئاً في مركز البيانات.\n\nالنتائج المؤلمة: تغيير سياسة واحدة (مثل عزل VLAN) يعني تسجيل دخول إلى 200 جهاز واحداً واحداً؛ البروتوكولات الموزعة بطيئة التجمّع؛ حالة الشبكة الظاهرة قد تختلف عن الفعلية (التقارب غير المكتمل)؛ و CLI النصي لا يناسب الأتمتة الحديثة.\n\n- مشكلة اليد: تغيير جهاز-بجهاز يستغرق أياماً\n- مشكلة الاتساق: إنسان واحد يخطئ فيسياسة من مئة\n- مشكلة الرؤية: لا توجد نقطة ترى الشبكة كاملة",
           en: "In the classical network, every router and switch carries its own copy of the control plane: routing protocols (OSPF, BGP), STP trees and ACLs distributed box by box, each deciding locally what to do with packets. This design built the Internet — but became a burden in the datacenter.\n\nThe painful results: one policy change (like VLAN isolation) means logging into 200 devices one by one; distributed protocols converge slowly; the apparent network state may differ from reality (incomplete convergence); and text CLIs do not suit modern automation.\n\n- The hands problem: box-by-box changes take days\n- The consistency problem: one human error in a policy of a hundred\n- The visibility problem: no single point sees the whole network",
@@ -427,6 +544,17 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الحل: فصل المستويات الثلاثة", en: "The Fix: Separating the Three Planes" },
+        diagram: {
+          kind: "layers",
+          title: { ar: "معمارية SDN من التطبيقات حتى مستوى البيانات", en: "SDN architecture from applications to the data plane" },
+          items: [
+            { ar: "التطبيقات والمنسّقات: سياسات الجدار وتوجيه الحمل", en: "Applications & orchestrators: firewall policy, load steering" },
+            { ar: "الواجهة الشمالية Northbound: REST و gRPC", en: "The northbound API: REST and gRPC" },
+            { ar: "المتحكم: خريطة الطوبولوجيا ومحرك السياسة والحالة", en: "The controller: topology map, policy engine, state" },
+            { ar: "الواجهة الجنوبية Southbound: OpenFlow و NETCONF و gNMI", en: "The southbound API: OpenFlow, NETCONF, gNMI" },
+            { ar: "مستوى البيانات: مبدلات وموجهات تنفذ القواعد", en: "The data plane: switches and routers executing rules" },
+          ],
+        },
         body: {
           ar: "اقترحت SDN نقلاً جذرياً: ارفع مستوى التحكم من الأجهزة إلى متحكم مركزي (Controller) يرى الشبكة كلها، واترك للأجهزة مهمة واحدة: تنفيذ قواعد التوجيه (مستوى البيانات Data Plane). بينهما واجهة جنوبية (Southbound) يبرمج بها المتحكم الأجهزة، وفوق المتحكم واجهة شمالية (Northbound) تستهلكها التطبيقات والمنسّقات.\n\nالفائدة الأولى: الرؤية الكاملة — المتحكم يبني خريطة الطوبولوجيا الحية فوراً (Link Discovery عبر LLDP). الثانية: السياسة المركزية — تكتب مرة وتُوزَّع آلياً على الجميع. الثالثة: التجريب — يمكنك برمجة سلوك الشبكة نفسها بلغة عالية المستوى بدل التنازل مع بروتوكولات ثابتة.\n\nملاحظة نقدية مهمة: SDN التقليدية لم تلغِ بروتوكولات التوجيه في كل مكان؛ فحلول المصنّعين العملية (Cisco DNA، VMware NSX، Cisco SD-WAN) هجينة: تُبقي BGP و OSPF يعملان في الأجهزة وتضيف طبقة تحكم إضافية للسياسات والتجريد.",
           en: "SDN proposed a radical move: lift the control plane from devices into a central controller that sees the entire network, leaving devices a single job: executing forwarding rules (the data plane). Between them, a southbound interface programs the devices; above the controller, a northbound API is consumed by applications and orchestrators.\n\nThe first gain: full visibility — the controller builds a live topology map instantly (link discovery via LLDP). Second: central policy — write once, distribute to everyone automatically. Third: experimentation — you program network behavior itself in a high-level language instead of negotiating with fixed protocols.\n\nAn important critical note: classic SDN did not eliminate routing protocols everywhere; practical vendor solutions (Cisco DNA, VMware NSX, Cisco SD-WAN) are hybrid — they keep BGP and OSPF running in devices while adding a control layer for policy and abstraction.",
@@ -560,6 +688,12 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الشبكات الفرعية العامة والخاصة", en: "Public and Private Subnets" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "VPC بنمط الطبقات: شبكة عامة وخاصة عبر منطقتي توفر", en: "A tiered VPC: public and private subnets across two AZs" },
+          nodes: ["Internet", "IGW-بوابة الإنترنت", "Pub-Sub-AZ1", "Priv-Sub-AZ2", "NAT-GW", "LB-موازن الأحمال"],
+          edges: [[0, 1], [1, 2], [1, 5], [2, 5], [5, 3], [3, 4], [4, 1]],
+        },
         body: {
           ar: "الشبكة الفرعية (Subnet) هي تقسيم الـ VPC إلى مقاطع أصغر داخل منطقة توفر (Availability Zone) — وهنا الحكمة: وزّع طبقاتك على AZs متعددة لتصمد أمام سقوط مركز بيانات كامل.\n\nالفرق بين العامة والخاصة ليس في السحابة نفسها بل في جدول التوجيه: الشبكة العامة جدولها يشير إلى بوابة الإنترنت (IGW) فمواردها تأخذ عناوين عامة أو مرنة وتُتاح من الخارج؛ والخاصة لا مسار لها إلى IGW، فمواردها لا تُقصد من الإنترنت أبداً — بل تخرج عبر بوابة NAT (إن سمحت لها) لتحديثات البرامج.\n\nهذا هو نمط الطبقات القياسي: طبقة ويب في شبكات عامة (أو خلف موازن أحمال)، وطبقة تطبيقات وقواعد بيانات في شبكات خاصة، والوصول الإداري عبر Bastion أو SSM أو VPN — لا فتح RDP للعالم أبداً.\n\n- عامة = طريق إلى IGW؛ خاصة = لا طريق للإنترنت الوارد\n- NAT GW = خروج فقط للخاصة (لا دخول)\n- التوزيع عبر AZs ليس ترفاً بل خط الدفاع الأول",
           en: "A subnet slices the VPC into smaller segments inside an Availability Zone — and here lies the wisdom: spread your tiers across AZs so you survive an entire datacenter failure.\n\nThe public/private difference is not in the cloud itself but in the route table: a public subnet's table points to an Internet Gateway (IGW), so its resources take public or elastic addresses and are reachable from outside; a private subnet has no route to the IGW, so its resources are never targeted from the Internet — they can still egress through a NAT Gateway (if you allow it) for software updates.\n\nThis is the standard tiering pattern: web tier in public subnets (or behind a load balancer), application and database tiers in private ones, with administrative access via a bastion, SSM or VPN — never expose RDP to the world.\n\n- Public = route to IGW; private = no inbound internet route\n- NAT GW = egress-only for private subnets (no inbound)\n- Spreading across AZs is not a luxury but the first line of defense",
@@ -571,6 +705,41 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "مجموعات الأمان مقابل قوائم ACL", en: "Security Groups vs Network ACLs" },
+        table: {
+          caption: { ar: "مجموعة الأمان مقابل قائمة ACL في السحابة", en: "Security Group vs NACL in the cloud" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "Security Group", en: "Security Group" },
+            { ar: "Network ACL", en: "Network ACL" },
+          ],
+          rows: [
+            [
+              { ar: "الحالة", en: "State" },
+              { ar: "حالي — الردود تلقائية", en: "Stateful — replies automatic" },
+              { ar: "عديم الحالة — صريح في الاتجاهين", en: "Stateless — explicit both ways" },
+            ],
+            [
+              { ar: "موضع التطبيق", en: "Applied at" },
+              { ar: "المورد نفسه (ENI/الخدمة)", en: "The resource itself (ENI/service)" },
+              { ar: "حدود الشبكة الفرعية", en: "The subnet boundary" },
+            ],
+            [
+              { ar: "نوع القواعد", en: "Rule types" },
+              { ar: "سماح فقط", en: "Allow only" },
+              { ar: "سماح وحظر", en: "Allow and deny" },
+            ],
+            [
+              { ar: "ترتيب التقييم", en: "Evaluation order" },
+              { ar: "شامل — كل القواعد تُطبق", en: "Union — all rules apply" },
+              { ar: "ترتيبي بالأرقام حتى *", en: "Numeric order ending at *" },
+            ],
+            [
+              { ar: "الاستخدام الأمثل", en: "Best use" },
+              { ar: "السياسة الرفيعة لكل دور", en: "Fine policy per role" },
+              { ar: "حظر خشن لعنوان/شبكة كاملة", en: "Coarse block of an address/network" },
+            ],
+          ],
+        },
         body: {
           ar: "مجموعة الأمان (Security Group) جدار ناري حالي (Stateful) مرتبط بالمورد نفسه (بطاقة الشبكة للـ EC2 أو الخدمة): تُصرح بالقواعد الواردة فقط، والردود تُسمح تلقائياً بذكاء تتبع الاتصال. في AWS كل القواعد تقييمها تقييم شامل (كل القواعد تُطبق) وليس ترتيبياً.\n\nقائمة تحكم الشبكة (NACL) جدار عديم الحالة (Stateless) على حدود الشبكة الفرعية نفسها: يجب التصريح بالوارد والصادر معاً (الردود تحتاج قواعد صادرة صريحة)، وتُقيَّم بالترتيب الرقمي (قاعدة 100 قبل 200) وتنتهي بـ * الافتراضية. ميزتها الحقيقية: كتلة عنوان كامل عند هجوم بسرعة، دون لمس كل مورد.\n\nالوصفة الاحترافية: اجعل SG هو خط السياسة الرئيسي (رفيع ودقيق لكل دور)، و NACL طبقة حدودية خشنة (حظر شبكات معروفة بالسوء، أو عزل شبكة فرعية أثناء التحقيق الجنائي).\n\n- SG: حالة، على المورد، قواعد سماح فقط، تقييم شامل\n- NACL: بلا حالة، على الشبكة الفرعية، قواعد سماح وحظر، تقييم ترتيبي\n- Azure تقابل SG بـ NSG (وقواعده صادرة أيضاً) و GCP بقواعد جدار الحماية الهرمية",
           en: "A Security Group is a stateful firewall attached to the resource itself (an EC2 ENI or a service): you declare inbound rules only, and replies are automatically permitted via connection tracking. In AWS all rules are evaluated as a union (allow-all-that-matches), not sequentially.\n\nA Network ACL is a stateless firewall at the subnet boundary: you must declare both inbound and outbound (replies need explicit egress rules), rules are evaluated in numbered order (rule 100 before 200) ending in a default *. Its real strength: blocking an entire address range quickly without touching every resource.\n\nThe professional recipe: make the SG your primary policy layer (fine-grained per role), and the NACL a coarse boundary layer (block known-bad networks, or quarantine a subnet during an incident).\n\n- SG: stateful, on the resource, allow rules only, union evaluation\n- NACL: stateless, on the subnet, allow and deny rules, ordered evaluation\n- Azure's counterparts are NSGs (egress rules too) and GCP's hierarchical firewall rules",
@@ -693,6 +862,17 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "معمارية Ansible للشبكات", en: "The Ansible Architecture for Networks" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "دورة التغيير الآمنة من Git حتى الأجهزة", en: "The safe change cycle from Git to devices" },
+          items: [
+            { ar: "الحالة المرغوبة تُكتب في Playbook داخل مستودع Git", en: "Desired state written as a playbook inside the Git repo" },
+            { ar: "محاكاة جافة: --check --diff تعرض ما سيتغير فقط", en: "Dry run: --check --diff shows only what would change" },
+            { ar: "تطبيق على مجموعة تجريبية (Canary) من جهازين", en: "Apply to a canary group of two devices" },
+            { ar: "التعميم التدريجي مع serial للتحكم بالانتشار", en: "Gradual rollout with serial controlling the spread" },
+            { ar: "التحقق بالقياس ثم التوثيق في تاريخ Git", en: "Verify by measurement, then document in Git history" },
+          ],
+        },
         body: {
           ar: "Ansible عديم الوكلاء (Agentless): لا يحتاج تثبيت شيء على المفاتيح — يتصل عبر SSH أو NETCONF/REST-API كما يتصل مهندس بشري، ثم يصف التغييرات بوحدات (Modules) جاهزة. لهذا صار معيار أتمتة الشبكات عملياً.\n\nمكونات الصورة: Inventory يعرّف الأجهزة وتصنيفاتها (مفاتيح الوصول، النواة، كل فرع)؛ Playbook ملف YAML يصف الحالة المرغوبة بلغة شبه بشرية؛ Modules حزم صغيرة تنفذ مهمة واحدة ذكية (ios_vlans، ios_interfaces، ios_config)؛ و Collections حزم التوزيع الحديثة (cisco.ios للسيسكو و community.network للعامة).\n\nسحر الوحدات الذكية (Smart Modules): ليست إرسال أوامر نصية غبية بل تفهم حالة الجهاز — وحدة ios_vlans مع state: merged تضيف VLANs الناقصة فقط ولا تلمس الموجودة، ومع state: deleted تحذف ما تحدد بدقة، ومع overridden تعيد المفتاح بالكامل إلى الحالة المعلنة. هذه هي الإنتاجية الحقيقية (Idempotency) لا مجرد تسلسل أوامر.\n\n- Inventory: من وماذا\n- Playbook: ماذا نريد\n- Module: كيف ننفذ بذكاء دون تكرار أضرار",
           en: "Ansible is agentless: nothing needs installing on switches — it connects over SSH, NETCONF or REST APIs exactly like a human engineer, then describes changes through ready modules. That is why it became the practical standard for network automation.\n\nThe picture's components: the Inventory defines devices and their groups (access switches, core, per-branch); the Playbook is a YAML file describing desired state in near-human language; Modules are small units that execute one intelligent task (ios_vlans, ios_interfaces, ios_config); and Collections are the modern distribution packages (cisco.ios for Cisco, community.network for the rest).\n\nThe magic of smart modules: they are not dumb text-command senders — they understand device state. ios_vlans with state: merged adds only missing VLANs and never touches existing ones; with state: deleted it removes exactly what you specify; with overridden it returns the switch entirely to the declared state. That is real idempotency, not just a command sequence.\n\n- Inventory: who and what\n- Playbook: what we want\n- Module: how to execute intelligently without destructive repeats",
@@ -811,6 +991,47 @@ export const m10_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "من ثلاث طبقات إلى نسيج Spine-Leaf", en: "From Three Tiers to the Spine-Leaf Fabric" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "نسيج CLOS: كل ورقة متصلة بكل عمود", en: "The CLOS fabric: every leaf connects to every spine" },
+          nodes: ["Spine-1", "Spine-2", "Leaf-1-رف1", "Leaf-2-رف2", "Leaf-3-رف3"],
+          edges: [[0, 2], [0, 3], [0, 4], [1, 2], [1, 3], [1, 4]],
+        },
+        table: {
+          caption: { ar: "البنية الهرمية الثلاثية مقابل نسيج Spine-Leaf", en: "Three-tier hierarchy vs Spine-Leaf fabric" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "ثلاث طبقات", en: "Three tiers" },
+            { ar: "Spine-Leaf", en: "Spine-Leaf" },
+          ],
+          rows: [
+            [
+              { ar: "نمط الحركة الأمثل", en: "Optimal traffic" },
+              { ar: "شمال-جنوب (مستخدم ← خادم)", en: "North-south (user → server)" },
+              { ar: "شرق-غرب (خادم ← خوادم)", en: "East-west (server → servers)" },
+            ],
+            [
+              { ar: "عدد القفزات", en: "Hop count" },
+              { ar: "متغير حسب الموقع", en: "Variable by location" },
+              { ar: "ثابت: ورقة ← عمود ← ورقة", en: "Fixed: leaf → spine → leaf" },
+            ],
+            [
+              { ar: "الروابط", en: "Links" },
+              { ar: "STP يحظر الاحتياطية", en: "STP blocks redundancy" },
+              { ar: "كل الروابط نشطة عبر ECMP", en: "All links active via ECMP" },
+            ],
+            [
+              { ar: "التوسع", en: "Scaling" },
+              { ar: "غير خطي — ترقية الطبقة العليا", en: "Non-linear — upgrade the top tier" },
+              { ar: "خطي — أضف عموداً أو ورقة", en: "Linear — add a spine or a leaf" },
+            ],
+            [
+              { ar: "نطاق الفشل", en: "Failure domain" },
+              { ar: "كبير — طبقة كاملة", en: "Large — a whole tier" },
+              { ar: "صغير — رَف واحد لكل ورقة", en: "Small — one rack per leaf" },
+            ],
+          ],
+        },
         body: {
           ar: "البنية الكلاسيكية (Core ← Distribution ← Access) صُممت لحركة الشمال-جنوب: المستخدم خارج مركز البيانات يدخل ليجد خادماً ويخرج. لكن الحوسبة السحابية والموزعة قلبت المعادلة: أغلب الحركة اليوم شرق-غرب — خادم يتحدث مع مئات الخوادم داخل المركز نفسه (النسخ المتماثل، Hadoop، Kubernetes) عبر مسارات هرمية متفاوتة الطول والزمن.\n\nالجواب: معمارية CLOS (نسبة لمخترع شبكات الهاتف تشارلز كلوس) المعروفة اليوم بـ Spine-Leaf: طبقتان فقط — كل Leaf (ورقة) يتصل بكل Spine (عمود فقري)، ولا يوجد اتصال ضمن الطبقة الواحدة، فيمر أي خادمين عبر أي مسار بطول ثابت: Leaf ← Spine ← Leaf.\n\nالنتيجة الهندسية: زمن تأخير متوقع ومتساوٍ، لا STP ولا حظر منافذ (كل الروابط نشطة)، وقابلية توسع أفقية خطية — تضيف Spine فيتضاعف عرض النسيج، وتضيف Leaf فتزيد كثافة الاتصال. المساواة البنيوية هي جوهر فلسفة CLOS.\n\n- شمال-جنوب (قديم): مستخدم ← خادم\n- شرق-غرب (حديث): خادم ← خوادم داخل النسيج\n- Spine-Leaf: مسار ثابت الطول، كل الروابط تعمل، توسع خطي",
           en: "The classic design (Core ← Distribution ← Access) was built for north-south traffic: a user outside the datacenter enters, finds a server, and leaves. But cloud and distributed computing flipped the equation: most traffic today is east-west — a server talking to hundreds of peers inside the same center (replication, Hadoop, Kubernetes) across hierarchical paths of varying length and latency.\n\nThe answer: the CLOS architecture (after telephone-switching inventor Charles Clos), known today as Spine-Leaf: only two tiers — every Leaf connects to every Spine, no intra-tier links — so any two servers communicate over a path of fixed length: Leaf ← Spine ← Leaf.\n\nThe engineering result: predictable, uniform latency; no STP and no blocked ports (every link active); and linear horizontal scale — add a Spine and fabric bandwidth doubles, add a Leaf and connectivity density grows. Structural equality is the heart of the CLOS philosophy.\n\n- North-south (legacy): user ← server\n- East-west (modern): server ← servers inside the fabric\n- Spine-Leaf: fixed-length paths, all links active, linear scaling",
@@ -952,6 +1173,35 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "SNMP: لغة الأجهزة الكلاسيكية", en: "SNMP: The Classic Language of Devices" },
+        table: {
+          caption: { ar: "إصدارات SNMP الثلاثة", en: "The three SNMP versions" },
+          headers: [
+            { ar: "الإصدار", en: "Version" },
+            { ar: "الأمان", en: "Security" },
+            { ar: "التحسينات", en: "Improvements" },
+            { ar: "الحكم", en: "Verdict" },
+          ],
+          rows: [
+            [
+              { ar: "SNMPv1", en: "SNMPv1" },
+              { ar: "كلمة سر مشتركة نصية مكشوفة", en: "Cleartext community string" },
+              { ar: "الأساس الأولي 1988", en: "The 1988 baseline" },
+              { ar: "تراثي — للمعرفة فقط", en: "Legacy — for knowledge only" },
+            ],
+            [
+              { ar: "SNMPv2c", en: "SNMPv2c" },
+              { ar: "السر المشترك يبقى مكشوفاً", en: "Shared secret still exposed" },
+              { ar: "GetBulk للكفاءة", en: "GetBulk for efficiency" },
+              { ar: "مخابر فقط", en: "Labs only" },
+            ],
+            [
+              { ar: "SNMPv3", en: "SNMPv3" },
+              { ar: "مصادقة SHA وتشفير AES", en: "SHA authentication and AES encryption" },
+              { ar: "سياقات ومستويات أمان", en: "Contexts and security levels" },
+              { ar: "معيار الإنتاج الوحيد", en: "The sole production standard" },
+            ],
+          ],
+        },
         body: {
           ar: "SNMP (بروتوكول إدارة الشبكة البسيط) منذ 1988 ما زال العمود الفقري للرصد: كل جهاز شبكة يحمل وكيلاً (Agent) يستمع للمنفذ UDP 161 ويرد بالاستعلامات؛ والمنصة المركزية (Manager) تسأله عن قيم مرقمة تسمى OIDs في شجرة MIB العملاقة.\n\nOID عنوان رقمي في شجرة هرمية: 1.3.6.1.2.1.2.2.1.10 يعني مثلاً بايتات الدخول لكل واجهة. الـ MIB هو ملف قاموس يترجم الأرقام إلى أسماء مفهومة (IF-MIB و TCP-MIB...) — به تستطيع أي منصة أن تفهم أي جهاز بمعايير موحدة.\n\nالإصدارات سيرة تطور أمنية: v1 أولي به كلمات مرور (Community Strings) نصية واضحة؛ v2c حسّن الكفاءة (GetBulk) لكن أبقى السر مشتركاً مكشوفاً؛ v3 أضاف الأمان الغائب: مصادقة (SHA) وتشفير (AES) وسياقات — لا عذر مؤسسياً اليوم لغير v3.\n\nنمطا العمل: الاستطلاع (Polling) — المنصة تسأل دورياً كل دقيقة/خمس دقائق فترسم خطوط الاتجاه؛ والفخاخ (Traps) — الجهاز يرسل فوراً عند حدث (سقوط واجهة) دون انتظار السؤال، على 162/UDP، والحكيم يجمع الاثنين.\n\n- v1/v2c: كلمة سر مشتركة مكشوفة — للمخابر فقط\n- v3: مصادقة وتشفير — معيار الإنتاج\n- اجمع الاستطلاع للاتجاهات والفخاخ للأحداث",
           en: "SNMP (Simple Network Management Protocol) since 1988 remains monitoring's backbone: every network device runs an agent listening on UDP 161 and answering queries; the central platform (manager) asks it for numbered values called OIDs in the giant MIB tree.\n\nAn OID is a numeric address in a hierarchical tree: 1.3.6.1.2.1.2.2.1.10 means, for instance, inbound octets per interface. The MIB is the dictionary file translating numbers into human names (IF-MIB, TCP-MIB...) — through it any platform can understand any device via unified standards.\n\nThe versions tell a security evolution: v1 primitive with cleartext community strings; v2c improved efficiency (GetBulk) but kept the shared secret exposed; v3 added the missing security — authentication (SHA), encryption (AES) and contexts — no enterprise excuse today for anything else.\n\nThe two working modes: polling — the platform asks every minute or five, drawing trend lines; and traps — the device sends instantly on an event (interface down) without waiting, on UDP 162; the wise combine both.\n\n- v1/v2c: cleartext shared password — labs only\n- v3: authentication and encryption — the production standard\n- Combine polling for trends and traps for events",
@@ -1081,6 +1331,35 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "ثلاث مدارس للتشخيص", en: "Three Diagnostic Schools" },
+        table: {
+          caption: { ar: "مدارس التشخيص الثلاث ومتى تختار كل واحدة", en: "The three diagnostic schools and when to pick each" },
+          headers: [
+            { ar: "المدرسة", en: "School" },
+            { ar: "البداية", en: "Starts at" },
+            { ar: "القوة", en: "Strength" },
+            { ar: "الأنسب لـ", en: "Best for" },
+          ],
+          rows: [
+            [
+              { ar: "من الأسفل للأعلى", en: "Bottom-up" },
+              { ar: "الطبقة الفيزيائية ثم صعوداً", en: "Physical layer, climbing up" },
+              { ar: "دقة وموثوقية", en: "Precision and reliability" },
+              { ar: "نطاق صغير واشتباه فيزيائي", en: "Small scope, physical suspicion" },
+            ],
+            [
+              { ar: "من الأعلى للأسفل", en: "Top-down" },
+              { ar: "شكوى التطبيق ثم نزولاً", en: "App complaint, descending" },
+              { ar: "سرعة الوصول للسبب", en: "Speed to the cause" },
+              { ar: "شكاوى مرتبطة بالتطبيقات", en: "Application-related complaints" },
+            ],
+            [
+              { ar: "فرّق تسد", en: "Divide-and-conquer" },
+              { ar: "الطبقة الوسطى (L3 غالباً)", en: "The middle layer (usually L3)" },
+              { ar: "تقسيم شجرة الشك نصفين", en: "Halving the doubt tree" },
+              { ar: "المشاكل الكبيرة الغامضة", en: "Big vague problems" },
+            ],
+          ],
+        },
         body: {
           ar: "المدرسة الأولى: من الأسفل إلى الأعلى (Bottom-Up) — تبدأ بالطبقة الفيزيائية وتصعد: الوصلة مضاءة؟ التبديل يعمل؟ الـ ARP يتعلم؟ ثم IP ثم التطبيق. دقيقة وموثوقة لكنها بطيئة عبر شبكة كبيرة، وتبدأ من فرضية أن العطل منخفض المستوى.\n\nالمدرسة الثانية: من الأعلى إلى الأسفل (Top-Down) — تبدأ من شكوى المستخدم نفسها (التطبيق) وتنزل: هل يفتح التطبيق؟ الـ DNS؟ الـ TCP؟ تعطي نتائج سريعة عندما تكون الشكوى متعلقة بالتطبيقات، وقد تصل للسبب دون المرور بالكل — لكنها قد تتخطى عللاً فيزيائية خفية.\n\nالثالثة والحكيمة: فرّق تسد (Divide-and-Conquer) — تقفز إلى الطبقة الوسطى (غالباً الشبكة L3) وتختبر مرة واحدة: هل الـ ping للبوابة ينجح؟ فالأسفل سليم غالباً واصعد؛ يفشل؟ فاهبط للأسفل. مثالية للمشاكل واسعة الغموض لأنها تقسم شجرة الاحتمالات نصفين في كل خطوة — على المهندس اختيار الطبقة بحيث يقطع أكبر مساحة شك بفحص واحد.\n\n- Bottom-Up: دقة، مناسبة للنطاق الصغير والاشتباه الفيزيائي\n- Top-Down: سرعة، مناسبة لشكاوى التطبيقات\n- Divide-and-Conquer: كفاءة، خيار الافتراضي للمشاكل الكبيرة الغامضة",
           en: "School one: bottom-up — start at the physical layer and climb: link lit? switch forwarding? ARP learning? then IP then application. Precise and reliable but slow across a large network, and it assumes the fault lies low.\n\nSchool two: top-down — start from the user's complaint itself (the application) and descend: does the app open? DNS? TCP? Fast results when the complaint is application-related, potentially reaching the cause without traversing everything — but it can skip hidden physical faults.\n\nThe third, wise school: divide-and-conquer — jump to the middle layer (usually L3) and test once: does pinging the gateway succeed? Then the lower half is probably fine — climb; it fails? Descend. Ideal for broadly mysterious problems because each step halves the tree of possibilities — the engineer picks the layer where a single test cuts the largest area of doubt.\n\n- Bottom-up: precision, suited to small scope and physical suspicion\n- Top-down: speed, suited to application complaints\n- Divide-and-conquer: efficiency, the default for big vague problems",
@@ -1096,6 +1375,19 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "منهجية الخطوات السبع", en: "The Seven-Step Method" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "منهجية التشخيص السبع خطوات", en: "The seven-step troubleshooting methodology" },
+          items: [
+            { ar: "1) حدد المشكلة بدقة بجملة واحدة", en: "1) Define the problem in one precise sentence" },
+            { ar: "2) اجمع المعلومات من المستخدم والسجلات والرصد", en: "2) Gather information from user, logs and monitoring" },
+            { ar: "3) حلّل وابنِ الفرضيات — الأرجح أولاً", en: "3) Analyze and form hypotheses — most probable first" },
+            { ar: "4) ضع خطة اختبار بأقل تأثير على الإنتاج", en: "4) Build a minimal-impact test plan" },
+            { ar: "5) نفّذ خطوة واحدة وقيّم النتيجة", en: "5) Execute one step and evaluate the result" },
+            { ar: "6) تحقق من الحل الكامل وزوال العرض", en: "6) Verify the complete fix and symptom removal" },
+            { ar: "7) وثّق السبب الجذري والحل والوقاية", en: "7) Document root cause, fix and prevention" },
+          ],
+        },
         body: {
           ar: "كل الشركات الكبرى تعلّم نسخة من المنهجية المعيارية، والنواة واحدة في سبع خطوات: (1) حدد المشكلة بدقة، (2) اجمع المعلومات — من المستخدم والسجلات والرصد والأعمدة الزمنية، (3) حلّل المعلومات المحتملة واشكّل الفرضيات — أكثر الأسباب احتمالاً أولاً (البساطة قبل التعقيد: كابل قبل جدار ناري!)، (4) ضع خطة اختبار لكل فرضية بأقل تأثير على الإنتاج، (5) نفّذ الخطة خطوة واحدة وقيّم النتيجة بعد كل خطوة، (6) تحقق من الحل الكامل: هل زال العرض أم أخفى مؤقتاً؟ هل تضررت وظائف أخرى؟ ثم (7) وثّق: السبب الجذري، الحل، والوقاية.\n\nالخطوة السابعة الأكثر إهمالاً والأكثر قيمة: توثيق الحادثة يحولها من معاناة فردية إلى معرفة مؤسسية — قاعدة معرفية تنقذ ساعات من زميل يواجه العطل نفسه بعد سنة. وكل ملف حادثة جيد ينتهي بسؤال: ما الذي يمنع تكرار هذا؟ (قاعدة جديدة، إنذار جديد، تغيير تصميم)\n\nانضباط آخر صارم: تغيير واحد في كل مرة. تغييران متزامنان ينتجان ضجيجاً لا علم: نجح العلاج؟ أي منهما شفى؟ فشل؟ أي منهما أعاق؟ متغير واحد في كل تجربة — هذا هو الفارق بين التشخيص والفوضى.",
           en: "Every major company teaches a version of the standard methodology, and the core is the same seven steps: (1) define the problem precisely, (2) gather information — from the user, logs, monitoring, timelines, (3) analyze and form hypotheses — most probable causes first (simplicity before complexity: a cable before a firewall!), (4) build a test plan per hypothesis with minimal production impact, (5) execute one step at a time and evaluate after each, (6) verify the complete fix: did the symptom vanish or is it merely hidden? was anything else harmed? then (7) document: root cause, fix, and prevention.\n\nThe most neglected and most valuable step is the seventh: documenting the incident converts individual suffering into institutional knowledge — a knowledge base saving hours for a colleague facing the same fault a year later. And every good incident file ends with the question: what prevents recurrence? (a new rule, a new alert, a design change)\n\nOne more strict discipline: one change at a time. Two simultaneous changes produce noise, not knowledge: the fix worked — which of the two cured it? It failed — which hindered? A single variable per experiment — that is the difference between diagnosis and chaos.",
@@ -1219,6 +1511,47 @@ export const m10_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "مسار الشهادات: Network+ ثم CCNA ثم تخصص CCNP", en: "The Certification Path: Network+ → CCNA → CCNP Specializations" },
+        table: {
+          caption: { ar: "شهادات الشبكات على السلّم من الدخول إلى القمة", en: "Networking certifications on the ladder from entry to apex" },
+          headers: [
+            { ar: "الشهادة", en: "Certification" },
+            { ar: "مستواها", en: "Level" },
+            { ar: "طبيعتها", en: "Nature" },
+            { ar: "ما تفتحه", en: "What it opens" },
+          ],
+          rows: [
+            [
+              { ar: "Network+ (N10-009)", en: "Network+ (N10-009)" },
+              { ar: "دخول", en: "Entry" },
+              { ar: "محايدة المصنّع — مفاهيم", en: "Vendor-neutral — concepts" },
+              { ar: "وظائف الدعم و NOC", en: "Support and NOC jobs" },
+            ],
+            [
+              { ar: "CCNA (200-301)", en: "CCNA (200-301)" },
+              { ar: "أساس المهنة", en: "Career foundation" },
+              { ar: "عملي: IOS و VLANs و OSPF", en: "Hands-on: IOS, VLANs, OSPF" },
+              { ar: "توظيف حقيقي كمهندس", en: "Genuine engineer employability" },
+            ],
+            [
+              { ar: "CCNP Enterprise", en: "CCNP Enterprise" },
+              { ar: "تخصص (ENCOR + تركيز)", en: "Specialization (ENCOR + concentration)" },
+              { ar: "EVPN و SD-WAN وأتمتة", en: "EVPN, SD-WAN, automation" },
+              { ar: "الأول — السوق الأوسع طلباً", en: "Senior — widest market demand" },
+            ],
+            [
+              { ar: "CCNP DC / Security", en: "CCNP DC / Security" },
+              { ar: "تخصص موازٍ", en: "Parallel specialization" },
+              { ar: "أقمشة VXLAN أو أمن شبكي", en: "VXLAN fabrics or network security" },
+              { ar: "موجة السحابة والأمن", en: "The cloud and security wave" },
+            ],
+            [
+              { ar: "CCIE", en: "CCIE" },
+              { ar: "القمة", en: "Apex" },
+              { ar: "كتابي + معمل 8 ساعات", en: "Written + 8-hour lab" },
+              { ar: "الاستشارات والمشاريع الكبرى", en: "Consulting and major projects" },
+            ],
+          ],
+        },
         body: {
           ar: "المحطة الأولى المقترحة للداخل الجديد: CompTIA Network+ (N10-009 حالياً) — شاملة المفاهيم، محايدة المصنّع، وبلا متطلبات سابقة؛ تفتح أبواب وظائف الدعم والـ NOC وتبني أساس المفاهيم. لكنها تختبر الفهم لا اليد: لن تُطلب منك تهيئة مفتاح فعلي.\n\nالمحطة الذهبية: Cisco CCNA (200-301) — الشهادة الأوسع اعترافاً في الشبكات، تختبر يداً حقيقية: تهيئة IOS، VLANs والتوجيه وOSPF وأمن أولي وأتمتة أولية وشبكات لاسلكية. اجتيازها يعني قابلية توظيف حقيقية كمهندس. صلاحيتها ثلاث سنوات وتتجدد بالنشاط المستمر (CE) أو امتحان أعلى.\n\nبعد CCNA تتخصص في CCNP بمسارك: Enterprise (ENCOR 350-401 كامتحان نواة + امتحان تركيز مثل ENARSI أو SD-WAN أو التصميم)، أو Security، أو Data Center، أو Service Provider، أو Collaboration. مسار Enterprise هو الأكثر طلباً سوقياً؛ وData Center يخدم موجة الأقمشة والسحابة. النواة ENCOR نفسها تغطي EVPN و SD-WAN و QoS والأتمتة — قفزة نوعية عن CCNA.\n\nوقمة الهرم CCIE (امتحان كتابي + معمل ثماني ساعات) — مشاريع كبرى ومستشاريات فقط، ولا يحتاجها معظم المسار المهني. استراتيجية ناضجة: CCNA ثم خبرة سنتين ثم CCNP في تخصص يخدم سوقك الفعلي — لا جمع شهادات كطوابع.\n\n- Network+: باب البداية المفاهيمي\n- CCNA: عتبة المهنة العملية\n- CCNP تخصص: Enterprise الأشهر، وDC للسحابة والأقمشة\n- CCIE: للنخبة الاستشارية فقط",
           en: "The suggested first stop for newcomers: CompTIA Network+ (currently N10-009) — conceptually comprehensive, vendor-neutral, no prerequisites; it opens support and NOC doors and builds the conceptual foundation. But it tests understanding, not hands: you will not configure an actual switch.\n\nThe golden stop: Cisco CCNA (200-301) — the most widely recognized networking certification, testing real hands: IOS configuration, VLANs, routing, OSPF, basic security, basic automation and wireless. Passing it means genuine employability as an engineer. It is valid three years, renewable through continuing education or a higher exam.\n\nAfter CCNA you specialize in CCNP on your track: Enterprise (the ENCOR 350-401 core exam plus a concentration like ENARSI, SD-WAN or design), Security, Data Center, Service Provider, or Collaboration. The Enterprise track has the widest market demand; Data Center serves the fabric and cloud wave. The ENCOR core itself covers EVPN, SD-WAN, QoS and automation — a qualitative leap over CCNA.\n\nAnd the pyramid's apex, CCIE (a written exam plus an eight-hour lab) — for major projects and consulting only; most careers do not need it. A mature strategy: CCNA, then two years of experience, then a CCNP in a specialization serving your actual market — not collecting stamps.\n\n- Network+: the conceptual entry door\n- CCNA: the practical profession threshold\n- CCNP specialization: Enterprise most popular, DC for cloud and fabrics\n- CCIE: for the consulting elite only",

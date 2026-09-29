@@ -23,6 +23,7 @@ export interface Store extends ProgressState {
   toggleToolBookmark: (id: string) => void;
   toggleProjectBookmark: (id: string) => void;
   markPlaygroundUsed: (id: string) => void;
+  recordChallenge: (id: string, xp: number) => boolean;
   resetAll: () => void;
   checkAchievements: () => string[];
 }
@@ -41,6 +42,7 @@ const initial: ProgressState = {
   projectBookmarks: [],
   achievements: [],
   playgroundUsed: [],
+  challengesDone: [],
 };
 
 function metrics(p: ProgressState) {
@@ -163,6 +165,12 @@ export const useProgress = create<Store>()(
         const state = get();
         if (state.playgroundUsed.includes(id)) return;
         set({ playgroundUsed: [...state.playgroundUsed, id], xp: state.xp + 5 });
+      },
+
+      recordChallenge: (id, xp) => {
+        if (get().challengesDone.includes(id)) return false;
+        set({ challengesDone: [...get().challengesDone, id], xp: get().xp + xp });
+        return true;
       },
 
       resetAll: () => set({ ...initial }),

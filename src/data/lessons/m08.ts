@@ -27,6 +27,12 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الهيكل الهرمي للأسماء", en: "The Hierarchical Namespace" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "شجرة تفويض DNS: من الجذر حتى النطاقات الفرعية", en: "The DNS delegation tree: from the root to subdomains" },
+          nodes: ["Root-.", "TLD-.com", "Auth-example.com", "www", "mail", "api"],
+          edges: [[0, 1], [1, 2], [2, 3], [2, 4], [2, 5]],
+        },
         body: {
           ar: "قوة DNS ليست في خادم واحد بل في تقسيم العمل عمودياً. قراءة الاسم تتم من اليمين إلى اليسار (في التمثيل الإنجليزي):\n\n- النقطة الجذر (.) : قمة الشجرة، تمثلها 13 مجموعة خوادم جذر بأحرف من A إلى M، تُدار عبر تقنية anycast بمئات النسخ الفيزيائية حول العالم\n- نطاق المستوى الأعلى TLD: مثل .com و .org و .sa و .eg، وتُقسم إلى عامة (gTLD) ووطنية (ccTLD)\n- النطاق الثاني: example.com وهو ما تشتريه أنت من مسجّل (Registrar)\n- النطاقات الفرعية: www أو mail أو api — تنشئها أنت بحرية\n\nالاسم الكامل (FQDN) ينتهي بنقطة غالباً ما ننساها: www.example.com. — النقطة هي الجذر.\n\nتحت نطاقك، تُفوَّض (Delegation) المسؤولية لخوادمك المُصدِّقة (Authoritative Servers) التي تملك الإجابة النهائية عن نطاقك ولا أحد غيرها.",
           en: "The power of DNS is not in one server but in dividing the work vertically. The name is read right to left (in its English form):\n\n- The root dot (.): the top of the tree, represented by 13 root server identities labeled A through M, served via anycast from hundreds of physical copies worldwide\n- The Top-Level Domain (TLD): .com, .org, .sa, .eg — split into generic (gTLD) and country-code (ccTLD)\n- The second level: example.com — what you buy from a registrar\n- Subdomains: www, mail, or api — you create them freely\n\nA Fully Qualified Domain Name (FQDN) ends with a dot we usually forget: www.example.com. — that dot is the root.\n\nBeneath your domain, authority is delegated to your authoritative servers, which hold the final answer for your zone and nobody else does.",
@@ -34,6 +40,17 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "رحلة الاستعلام: التكراري مقابل المتتالي", en: "The Query Journey: Recursive vs Iterative" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "رحلة استعلام تكراري كاملة من الجذر إلى الإجابة", en: "A full recursive query journey from the root to the answer" },
+          items: [
+            { ar: "العميل يسأل المُحلِّل: أين www.example.com؟", en: "The client asks the resolver: where is www.example.com?" },
+            { ar: "المُحلِّل يسأل الجذر فيُحال إلى خوادم .com", en: "The resolver asks the root and is referred to the .com servers" },
+            { ar: "خوادم .com تحيله إلى الخوادم المُصدِّقة لنطاق example.com", en: "The .com servers refer it to example.com's authoritative servers" },
+            { ar: "الخادم المُصدِّق يجيب: سجل A هو 93.184.216.34", en: "The authoritative server answers: the A record is 93.184.216.34" },
+            { ar: "المُحلِّل يعيد الإجابة للعميل ويخزّنها مؤقتاً وفق TTL", en: "The resolver returns the answer and caches it per the TTL" },
+          ],
+        },
         body: {
           ar: "عند كتابة اسم موقع في المتصفح تبدأ سلسلة من الأسئلة. المُحلِّل (Resolver) — في جهازك أو لدى مزود الخدمة — يقوم بالعمل التكراري (Recursive) نيابة عنك، أي أنه لا يعود إليك إلا بجواب نهائي.\n\nأما الخوادم التي يسألها فتجيب إجابات متتالية (Iterative) أي: لا أعرف الجواب لكن اسأل هذا الخادم. المسار الكامل:\n\n- 1) المُحلِّل يسأل خوادم الجذر: أين example.com؟\n- 2) الجذر يجيب: لا أعرف، لكن خوادم .com هي هذه — فيرسل قائمة NS الخاصة بـ .com\n- 3) المُحلِّل يسأل خوادم .com، فتجيب: اسأل الخوادم المُصدِّقة لنطاق example.com\n- 4) المُحلِّل يسأل الخادم المُصدِّق، فيجيبه أخيراً: عنوان A هو 93.184.216.34\n- 5) يعود المُحلِّل إليك بالجواب ويخزّنه مؤقتاً\n\nكل هذا يحدث عادة في أقل من 100 ملّي ثانية، ويعمل بالتوازي مع استعلامات AAAA لأجل IPv6.",
           en: "When you type a site name in the browser, a chain of questions begins. The resolver — on your device or at your ISP — performs the recursive work on your behalf, meaning it does not come back to you without a final answer.\n\nThe servers it asks give iterative answers, meaning: I do not know, but ask this server. The full path:\n\n- 1) The resolver asks the root servers: where is example.com?\n- 2) The root answers: I do not know, but the .com servers are these — it sends the NS list for .com\n- 3) The resolver asks the .com servers, which answer: ask the authoritative servers of example.com\n- 4) The resolver asks the authoritative server, which finally answers: the A record is 93.184.216.34\n- 5) The resolver returns the answer to you and caches it\n\nAll of this typically happens in under 100 milliseconds, and it runs in parallel with AAAA queries for IPv6.",
@@ -49,6 +66,36 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "التخزين المؤقت وقيمة TTL", en: "Caching and the TTL Value" },
+        table: {
+          caption: { ar: "مستويات خزائن DNS الأربعة", en: "The four DNS cache levels" },
+          headers: [
+            { ar: "المستوى", en: "Level" },
+            { ar: "من يستفيد منه", en: "Who benefits" },
+            { ar: "مدة الاحتفاظ", en: "Retention" },
+          ],
+          rows: [
+            [
+              { ar: "خزانة المتصفح", en: "Browser cache" },
+              { ar: "المستخدم الواحد في جلسته", en: "The single user in their session" },
+              { ar: "ثوانٍ إلى دقائق قصيرة", en: "Seconds to a few minutes" },
+            ],
+            [
+              { ar: "خزانة نظام التشغيل", en: "OS cache" },
+              { ar: "كل تطبيقات الجهاز نفسه", en: "All applications on that device" },
+              { ar: "حسب سياسة النظام (غالباً قصيرة)", en: "Per OS policy (usually short)" },
+            ],
+            [
+              { ar: "مُحلِّل مزود الخدمة", en: "ISP resolver" },
+              { ar: "آلاف المستخدمين في المنطقة", en: "Thousands of users in the region" },
+              { ar: "يحترم TTL (وقد يتجاوزه بعضها!)", en: "Honors TTL (some exceed it!)" },
+            ],
+            [
+              { ar: "الخادم المُصدِّق", en: "Authoritative server" },
+              { ar: "المصدر — إجابته نهائية", en: "The source — its answer is final" },
+              { ar: "لا يخزّن: هو الحقيقة نفسها", en: "No caching: it is the truth itself" },
+            ],
+          ],
+        },
         body: {
           ar: "لو سار كل استعلام حتى خوادم الجذر لانهار الإنترنت تحت الحمل. الحل هو التخزين المؤقت (Caching) في كل مستوى:\n\n- المتصفح يخزن الأسماء لمدة قصيرة\n- نظام التشغيل يحتفظ بخزانته الخاصة\n- مُحلِّل مزود الخدمة يخزن ملايين الإجابات ويخدم آلاف المستخدمين منها\n\nمدة الصلاحية لا يقررها المُحلِّل بل مالك السجل عبر قيمة TTL بالثواني. سجل TTL = 3600 يعني: يجوز استخدام النسخة المخزنة لمدة ساعة.\n\n- TTL طويل = استجابات أسرع وتحميل أقل، لكن التغييرات تنتشر ببطء\n- TTL قصير = انتشار سريع للتعديلات لكن حملاً أكبر\n\nقبل نقل نطاقك إلى خادم جديد، خفّض TTL إلى 60-300 ثانية قبل يوم من التغيير — هذه عادة المهندسين المحترفين.",
           en: "If every query went up to the root servers, the Internet would collapse under the load. The solution is caching at every level:\n\n- The browser caches names for a short time\n- The operating system keeps its own cache\n- The ISP resolver caches millions of answers and serves thousands of users from them\n\nThe validity window is not decided by the resolver but by the record owner through the TTL value in seconds. A TTL of 3600 means: the cached copy may be used for one hour.\n\n- Long TTL = faster responses and less load, but changes propagate slowly\n- Short TTL = fast propagation of changes but more load\n\nBefore migrating your domain to a new server, lower the TTL to 60-300 seconds a day ahead — this is a professional engineer habit.",
@@ -154,6 +201,66 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "سجلات النصوص والخدمات: TXT و SRV و PTR و CAA", en: "Text and Service Records: TXT, SRV, PTR and CAA" },
+        table: {
+          caption: { ar: "أنواع سجلات DNS الشائعة العشرة في جدول واحد", en: "The ten common DNS record types in one table" },
+          headers: [
+            { ar: "السجل", en: "Record" },
+            { ar: "وظيفته", en: "Purpose" },
+            { ar: "مثال", en: "Example" },
+          ],
+          rows: [
+            [
+              { ar: "A", en: "A" },
+              { ar: "يربط اسماً بعنوان IPv4", en: "Maps a name to an IPv4 address" },
+              { ar: "example.com. IN A 93.184.216.34", en: "example.com. IN A 93.184.216.34" },
+            ],
+            [
+              { ar: "AAAA", en: "AAAA" },
+              { ar: "يربط اسماً بعنوان IPv6", en: "Maps a name to an IPv6 address" },
+              { ar: "example.com. IN AAAA 2606:2800:220:1::248", en: "example.com. IN AAAA 2606:2800:220:1::248" },
+            ],
+            [
+              { ar: "CNAME", en: "CNAME" },
+              { ar: "اسم بديل يشير إلى الاسم القانوني", en: "An alias pointing to the canonical name" },
+              { ar: "cdn.example.com → example.cdn.net", en: "cdn.example.com → example.cdn.net" },
+            ],
+            [
+              { ar: "MX", en: "MX" },
+              { ar: "خوادم بريد النطاق مع الأولوية", en: "The domain's mail servers with preference" },
+              { ar: "10 mail1.example.com", en: "10 mail1.example.com" },
+            ],
+            [
+              { ar: "NS", en: "NS" },
+              { ar: "الخوادم المُصدِّقة للنطاق", en: "The zone's authoritative servers" },
+              { ar: "example.com. IN NS a.iana-servers.net.", en: "example.com. IN NS a.iana-servers.net." },
+            ],
+            [
+              { ar: "SOA", en: "SOA" },
+              { ar: "بطاقة تعريف المنطقة ومعالم المزامنة", en: "Zone identity card and sync parameters" },
+              { ar: "serial + refresh + retry + expire", en: "serial + refresh + retry + expire" },
+            ],
+            [
+              { ar: "TXT", en: "TXT" },
+              { ar: "نص حر: SPF و DKIM و DMARC والتحقق", en: "Free text: SPF, DKIM, DMARC, verification" },
+              { ar: "v=spf1 include:_spf.google.com ~all", en: "v=spf1 include:_spf.google.com ~all" },
+            ],
+            [
+              { ar: "SRV", en: "SRV" },
+              { ar: "موقع خدمة ومنفذها ووزنها", en: "Locates a service, its port and weight" },
+              { ar: "_ldap._tcp 0 100 389 dc01.example.com", en: "_ldap._tcp 0 100 389 dc01.example.com" },
+            ],
+            [
+              { ar: "PTR", en: "PTR" },
+              { ar: "تحويل عكسي من IP إلى اسم", en: "Reverse mapping from IP to name" },
+              { ar: "34.216.184.93.in-addr.arpa. PTR www", en: "34.216.184.93.in-addr.arpa. PTR www" },
+            ],
+            [
+              { ar: "CAA", en: "CAA" },
+              { ar: "جهات إصدار الشهادات المسموح لها", en: "Permitted certificate authorities" },
+              { ar: "0 issue \"letsencrypt.org\"", en: "0 issue \"letsencrypt.org\"" },
+            ],
+          ],
+        },
         body: {
           ar: "سجل TXT يحمل نصاً حراً وقد أصبح اليوم أهم سجل متعدد الاستخدامات:\n\n- SPF: يحدد من يحق له إرسال بريد باسم نطاقك\n- DKIM: يستضيف المفتاح العام للتحقق من توقيع الرسائل\n- DMARC: سياسة التعامل مع البريد المزوَّر\n- التحقق من ملكية النطاق لدى Google و Microsoft وخدمات أخرى\n\nسجل SRV يحدد موقع خدمة معينة ومنفذها، ويستخدمه Microsoft في Active Directory للعثور على وحدات التحكم بالمجال: _ldap._tcp.example.com SRV 0 100 389 dc01.example.com.\n\nسجل PTR يعمل بعكس الجميع: يحول عنوان IP إلى اسم عبر مناطق خاصة in-addr.arpa (لـ IPv4) و ip6.arpa (لـ IPv6). يستخدمه البريد والتشخيص الأمني — خادم بريد بلا PTR غالباً سيرفض بريدك الخارج.\n\nسجل CAA (حديث نسبياً) يحدد أي جهات إصدار الشهادات (CAs) يحق لها إصدار شهادات TLS لنطاقك — طبقة أمان إضافية تمنع الإصدار غير المصرح به.",
           en: "The TXT record carries free text and has become today's most versatile record:\n\n- SPF: defines who may send mail on your domain's behalf\n- DKIM: hosts the public key verifying message signatures\n- DMARC: the policy for handling forged mail\n- Domain ownership verification for Google, Microsoft and other services\n\nThe SRV record locates a specific service and its port; Microsoft Active Directory uses it to find domain controllers: _ldap._tcp.example.com SRV 0 100 389 dc01.example.com.\n\nThe PTR record works in reverse: it maps an IP address to a name via the special zones in-addr.arpa (IPv4) and ip6.arpa (IPv6). Mail servers and security diagnostics rely on it — a sending mail server without PTR often gets its mail rejected.\n\nThe CAA record (relatively recent) restricts which certificate authorities may issue TLS certificates for your domain — an extra layer against unauthorized issuance.",
@@ -263,6 +370,59 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "أفعال HTTP والسلامة والتكرارية", en: "HTTP Verbs: Safety and Idempotency" },
+        table: {
+          caption: { ar: "أفعال HTTP السبعة: الغرض والسلامة والتكرارية", en: "The seven HTTP verbs: purpose, safety, idempotency" },
+          headers: [
+            { ar: "الفعل", en: "Verb" },
+            { ar: "الغرض", en: "Purpose" },
+            { ar: "آمن؟", en: "Safe?" },
+            { ar: "تكراري؟", en: "Idempotent?" },
+          ],
+          rows: [
+            [
+              { ar: "GET", en: "GET" },
+              { ar: "قراءة مورد", en: "Read a resource" },
+              { ar: "نعم", en: "Yes" },
+              { ar: "نعم", en: "Yes" },
+            ],
+            [
+              { ar: "POST", en: "POST" },
+              { ar: "إنشاء أو إرسال للمعالجة", en: "Create or submit for processing" },
+              { ar: "لا", en: "No" },
+              { ar: "لا", en: "No" },
+            ],
+            [
+              { ar: "PUT", en: "PUT" },
+              { ar: "استبدال كامل للمورد", en: "Full replacement of a resource" },
+              { ar: "لا", en: "No" },
+              { ar: "نعم", en: "Yes" },
+            ],
+            [
+              { ar: "PATCH", en: "PATCH" },
+              { ar: "تعديل جزئي", en: "Partial modification" },
+              { ar: "لا", en: "No" },
+              { ar: "ليس بالضرورة", en: "Not necessarily" },
+            ],
+            [
+              { ar: "DELETE", en: "DELETE" },
+              { ar: "حذف مورد", en: "Remove a resource" },
+              { ar: "لا", en: "No" },
+              { ar: "نعم عملياً", en: "Practically yes" },
+            ],
+            [
+              { ar: "HEAD", en: "HEAD" },
+              { ar: "ترويسات GET بلا جسم", en: "GET headers with no body" },
+              { ar: "نعم", en: "Yes" },
+              { ar: "نعم", en: "Yes" },
+            ],
+            [
+              { ar: "OPTIONS", en: "OPTIONS" },
+              { ar: "اكتشاف الأفعال المدعومة", en: "Discover supported verbs" },
+              { ar: "نعم", en: "Yes" },
+              { ar: "نعم", en: "Yes" },
+            ],
+          ],
+        },
         body: {
           ar: "الأفعال (Methods) تحدد ماذا تريد أن تفعل بالمورد (Resource):\n\n- GET: قراءة — آمن (لا يغير شيئاً) وقابل للتخزين المؤقت\n- POST: إنشاء أو إرسال بيانات للمعالجة — غير آمن وغير تكراري\n- PUT: استبدال كامل للمورد — تكراري (Idempotent): تنفيذه مرة أو عشر مرات يعطي النتيجة نفسها\n- PATCH: تعديل جزئي\n- DELETE: حذف — تكراري عملياً\n- HEAD: مثل GET لكن بلا جسم — لفحص الحجم والوجود فقط\n- OPTIONS: استكشاف الأفعال المدعومة (مهم في CORS)\n\nالتكرارية (Idempotency) ليست ترفاً نظرياً: عند فشل الشبكة وإعادة إرسال الطلب، التكرارية تحميك من عمليات مكررة مثل إنشاء طلب شراء مرتين.",
           en: "Methods define what you want to do with a resource:\n\n- GET: read — safe (changes nothing) and cacheable\n- POST: create or submit data for processing — unsafe and not idempotent\n- PUT: full replacement of the resource — idempotent: executing it once or ten times yields the same result\n- PATCH: partial modification\n- DELETE: remove — practically idempotent\n- HEAD: like GET but without a body — just to check existence and size\n- OPTIONS: discover supported verbs (important for CORS)\n\nIdempotency is not a theoretical luxury: when the network fails and a request is retried, idempotency protects you from duplicated operations such as creating a purchase order twice.",
@@ -274,6 +434,41 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "أكواد الحالة: لغة الخادم", en: "Status Codes: The Server's Language" },
+        table: {
+          caption: { ar: "عائلات أكواد الحالة الخمس وأشهر رموزها", en: "The five status-code families and their famous codes" },
+          headers: [
+            { ar: "العائلة", en: "Family" },
+            { ar: "المعنى", en: "Meaning" },
+            { ar: "أشهر الرموز", en: "Famous codes" },
+          ],
+          rows: [
+            [
+              { ar: "1xx", en: "1xx" },
+              { ar: "معلومات مؤقتة", en: "Informational" },
+              { ar: "100 Continue، 101 Switching Protocols", en: "100 Continue, 101 Switching Protocols" },
+            ],
+            [
+              { ar: "2xx", en: "2xx" },
+              { ar: "نجاح الطلب", en: "Success" },
+              { ar: "200 OK، 201 Created، 204 No Content، 206 Partial", en: "200 OK, 201 Created, 204 No Content, 206 Partial" },
+            ],
+            [
+              { ar: "3xx", en: "3xx" },
+              { ar: "إعادة توجيه", en: "Redirection" },
+              { ar: "301 دائم، 302 مؤقت، 304 Not Modified، 307/308", en: "301 permanent, 302 temporary, 304 Not Modified, 307/308" },
+            ],
+            [
+              { ar: "4xx", en: "4xx" },
+              { ar: "خطأ من العميل", en: "Client error" },
+              { ar: "400، 401، 403، 404، 405، 429", en: "400, 401, 403, 404, 405, 429" },
+            ],
+            [
+              { ar: "5xx", en: "5xx" },
+              { ar: "خطأ من الخادم أو البوابة", en: "Server or gateway error" },
+              { ar: "500، 502، 503، 504", en: "500, 502, 503, 504" },
+            ],
+          ],
+        },
         body: {
           ar: "كل استجابة تحمل رمزاً من ثلاث خانات، والخانة الأولى تحدد العائلة:\n\n- 1xx معلومات: 100 Continue أثناء الإرسال، 101 Switching Protocols (ترقية إلى WebSocket)\n- 2xx نجاح: 200 OK، 201 Created بعد إنشاء مورد، 204 No Content نجاح بلا جسم، 206 Partial Content مع التحميل الجزئي\n- 3xx إعادة توجيه: 301 دائم (غيّر الرابط في محركات البحث!)، 302 مؤقت، 304 Not Modified — نجاح التخزين المؤقت، 307/308 تحافظ على الفعل\n- 4xx خطأ العميل: 400 طلب سيئ التشكيل، 401 غير مُصادَق، 403 ممنوع رغم المصادقة، 404 غير موجود، 405 فعل غير مسموح، 418 أنا إبريق شاي (نكتة رسمية!)، 429 تجاوزت حد الطلبات\n- 5xx خطأ الخادم: 500 خطأ داخلي، 502 بوابة سيئة (الخادم الخلفي فشل)، 503 غير متاح حالياً، 504 انتهت مهلة البوابة\n\nمهندس الشبكات يقرأ هذه الرموز يومياً: 502 و 504 غالباً مشاكل شبكة/موازن أحمال وليست مشاكل تطبيق.",
           en: "Every response carries a three-digit code, and the first digit defines the family:\n\n- 1xx informational: 100 Continue mid-upload, 101 Switching Protocols (upgrade to WebSocket)\n- 2xx success: 200 OK, 201 Created after resource creation, 204 No Content success with no body, 206 Partial Content for range downloads\n- 3xx redirection: 301 permanent (update your links in search engines!), 302 temporary, 304 Not Modified — a caching win, 307/308 preserve the method\n- 4xx client errors: 400 malformed request, 401 unauthenticated, 403 forbidden despite authentication, 404 not found, 405 method not allowed, 418 I'm a teapot (an official joke!), 429 too many requests\n- 5xx server errors: 500 internal error, 502 bad gateway (backend failed), 503 unavailable, 504 gateway timeout\n\nNetwork engineers read these daily: 502 and 504 are usually network/load-balancer issues, not application bugs.",
@@ -383,6 +578,41 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "التشفير الهجين: قوة الاثنين معاً", en: "Hybrid Encryption: The Best of Both" },
+        table: {
+          caption: { ar: "التشفير المتماثل مقابل غير المتماثل", en: "Symmetric vs asymmetric encryption" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "المتماثل", en: "Symmetric" },
+            { ar: "غير المتماثل", en: "Asymmetric" },
+          ],
+          rows: [
+            [
+              { ar: "المفاتيح", en: "Keys" },
+              { ar: "مفتاح واحد مشترك بين الطرفين", en: "One shared key between both parties" },
+              { ar: "زوج: عام يُنشر وخاص يُحرس", en: "A pair: public published, private guarded" },
+            ],
+            [
+              { ar: "السرعة", en: "Speed" },
+              { ar: "عالية جداً — يشفر جيجابت كاملة", en: "Very fast — encrypts full gigabits" },
+              { ar: "بطيئة بمراتب (~1000 ضعف)", en: "Orders of magnitude slower (~1000x)" },
+            ],
+            [
+              { ar: "أمثلة", en: "Examples" },
+              { ar: "AES-GCM، ChaCha20-Poly1305", en: "AES-GCM, ChaCha20-Poly1305" },
+              { ar: "RSA، ECDSA، ECDHE", en: "RSA, ECDSA, ECDHE" },
+            ],
+            [
+              { ar: "المشكلة التي يحلها", en: "Problem it solves" },
+              { ar: "تشفير حجم البيانات الضخم", en: "Bulk data encryption" },
+              { ar: "تبادل المفاتيح والتوقيع بين غرباء", en: "Key exchange and signing between strangers" },
+            ],
+            [
+              { ar: "دوره في TLS", en: "Role in TLS" },
+              { ar: "يحمي كل بيانات الجلسة", en: "Protects all session data" },
+              { ar: "يُستخدم مرة واحدة في المصافحة", en: "Used once during the handshake" },
+            ],
+          ],
+        },
         body: {
           ar: "صمّمت المنظومة من نوعين من التشفير:\n\n- التشفير غير المتماثل (مفتاح عام/خاص مثل RSA و ECDSA): يحل مشكلة تبادل المفاتيح بين طرفين لا يعرفان بعضهما، لكنه بطيء جداً لنقل بيانات ضخمة\n- التشفير المتماثل (AES-GCM و ChaCha20-Poly1305): سرعة هائلة وتشفير كامل للبيانات، لكن الطرفين يحتاجان المفتاح نفسه مسبقاً\n\nالحل الهندسي هو النموذج الهجين: تستخدم اللامتماثلية مرة واحدة في البداية لتبادل مفتاح جلسة (Session Key) سري صغير، ثم ينتقل كل التشفير الفعلي إلى المتماثلة السريعة.\n\n- مفتاح الجلسة فريد لكل اتصال ويموت بانتهائه\n- الأسرار الأمامية (Forward Secrecy): حتى لو سُرّب مفتاح الخادم الخاص مستقبلاً لا يمكن فك جلسات قديمة لأن مفاتيحها وُلدت مؤقتاً عبر ECDHE",
           en: "The system combines two encryption families:\n\n- Asymmetric encryption (public/private keys like RSA and ECDSA): solves the key-exchange problem between strangers, but is far too slow for bulk data\n- Symmetric encryption (AES-GCM, ChaCha20-Poly1305): massive speed and full data encryption, but both parties need the same key beforehand\n\nThe engineering answer is the hybrid model: asymmetry is used once, at the start, to exchange a small secret session key; all actual encryption then moves to fast symmetric ciphers.\n\n- The session key is unique per connection and dies with it\n- Forward Secrecy: even if the server's private key leaks in the future, old sessions cannot be decrypted because their keys were ephemeral, generated via ECDHE",
@@ -401,6 +631,18 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "مصافحة TLS 1.2 الكاملة", en: "The Full TLS 1.2 Handshake" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "خطوات مصافحة TLS 1.2 من ClientHello حتى البيانات", en: "TLS 1.2 handshake steps from ClientHello to data" },
+          items: [
+            { ar: "ClientHello: رقم عشوائي + مجموعات التشفير المدعومة", en: "ClientHello: random number + supported cipher suites" },
+            { ar: "ServerHello: اختيار المجموعة + إرسال الشهادة وسلسلتها", en: "ServerHello: cipher choice + certificate chain" },
+            { ar: "ServerKeyExchange: معاملات ECDHE موقّعة بالمفتاح الخاص", en: "ServerKeyExchange: ECDHE parameters signed with the private key" },
+            { ar: "العميل يتحقق من الشهادة ويرسل معاملاته — اكتمال السر المشترك", en: "Client verifies the certificate and sends its share — secret complete" },
+            { ar: "الطرفان يشتقان مفاتيح الجلسة عبر دالة PRF", en: "Both derive session keys via the PRF" },
+            { ar: "ChangeCipherSpec + Finished ثم أول بايت مشفر", en: "ChangeCipherSpec + Finished, then the first encrypted byte" },
+          ],
+        },
         body: {
           ar: "كيف يتفق طرفان غريبان على مفتاح سري عبر قناة مكشوفة؟ هذا تسلسل TLS 1.2 (عند فتح أي موقع HTTPS):\n\n- 1) ClientHello: العميل يرسل رقم عشوائي Client Random ودعمه من مجموعات التشفير (Cipher Suites) وأعلى إصدار\n- 2) ServerHello: الخادم يرسل Server Random ويختار مجموعة التشفير، ثم يرسل شهادته + سلسلتها\n- 3) ServerKeyExchange: الخادم يرسل معاملاته المؤقتة ECDHE موقّعة بمفتاحه الخاص (إثبات الملكية + سرية أمامية)\n- 4) العميل يتحقق من الشهادة والسلسلة، ثم يرسل ClientKeyExchange بمعاملاته، فيمتلك الطرفان الآن المفتاح السري المسبق\n- 5) كلا الطرفين يبني مفاتيح الجلسة من Random + Secret عبر دالة PRF\n- 6) ChangeCipherSpec و Finished: التبديل إلى التشفير ورسالة تحقق أن كل ما سبق لم يُعبث به\n\nالتكلفة: 2 ذهاب وإياب (2-RTT) قبل أول بايت بيانات، وأجزاء كبيرة من المصافحة مكشوفة نصياً — وهذا ما أصلحه TLS 1.3.",
           en: "How do two strangers agree on a secret key over an open channel? Here is the TLS 1.2 sequence (on opening any HTTPS site):\n\n- 1) ClientHello: the client sends a Client Random, its supported cipher suites, and highest version\n- 2) ServerHello: the server sends a Server Random, picks the cipher suite, then presents its certificate chain\n- 3) ServerKeyExchange: the server sends its ephemeral ECDHE parameters signed with its private key (proof of ownership + forward secrecy)\n- 4) The client validates the certificate chain, then sends ClientKeyExchange with its parameters — both sides now hold the premaster secret\n- 5) Both derive the session keys from Random + Secret via the PRF function\n- 6) ChangeCipherSpec and Finished: switching to encryption plus a verification message proving nothing earlier was tampered with\n\nThe cost: 2 round trips (2-RTT) before the first data byte, and large parts of the handshake are visible in plaintext — exactly what TLS 1.3 fixed.",
@@ -503,6 +745,17 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "HTTP/2: التأطير الثنائي والتعدد الإرسالي", en: "HTTP/2: Binary Framing and Multiplexing" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "كيف تتداخل تدفقات HTTP/2 على اتصال واحد", en: "How HTTP/2 streams interleave on one connection" },
+          items: [
+            { ar: "الطلبات المتعددة تُحوَّل إلى تدفقات Streams مستقلة", en: "Multiple requests become independent streams" },
+            { ar: "كل رسالة تُجزَّأ إلى إطارات Frames ثنائية صغيرة", en: "Each message splits into small binary frames" },
+            { ar: "إطارات التدفقات تتداخل بلا ترتيب على اتصال TCP واحد", en: "Frames from all streams interleave on one TCP connection" },
+            { ar: "HPACK يضغط الترويسات بقاموس مشترك — لا تكرار", en: "HPACK compresses headers with a shared dictionary — no repeats" },
+            { ar: "الاستجابات تُجمَّع لكل تيار — طلب بطيء لم يعد يحجب البقية", en: "Responses reassemble per stream — a slow one no longer blocks the rest" },
+          ],
+        },
         body: {
           ar: "HTTP/2 (RFC 7540، 2015، من أبحاث SPDY في Google) غيّر البنية الجوهرية:\n\n- طبقة تأطير ثنائية: كل رسالة تُقسم إلى إطارات (Frames) صغيرة قابلة للتحليل آلياً — لم يعد هناك نص يُقرأ\n- التدفقات (Streams): الاتصال الواحد يحمل عشرات التدفقات المتزامنة، كل تيار يحمل رسالة طلب/استجابة\n- التعدد الإرسالي (Multiplexing): إطارات التدفقات تتداخل بلا ترتيب — طلب بطيء لم يعد يحجب آخر، والحلول الظرفية القديمة أصبحت ضارة\n- HPACK: ضغط الترويسات بقاموس مشترك — الفرق: لن تُرسل User-Agent نفسه مرتين\n- الأولويات (Priorities): العميل يقترح ترتيب الأهمية (CSS قبل الصور)\n- Server Push: أرسل الموارد المرتبطة قبل طلبها (خفض الاستخدام لاحقاً بسبب التعقيد)\n\nكيف يتفق الطرفان على HTTP/2؟ عبر ALPN أثناء TLS (الاسم التفاوضي h2)، أو معرفة مسبقة cleartext (h2c) نادرة الاستخدام.",
           en: "HTTP/2 (RFC 7540, 2015, from Google's SPDY research) changed the core structure:\n\n- Binary framing layer: every message splits into small machine-parseable frames — no more readable text\n- Streams: one connection carries dozens of concurrent streams, each stream carrying one request/response message\n- Multiplexing: frames from different streams interleave freely — a slow request no longer blocks others, and the old band-aid tricks became harmful\n- HPACK: header compression with a shared dictionary — you never send the same User-Agent twice\n- Priorities: the client suggests importance ordering (CSS before images)\n- Server Push: deliver related resources before they are requested (later abandoned due to complexity)\n\nHow do peers agree on HTTP/2? Via ALPN during TLS (the negotiated name h2), or prior-knowledge cleartext (h2c), rarely used.",
@@ -525,6 +778,53 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "QUIC و HTTP/3: إعادة اختراع النقل", en: "QUIC and HTTP/3: Reinventing the Transport" },
+        table: {
+          caption: { ar: "مقارنة أجيال HTTP الثلاثة", en: "Comparing the three HTTP generations" },
+          headers: [
+            { ar: "الخاصية", en: "Feature" },
+            { ar: "HTTP/1.1", en: "HTTP/1.1" },
+            { ar: "HTTP/2", en: "HTTP/2" },
+            { ar: "HTTP/3", en: "HTTP/3" },
+          ],
+          rows: [
+            [
+              { ar: "بروتوكول النقل", en: "Transport" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "QUIC فوق UDP 443", en: "QUIC over UDP 443" },
+            ],
+            [
+              { ar: "بنية الرسائل", en: "Message format" },
+              { ar: "نصّي مقروء", en: "Readable text" },
+              { ar: "إطارات ثنائية", en: "Binary frames" },
+              { ar: "إطارات ثنائية", en: "Binary frames" },
+            ],
+            [
+              { ar: "التعدد الإرسالي", en: "Multiplexing" },
+              { ar: "لا — 6 اتصالات كحل جزئي", en: "No — 6 connections as a partial fix" },
+              { ar: "نعم على اتصال واحد", en: "Yes, on one connection" },
+              { ar: "نعم مع تيارات مستقلة", en: "Yes, with independent streams" },
+            ],
+            [
+              { ar: "ازدحام رأس الطابور", en: "Head-of-line blocking" },
+              { ar: "في التطبيق والنقل معاً", en: "Both application and transport" },
+              { ar: "في طبقة النقل فقط", en: "Transport layer only" },
+              { ar: "مُقضى عليه تقريباً", en: "Practically eliminated" },
+            ],
+            [
+              { ar: "ضغط الترويسات", en: "Header compression" },
+              { ar: "لا يوجد", en: "None" },
+              { ar: "HPACK", en: "HPACK" },
+              { ar: "QPACK", en: "QPACK" },
+            ],
+            [
+              { ar: "زمن التأسيس المشفر", en: "Secure establishment" },
+              { ar: "TCP + TLS منفصلان", en: "TCP + TLS separate" },
+              { ar: "TCP + TLS منفصلان", en: "TCP + TLS separate" },
+              { ar: "نقل وتشفير مدمجان: 1-RTT و0-RTT", en: "Transport + crypto fused: 1-RTT and 0-RTT" },
+            ],
+          ],
+        },
         body: {
           ar: "QUIC (RFC 9000) بروتوكول نقل جديد من Google يعمل فوق UDP على المنفذ 443. لماذا UDP؟ لأن نشر بروتوكول جديد في طبقة النقل عبر أنظمة التشغيل والراوترات يحتاج عقوداً، أما UDP فالباب مفتوح دائماً.\n\n- TLS 1.3 مدمج داخلياً: لا طبقة نقل + أمن منفصلتان، بل مصافحة نقل ومصافحة تشفير واحدة — 1-RTT للمرة الأولى\n- 0-RTT للجلسات المعادة: البيانات مع أول حزمة\n- التيارات مستقلة في الاستعادة: فقدان حزمة من تيار يوقف هذا التيار فقط، وتستمر بقية التيارات — القضاء على ازدحام النقل\n- معرفات الاتصال (Connection IDs): الاتصال يُعرَّف بمعرف لا برباعية المنافذ — انتقل من Wi-Fi إلى شبكة الجوال ويتابع الاتصال نفسه حياً (Connection Migration) دون بدء من الصفر\n- استعادة فقدان أسرع وأذكى من TCP: إشارات ACK أكثر دقة وتصحيح نمطية لكل تيار\n\nHTTP/3 (RFC 9114) هو HTTP الدلالي فوق QUIC — الأفعال والترويسات والرموز نفسها التي تعرفها، بانسيابية أعلى. واكتشافه يتم عبر ترويسة Alt-Svc: الخادم يخبر العميل أثناء اتصال HTTP/2 أو 1.1: جربني عبر h3 على هذا العنوان.",
           en: "QUIC (RFC 9000) is a new transport protocol from Google running over UDP on port 443. Why UDP? Because deploying a new transport-layer protocol across operating systems and routers takes decades, while UDP is always open.\n\n- TLS 1.3 built-in: no separate transport + security — one transport-and-crypto handshake, 1-RTT for the first connection\n- 0-RTT for resumed sessions: data with the first packet\n- Independent per-stream recovery: a lost packet stalls only its stream while others continue — killing transport-layer blocking\n- Connection IDs: the connection is identified by an ID, not the port 4-tuple — switch from Wi-Fi to mobile data and the same connection lives on (connection migration) without starting over\n- Faster, smarter loss recovery than TCP: richer ACK signals and per-stream loss signaling\n\nHTTP/3 (RFC 9114) is HTTP semantics over QUIC — the same verbs, headers and codes you know, with better flow. Discovery happens via the Alt-Svc header: during an HTTP/2 or 1.1 connection the server says: try me via h3 at this endpoint.",
@@ -612,6 +912,12 @@ export const m08_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "مكونات منظومة البريد", en: "The Anatomy of a Mail System" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "مسار رسالة بريد عبر أدوار المنظومة الأربعة", en: "An email's path across the four system roles" },
+          nodes: ["MUA-المرسل", "MSA-587", "MTA-المرسل", "MTA-المستقبل", "MDA", "MUA-المستلم"],
+          edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]],
+        },
         body: {
           ar: "إرسال بريد واحد يمر عبر أربع مراحل متخصصة:\n\n- MUA (Mail User Agent): برنامجك — Outlook أو Thunderbird أو تطبيق الهاتف\n- MSA (Mail Submission Agent): يستقبل رسالتك من برنامجك ويسلّمها للبنية (يستخدم SMTP عادة المنفذ 587)\n- MTA (Mail Transfer Agent): خادم البريد — يبحث عن MX للنطاق الهدف عبر DNS وينقل الرسالة بين الخوادم (المنفذ 25)\n- MDA (Mail Delivery Agent): يضع الرسالة في صندوق المستلم النهائي\n\nمثال كامل: ترسل من Gmail إلى عنوان hotmail. خادم Gmail (MTA) يسأل DNS: ما MX الخاص بـ hotmail.com؟ يتصل بذاك الخادم على المنفذ 25 ويسلمها، فيضعها MDA في صندوق مستلمها، الذي يقرأها لاحقاً عبر IMAP.",
           en: "Sending a single email passes through four specialized stages:\n\n- MUA (Mail User Agent): your program — Outlook, Thunderbird, or a phone app\n- MSA (Mail Submission Agent): receives your message from your client and hands it into the infrastructure (usually SMTP on port 587)\n- MTA (Mail Transfer Agent): the mail server — looks up the destination domain's MX via DNS and relays the message between servers (port 25)\n- MDA (Mail Delivery Agent): drops the message into the recipient's final mailbox\n\nA full example: you send from Gmail to a hotmail address. Gmail's server (MTA) asks DNS: what is hotmail.com's MX? It connects to that server on port 25 and delivers; the MDA files it into the recipient's mailbox, who later reads it via IMAP.",
@@ -634,6 +940,46 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "POP3 مقابل IMAP: تنزيل أم مزامنة؟", en: "POP3 vs IMAP: Download or Sync?" },
+        table: {
+          caption: { ar: "POP3 مقابل IMAP: مقارنة القرار", en: "POP3 vs IMAP: the decision comparison" },
+          headers: [
+            { ar: "الخاصية", en: "Feature" },
+            { ar: "POP3", en: "POP3" },
+            { ar: "IMAP", en: "IMAP" },
+          ],
+          rows: [
+            [
+              { ar: "المنافذ", en: "Ports" },
+              { ar: "110 أو 995 مشفر", en: "110, or 995 encrypted" },
+              { ar: "143 أو 993 مشفر", en: "143, or 993 encrypted" },
+            ],
+            [
+              { ar: "موطن الرسائل", en: "Where mail lives" },
+              { ar: "تُنزّل لجهازك وتُحذف من الخادم", en: "Downloaded to your device, deleted from server" },
+              { ar: "تعيش على الخادم دائماً", en: "Live on the server permanently" },
+            ],
+            [
+              { ar: "تعدد الأجهزة", en: "Multi-device" },
+              { ar: "بلا مزامنة — كل جهاز رسائله", en: "No sync — each device its own mail" },
+              { ar: "حالة واحدة موحدة في كل مكان", en: "One unified state everywhere" },
+            ],
+            [
+              { ar: "الأعلام والمجلدات", en: "Flags and folders" },
+              { ar: "غير مدعومة (مقروء محلياً فقط)", en: "Unsupported (local read state only)" },
+              { ar: "مدعومة وتتزامن على الخادم", en: "Supported and synced server-side" },
+            ],
+            [
+              { ar: "البحث", en: "Search" },
+              { ar: "محلي بعد التنزيل", en: "Local, after download" },
+              { ar: "على الخادم نفسه", en: "On the server itself" },
+            ],
+            [
+              { ar: "الأنسب لمن", en: "Best for" },
+              { ar: "جهاز واحد وخصوصية محلية بلا سحابة", en: "One device and local privacy without cloud" },
+              { ar: "الهواتف المتعددة والعمل الحديث", en: "Multiple phones and modern work" },
+            ],
+          ],
+        },
         body: {
           ar: "بروتوكولا الاستلام يحلان المشكلة نفسها بفلسفتين مختلفتين:\n\nPOP3 (منفذ 110 أو 995 مشفر):\n\n- الفلسفة: نزّل الرسائل إلى جهازك واحذفها من الخادم\n- ميزة: يعمل بدون اتصال دائم، وخزانة الخادم صغيرة\n- عيب: قرأت على الجهاز A؟ لن تجدها على الهاتف B — بلا مزامنة\n\nIMAP (منفذ 143 أو 993 مشفر):\n\n- الفلسفة: الرسائل تعيش على الخادم، وجهازك يرى نسخة متزامنة\n- ميزة: كل أجهزتك ترى الحالة نفسها (مقروء/مجلدات/أعلام)، والبحث على الخادم\n- عيب: مساحة خادم أكبر واعتماد على الاتصال\n\nعصر الهواتف المتعددة حسم المعركة لصالح IMAP — لكن POP3 يبقى خياراً مشروعاً لمن يريد نسخة محلية بلا سحابة.",
           en: "The two receiving protocols solve the same problem with opposite philosophies:\n\nPOP3 (port 110, or 995 encrypted):\n\n- Philosophy: download messages to your device and delete from the server\n- Advantage: works without constant connectivity; small server mailbox\n- Drawback: read on device A? You will not find it on phone B — no sync\n\nIMAP (port 143, or 993 encrypted):\n\n- Philosophy: messages live on the server; your device sees a synchronized view\n- Advantage: all devices share the same state (read/folders/flags), plus server-side search\n- Drawback: larger server storage and connectivity dependence\n\nThe multi-device era settled the battle for IMAP — though POP3 remains legitimate for those wanting a local copy with no cloud.",
@@ -735,6 +1081,17 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "عملية DORA: أربع رسائل تبدأ حياة الجهاز", en: "The DORA Process: Four Messages Start a Device's Life" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "رسائل DORA الأربع بالترتيب", en: "The four DORA messages in order" },
+          items: [
+            { ar: "Discover: بث من 0.0.0.0 إلى 255.255.255.255 — هل من خادم؟", en: "Discover: broadcast from 0.0.0.0 to 255.255.255.255 — any server?" },
+            { ar: "Offer: خادم يعرض عنواناً محجوزاً مؤقتاً مع الإعدادات", en: "Offer: a server proposes a temporarily reserved address with settings" },
+            { ar: "Request: العميل يقبل العرض بثاً ليُعلم بقية الخوادم", en: "Request: the client accepts by broadcast, informing the other servers" },
+            { ar: "ACK: الخادم يثبّت الملكية والمدة فينشط العميل العنوان", en: "ACK: the server confirms ownership and duration; the client activates the address" },
+            { ar: "ARP probe: فحص أخير للتأكد أن العنوان غير مستخدم", en: "ARP probe: a final check that the address is unused" },
+          ],
+        },
         body: {
           ar: "الجهاز الجديد بلا عنوان يرسل Discover من 0.0.0.0 إلى 255.255.255.255 (بث عام layer 2 أيضاً من MAC للبث FF:FF:FF:FF:FF:FF) حاملاً معرفه (Client ID أو MAC).\n\n- D — Discover: هل من خادم DHCP هنا؟\n- O — Offer: خادم ما يعرض عليك: خذ 192.168.1.50 مع هذه الإعدادات (يُحجز لك مؤقتاً)\n- R — Request: العميل يطلب العنوان المعروض — لكن بثاً وليس أحادياً! لماذا؟ ليعلم بقية الخوادم أن عروضها رُفضت فتحرر حجوزاتها\n- A — ACK: الخادم يؤكد الملكية نهائياً، فيفعّل العميل العنوان ويبدأ العمل\n\nبعدها يرسل العميل ARP probing للتأكد أن لا أحد يستخدم العنوان فعلاً (كشف الخوادم الوهمية)، ويسجل البوابة في جدول ARP.\n\nعند الترقب الشبكي، هذه الرسائل الأربع تظهر بوضوح في Wireshark بفلتر bootp — أول مكان تنظر إليه عندما لا يستلم جهاز عنواناً.",
           en: "The address-less new device sends a Discover from 0.0.0.0 to 255.255.255.255 (also a layer-2 broadcast to FF:FF:FF:FF:FF:FF) carrying its identifier (Client ID or MAC).\n\n- D — Discover: any DHCP server here?\n- O — Offer: some server offers: take 192.168.1.50 with these settings (reserved for you temporarily)\n- R — Request: the client claims the offered address — but as a broadcast, not unicast! Why? So the other servers learn their offers were declined and free their reservations\n- A — ACK: the server confirms final ownership; the client activates the address and starts working\n\nAfterwards the client sends ARP probes to confirm nobody actually uses the address (rogue server detection) and registers the gateway in its ARP table.\n\nWhen troubleshooting, these four messages show clearly in Wireshark with the bootp filter — the first place to look when a device gets no address.",
@@ -743,6 +1100,36 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "دورة حياة الإيجار: التجديد قبل الانتهاء", en: "The Lease Lifecycle: Renewal Before Expiry" },
+        table: {
+          caption: { ar: "عتبات دورة حياة إيجار DHCP", en: "DHCP lease lifecycle thresholds" },
+          headers: [
+            { ar: "العتبة", en: "Threshold" },
+            { ar: "التوقيت", en: "Timing" },
+            { ar: "سلوك العميل", en: "Client behavior" },
+          ],
+          rows: [
+            [
+              { ar: "T1 — التجديد", en: "T1 — Renewal" },
+              { ar: "50% من مدة الإيجار", en: "50% of the lease" },
+              { ar: "DHCPREQUEST أحادي مباشرة للخادم الأصلي", en: "Unicast DHCPREQUEST straight to the original server" },
+            ],
+            [
+              { ar: "T2 — إعادة الارتباط", en: "T2 — Rebinding" },
+              { ar: "87.5% من المدة", en: "87.5% of the term" },
+              { ar: "DHCPREQUEST بثاً يقبله أي خادم", en: "Broadcast DHCPREQUEST any server may accept" },
+            ],
+            [
+              { ar: "انتهاء المدة", en: "Expiry" },
+              { ar: "100% من المدة", en: "100% of the term" },
+              { ar: "تخلٍّ عن العنوان وعودة إلى Discover", en: "Release the address and restart at Discover" },
+            ],
+            [
+              { ar: "مثال عملي: إيجار 8 أيام", en: "Worked example: 8-day lease" },
+              { ar: "اليوم 4 ثم 7 ثم 8", en: "Day 4, then 7, then 8" },
+              { ar: "تجديد أحادي ثم بث ثم تخلٍّ نهائي", en: "Unicast renewal, then broadcast, then final release" },
+            ],
+          ],
+        },
         body: {
           ar: "الإيجار (Lease) ليس ملكية أبدية. الخادم يمنح العنوان لمدة محددة (ساعة، يوم، أسبوع)، والعميل يدير دورة حياته عبر عتبتين:\n\n- T1 = 50% من مدة الإيجار: العميل يحاول التجديد بإرسال DHCPREQUEST أحادي الاتجاه مباشرة إلى خادمه الأصلي — بلا DORA كاملة، مجرد طلب وتأكيد\n- T2 = 87.5% من المدة: إن فشل الخادم الأصلي، يرسل Request بثاً يقبلَه أي خادم (إعادة الارتباط Rebinding)\n- انتهاء المدة 100%: العميل يتخلى عن العنوان ويعود إلى مرحلة Discover من الصفر\n\nالتصميم عبقري: العنوان لا يُسحب فجأة بل هناك فرصتان للتجديد، والخادم يستعيد العناوين تلقائياً من الأجهزة الغائبة (من غادر الشبكة بلا إفلات Graceful Release).\n\n- إيجارات قصيرة للشبكات الزائرة (ضيوف وكافيهات): 1-4 ساعات\n- إيجارات طويلة للمكاتب المستقرة: 8 أيام فأكثر لتقليل حركة DHCP",
           en: "A lease is not eternal ownership. The server grants the address for a finite window (an hour, a day, a week), and the client manages its lifecycle through two thresholds:\n\n- T1 = 50% of the lease: the client attempts renewal by sending a unicast DHCPREQUEST straight to its original server — no full DORA, just request and confirmation\n- T2 = 87.5%: if the original server has failed, the client broadcasts a Request that any server may accept (rebinding)\n- 100% expiry: the client releases the address and restarts from the Discover phase\n\nThe design is brilliant: the address is never yanked away — there are two renewal chances — and the server automatically reclaims addresses from vanished devices (those that left without a graceful release).\n\n- Short leases for transient networks (guests, cafés): 1-4 hours\n- Long leases for stable offices: 8+ days to reduce DHCP chatter",
@@ -859,6 +1246,17 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "SSH: باب الإدارة الآمن", en: "SSH: The Secure Management Door" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "مراحل إنشاء جلسة SSH من الاتصال إلى القناة المشفرة", en: "SSH session setup stages from connect to encrypted channel" },
+          items: [
+            { ar: "TCP 22: الاتصال وتسجيل بصمة المفتاح المضيف في known_hosts", en: "TCP 22: connect and record the host key fingerprint in known_hosts" },
+            { ar: "التفاوض على خوارزميات التشفير والتكامل والمبادلة", en: "Negotiate cipher, integrity and key-exchange algorithms" },
+            { ar: "مصادقة المستخدم: مفتاح عام أو كلمة مرور", en: "User authentication: public key or password" },
+            { ar: "قناة مشفرة: جلسة أوامر أو SFTP أو نفق", en: "Encrypted channel: shell session, SFTP, or a tunnel" },
+            { ar: "كل أوامر الإدارة ونقل الملفات تعبر النفق المشفر", en: "All management commands and file transfers cross the encrypted tunnel" },
+          ],
+        },
         body: {
           ar: "SSH (Secure Shell) على المنفذ 22 خلف منذ 1995 كبديل آمن لـ Telnet المشفر المكشوف. ما يقدمه فوق التشفير:\n\n- مصادقة المضيف: عند أول اتصال يعرض الخادم بصمة مفتاحه (Host Key) وتُسجل في known_hosts — أي تغيير لاحق ينذر بخطر (هجوم رجل في المنتصف!)\n- مصادقة المستخدم: كلمة مرور أو الأفضل — زوج مفاتيح عام/خاص\n- النقل: جلسات تشغيل أوامر بعيدة، ونقل ملفات (SFTP/SCP)، وأنفاق (Tunneling) تمرر أي بروتوكول آخر داخل الاتصال المشفر — مثل توصيل منفذ قاعدة بيانات بعيد إلى جهازك\n\nإنشاء مفتاحك الخاص بأمر واحد: ssh-keygen -t ed25519 ثم انسخ العام إلى الخادم عبر ssh-copy-id — بعدها كلمات المرور تاريخ.",
           en: "SSH (Secure Shell) on port 22 has served since 1995 as the secure replacement for plaintext Telnet. What it offers beyond encryption:\n\n- Host authentication: on first connect the server presents its host key fingerprint, recorded in known_hosts — any later change signals danger (a man-in-the-middle attack!)\n- User authentication: a password, or better, a public/private key pair\n- Transport: remote command sessions, file transfer (SFTP/SCP), and tunneling that carries any other protocol inside the encrypted connection — such as forwarding a remote database port to your machine\n\nCreate your key pair with one command: ssh-keygen -t ed25519, then copy the public half to the server via ssh-copy-id — after that, passwords are history.",
@@ -870,6 +1268,47 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "SFTP و SCP مقابل FTPS: أسماء متشابهة عالم مختلف", en: "SFTP and SCP vs FTPS: Similar Names, Different Worlds" },
+        table: {
+          caption: { ar: "بروتوكولات نقل الملفات الخمسة مقارنةً", en: "The five file-transfer protocols compared" },
+          headers: [
+            { ar: "البروتوكول", en: "Protocol" },
+            { ar: "النقل والمنفذ", en: "Transport & port" },
+            { ar: "الأمان", en: "Security" },
+            { ar: "الاستخدام الأمثل", en: "Best use" },
+          ],
+          rows: [
+            [
+              { ar: "FTP", en: "FTP" },
+              { ar: "TCP: تحكم 21 + بيانات 20/PASV", en: "TCP: control 21 + data 20/PASV" },
+              { ar: "بلا تشفير إطلاقاً", en: "No encryption at all" },
+              { ar: "معمل معزول فقط", en: "Isolated labs only" },
+            ],
+            [
+              { ar: "TFTP", en: "TFTP" },
+              { ar: "UDP 69", en: "UDP 69" },
+              { ar: "بلا مصادقة ولا تشفير", en: "No auth, no encryption" },
+              { ar: "صور IOS و PXE داخل شبكة إدارة", en: "IOS images and PXE inside a management network" },
+            ],
+            [
+              { ar: "SFTP", en: "SFTP" },
+              { ar: "SSH — منفذ 22 واحد", en: "SSH — single port 22" },
+              { ar: "تشفير ومصادقة SSH كاملان", en: "Full SSH encryption and authentication" },
+              { ar: "الاختيار الافتراضي الحديث", en: "Today's default choice" },
+            ],
+            [
+              { ar: "SCP", en: "SCP" },
+              { ar: "SSH — منفذ 22", en: "SSH — port 22" },
+              { ar: "تشفير SSH", en: "SSH encryption" },
+              { ar: "نسخ ملف واحد في سكربت", en: "One-file copy in scripts" },
+            ],
+            [
+              { ar: "FTPS", en: "FTPS" },
+              { ar: "TCP 21/990 فوق TLS — قناتان", en: "TCP 21/990 over TLS — two channels" },
+              { ar: "تشفير TLS مع بنية FTP القديمة", en: "TLS encryption with legacy FTP architecture" },
+              { ar: "تكامل مع أنظمة قديمة فقط", en: "Legacy system integration only" },
+            ],
+          ],
+        },
         body: {
           ar: "الخلط الأشهر في هذا المجال — ثلاثة بروتوكولات آمنة لمعنى مختلف تماماً:\n\n- SFTP (SSH File Transfer Protocol): ليس FTP إطلاقاً! بروتوكول نقل ملفات مصمم أصلاً للعمل فوق قناة SSH — نفس المنفذ 22 ونفس المصادقة ونفس التشفير. يقدم قائمة ملفات ومسارات واستئناف نقل.\n- SCP (Secure Copy): نقل مبسط فوق SSH — نسخة ملف واحد بسرعة وبلا تصفح\n- FTPS: بروتوكول FTP القديم نفسه فوق TLS — منفذ 21 مع STARTTLS أو 990 ضمنياً. يحافظ على التوافق مع بنية FTP (تحكم + بيانات) لكنه أبطأ وأثقل إدارياً عبر الجدران\n\nالتوصية العملية الحديثة: SFTP في كل شيء تقريباً — أمان SSH وبساطة منفذ واحد ونجاة عبر NAT. FTPS فقط عند دمج مع أنظمة قديمة تفرض FTP حرفياً.",
           en: "The classic confusion in this space — three secure protocols meaning entirely different things:\n\n- SFTP (SSH File Transfer Protocol): not FTP at all! A file transfer protocol designed from scratch to run over an SSH channel — same port 22, same authentication, same encryption. It offers directory listings, paths, and resumable transfers.\n- SCP (Secure Copy): a minimal transfer over SSH — one file, fast, no browsing\n- FTPS: the old FTP protocol itself over TLS — port 21 with STARTTLS or 990 implicit. It keeps FTP architecture compatibility (control + data) but is slower and heavier to manage through firewalls\n\nThe modern practical recommendation: SFTP for nearly everything — SSH's security, one simple port, NAT survival. FTPS only when integrating with legacy systems that literally mandate FTP.",
@@ -964,6 +1403,47 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "آلية العمل: الطبقات و UDP 123", en: "How It Works: Strata and UDP 123" },
+        table: {
+          caption: { ar: "طبقات NTP من المرجع الفيزيائي حتى العميل", en: "NTP strata from physical reference to client" },
+          headers: [
+            { ar: "الطبقة", en: "Stratum" },
+            { ar: "ما هي", en: "What it is" },
+            { ar: "الدقة المتوقعة", en: "Expected accuracy" },
+          ],
+          rows: [
+            [
+              { ar: "Stratum 0", en: "Stratum 0" },
+              { ar: "مراجع فيزيائية: ساعات ذرية وGPS — لا تتحدث NTP مباشرة", en: "Physical references: atomic clocks, GPS — do not speak NTP directly" },
+              { ar: "المرجع المطلق", en: "The absolute reference" },
+            ],
+            [
+              { ar: "Stratum 1", en: "Stratum 1" },
+              { ar: "خوادم متصلة مباشرة بالمرجع الفيزيائي", en: "Servers directly attached to the physical reference" },
+              { ar: "ميكروثانية", en: "Microseconds" },
+            ],
+            [
+              { ar: "Stratum 2", en: "Stratum 2" },
+              { ar: "تتزامن من Stratum 1 — خوادم المؤسسات الكبيرة", en: "Synced from Stratum 1 — large enterprise servers" },
+              { ar: "ميلي ثانية قليلة", en: "A few milliseconds" },
+            ],
+            [
+              { ar: "Stratum 3 — 15", en: "Stratum 3 — 15" },
+              { ar: "كل طبقة بعداً إضافياً عن المرجع — الشبكات الداخلية", en: "Each layer one more step from the reference — internal networks" },
+              { ar: "تتدهور تدريجياً", en: "Gradually degrading" },
+            ],
+            [
+              { ar: "Stratum 16", en: "Stratum 16" },
+              { ar: "تعني غير متزامن — تُرفض كمصدر", en: "Means unsynchronized — rejected as a source" },
+              { ar: "غير صالحة", en: "Invalid" },
+            ],
+          ],
+        },
+        diagram: {
+          kind: "topology",
+          title: { ar: "هرمية مزامنة الوقت داخل المؤسسة", en: "The time-sync hierarchy inside an enterprise" },
+          nodes: ["GPS/ذري (S0)", "خادم S1 عام", "خادما المؤسسة (S2)", "المبدلات والخوادم (S3)", "أجهزة المستخدمين"],
+          edges: [[0, 1], [1, 2], [2, 3], [3, 4], [2, 4]],
+        },
         body: {
           ar: "NTP (Network Time Protocol، RFC 5905) يعمل عبر UDP على المنفذ 123 وينظم العالم في هرمية موثوقية تسمى الطبقات (Stratum):\n\n- Stratum 0: مراجع فيزيائية — ساعات ذرية وأجهزة GPS — لا تتحدث NTP مباشرة\n- Stratum 1: خوادم متصلة مباشرة بالمرجع الفيزيائي\n- Stratum 2: تزامن من Stratum 1 (مثل خوادم المؤسسات الكبيرة)\n- Stratum 3 وما فوق: كل طبقة تزداد ابتعاداً عن المرجع\n- الحد الأقصى 15 — و Stratum 16 يعني غير متزامن\n\nالعميل يرسل حزمة تحمل طابع زمن الخروج، فيضع الخادم طابع الوصول والخروج، ويعود العميل بطابع العودة. أربعة طوابع تحسب زمن الذهاب والعودة (RTT) والإزاحة (Offset) فيُعدَّل الساعة بذكاء — ليس قفزاً بل تسريعاً/تباطؤاً لطيفاً (Slewing) يحمي التطبيقات من قفزات الزمن.\n\nخوادم Pool العامة: pool.ntp.org موزعة جغرافياً — خذ 4-5 خوادم موزعة (منطق NTP: لا تثق بخادم واحد أبداً، الخوارزمية ترفض الشاذّ).",
           en: "NTP (Network Time Protocol, RFC 5905) runs over UDP on port 123 and organizes the world into a reliability hierarchy called strata:\n\n- Stratum 0: physical references — atomic clocks and GPS receivers — they do not speak NTP directly\n- Stratum 1: servers directly attached to the physical reference\n- Stratum 2: synchronized from Stratum 1 (like large enterprise servers)\n- Stratum 3 and beyond: each layer further from the reference\n- The maximum is 15 — and Stratum 16 means unsynchronized\n\nThe client sends a packet carrying its departure timestamp; the server stamps arrival and departure; the client stamps return. Four timestamps compute round-trip time (RTT) and offset, and the clock is adjusted intelligently — not jumped, but gently sped/slowed (slewing), protecting applications from time jumps.\n\nPublic pool servers: pool.ntp.org, geographically distributed — take 4-5 diverse servers (NTP logic: never trust a single server; the algorithm rejects outliers).",
@@ -1066,6 +1546,12 @@ export const m08_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "المسافة هي العدو الأول للأداء", en: "Distance Is Performance's Enemy Number One" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "طلب يُخدم من PoP الأقرب بدل العبور للأصل", en: "A request served from the nearest PoP instead of crossing to the origin" },
+          nodes: ["المستخدم", "PoP-الأقرب", "PoP-درع", "الخادم الأصل", "مستخدم بعيد"],
+          edges: [[0, 1], [1, 2], [2, 3], [4, 2]],
+        },
         body: {
           ar: "قانون الفيزياء لا يُتفاوض عليه: الضوء في الألياف يقطع ~200 كم في الملّي ثانية ذهاباً. مستخدم في الرياض يطلب ملفاً من خادم في طوكيو ينتظر ~70 ملّي ثانية قبل أول بايت — ثم تضاف مصافحة TCP (RTT إضافي) ومصافحة TLS (RTT أو اثنان) — 4 رحلات قبل البيانات!\n\nCDN (Content Delivery Network) يحل المعادلة جغرافياً:\n\n- شبكة نقاط حضور (PoPs) موزعة عالمياً في مئات المدن\n- ينسخ المحتوى الثابت (صور، CSS، JS، فيديو) إلى الأقرب من المستخدم\n- RTT ينخفض من 70 إلى 5-15 ملّي ثانية عادة، والمصافحات تصبح شبه فورية\n\nالكيفية الذكية: DNS يحل اسم CDN (مثل cdn.example.com) فيعيد عنوان PoP الأقرب جغرافياً وشبكياً للمستخدم — وأحياناً عبر anycast: عنوان IP واحد معلن من عشرات المواقع فيوجهك بروتوكول التوجيه لأقرب موضع يعلنه.",
           en: "The law of physics is non-negotiable: light in fiber travels ~200 km per millisecond one way. A user in Riyadh requesting a file from a Tokyo server waits ~70 ms before the first byte — then add the TCP handshake (another RTT) and the TLS handshake (one or two RTTs) — 4 round trips before any data!\n\nA CDN (Content Delivery Network) solves the equation geographically:\n\n- A network of Points of Presence (PoPs) distributed across hundreds of cities\n- It replicates static content (images, CSS, JS, video) near the user\n- RTT drops from 70 to typically 5-15 ms, and handshakes become near-instant\n\nThe smart part: DNS resolves the CDN name (like cdn.example.com) returning the PoP nearest geographically and topologically to the user — sometimes via anycast: one IP address announced from dozens of locations, with routing steering you to the nearest announcer.",
@@ -1102,6 +1588,41 @@ export const m08_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "ما بعد REST: gRPC و GraphQL و Edge Computing", en: "Beyond REST: gRPC, GraphQL and Edge Computing" },
+        table: {
+          caption: { ar: "REST مقابل gRPC و GraphQL و Webhooks", en: "REST vs gRPC, GraphQL and Webhooks" },
+          headers: [
+            { ar: "التقنية", en: "Technology" },
+            { ar: "النقل والصيغة", en: "Transport & format" },
+            { ar: "نقطة القوة", en: "Strength" },
+            { ar: "الاستخدام الأمثل", en: "Best fit" },
+          ],
+          rows: [
+            [
+              { ar: "REST", en: "REST" },
+              { ar: "HTTP نصي JSON", en: "HTTP with JSON text" },
+              { ar: "بسيط وعالمي ومخزّن مؤقتاً", en: "Simple, universal, cacheable" },
+              { ar: "واجهات APIs عامة", en: "Public APIs" },
+            ],
+            [
+              { ar: "gRPC", en: "gRPC" },
+              { ar: "HTTP/2 ثنائي Protobuf", en: "HTTP/2 binary Protobuf" },
+              { ar: "أداء عالٍ وتدفقات ثنائية الاتجاه", en: "High performance, bidirectional streaming" },
+              { ar: "خدمات دقيقة داخلية", en: "Internal microservices" },
+            ],
+            [
+              { ar: "GraphQL", en: "GraphQL" },
+              { ar: "HTTP استعلام واحد محدد الشكل", en: "HTTP single shaped query" },
+              { ar: "العميل يحدد البيانات بدقة — لا طلبات متعددة", en: "Client defines exactly the data — no over-fetching" },
+              { ar: "واجهات أمامية معقدة", en: "Complex frontends" },
+            ],
+            [
+              { ar: "Webhooks", en: "Webhooks" },
+              { ar: "HTTP صادر من الخادم عند الحدث", en: "HTTP pushed by the server on events" },
+              { ar: "إشعار فوري بلا استقصاء", en: "Instant notification without polling" },
+              { ar: "التكاملات والإشعارات", en: "Integrations and notifications" },
+            ],
+          ],
+        },
         body: {
           ar: "REST منتصر واسعاً لكن ليس بلا منافسين لهم مواطن قوتهم:\n\n- gRPC: RPC ثنائي فوق HTTP/2 — تدفقات ثنائية متعددة الاتجاهات بضغط protobuf، مثالي للخدمات الداخلية عالية الأداء (Google و Netflix داخلياً)\n- GraphQL: العميل يحدد شكل البيانات في استعلام واحد بدل عشرات الطلبات REST — مرونة للواجهات المعقدة\n- Webhooks: عكس الاستقصاء (Polling) — الخادم يتصل بك عند الحدث بدل أن تسأله كل دقيقة\n\nاتجاه CDN الحديث: Edge Computing — تشغيل أكواد خفيفة (Cloudflare Workers و AWS Lambda@Edge) داخل PoP نفسه قرب المستخدم: تحقق منطقي، تخصيص محتوى، و even تقديم APIs كاملة من الحافة — المستقبل يمزج CDN بتطبيقات البنية كلها.",
           en: "REST has broadly won, but not without rivals with their strongholds:\n\n- gRPC: binary RPC over HTTP/2 — bidirectional multiplexed streams with protobuf compression, ideal for high-performance internal services (Google and Netflix internally)\n- GraphQL: the client specifies the data shape in one query instead of dozens of REST calls — flexibility for complex frontends\n- Webhooks: the reverse of polling — the server calls you upon the event instead of you asking every minute\n\nThe modern CDN trend: Edge Computing — running lightweight code (Cloudflare Workers, AWS Lambda@Edge) inside the PoP itself near the user: logic checks, content personalization, and even whole APIs served from the edge — the future is blending the CDN with the application tier.",

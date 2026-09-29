@@ -47,6 +47,41 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الموجّه مقابل المبدّل: من يفعل ماذا؟", en: "Router vs Switch: Who Does What?" },
+        table: {
+          caption: { ar: "المبدّل والراوتر: تقسيم العمل بينهما", en: "Switch and router: the division of labor" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "المبدّل Switch", en: "Switch" },
+            { ar: "الموجّه Router", en: "Router" },
+          ],
+          rows: [
+            [
+              { ar: "الطبقة", en: "Layer" },
+              { ar: "L2 — الوصل", en: "L2 — data link" },
+              { ar: "L3 — الشبكة", en: "L3 — network" },
+            ],
+            [
+              { ar: "العنوان الذي يقرأه", en: "Address it reads" },
+              { ar: "MAC", en: "MAC" },
+              { ar: "IP", en: "IP" },
+            ],
+            [
+              { ar: "وحدة البيانات", en: "PDU" },
+              { ar: "إطار Frame", en: "Frame" },
+              { ar: "حزمة Packet", en: "Packet" },
+            ],
+            [
+              { ar: "نطاق عمله", en: "Scope" },
+              { ar: "قطاع محلي واحد / VLAN", en: "One local segment / VLAN" },
+              { ar: "بين الشبكات عبر المسارات", en: "Between networks across paths" },
+            ],
+            [
+              { ar: "جدوله", en: "Its table" },
+              { ar: "MAC Address Table", en: "MAC address table" },
+              { ar: "جدول التوجيه Routing Table", en: "The routing table" },
+            ],
+          ],
+        },
         body: {
           ar: "المبدّع يعمل في الطبقة الثانية ويبني جدول عناوين MAC ليجري التبديل داخل شبكة بث واحدة، أما الموجّه فيعمل في الطبقة الثالثة ويفصل بين نطاقات البث (Broadcast Domains) ويجعل كل منفذ شبكة مستقلة.\n\nعندما يستلم الموجّه إطاراً على واجهة ما، يمرّ بالخطوات التالية:\n\n- يفحص غلاف الإطار ويستخرج الحزمة\n- ينقص قيمة TTL (Time To Live) بمقدار واحد لمنع الحزم من الدوران للأبد\n- يعيد حساب ترويسة التحقق (Checksum) بعد التعديل\n- يبحث في جدول التوجيه عن أطول بادئة تطابق عنوان الوجهة\n- يغلّف الحزمة في إطار جديد بعناوين MAC للقفزة التالية ويرسلها\n\nالمبدّلات الحديثة (Layer 3 Switches) تجمع الوظيفتين معاً، لكن المبدأ يبقى كما هو.",
           en: "A switch operates at Layer 2, building a MAC table to forward frames inside one broadcast domain. A router operates at Layer 3, separating broadcast domains and making each port an independent network.\n\nWhen a router receives a frame on an interface, it goes through these steps:\n\n- Checks the frame integrity and extracts the packet\n- Decrements TTL (Time To Live) by one, preventing packets from looping forever\n- Recomputes the header checksum after the change\n- Looks up the longest matching prefix for the destination address\n- Encapsulates the packet in a new frame with next-hop MACs and sends it\n\nModern Layer 3 switches combine both roles, but the principle is unchanged.",
@@ -137,6 +172,51 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "حقول التحكم الأساسية", en: "Core Control Fields" },
+        table: {
+          caption: { ar: "أهم حقول ترويسة IPv4", en: "Key IPv4 header fields" },
+          headers: [
+            { ar: "الحقل", en: "Field" },
+            { ar: "الحجم", en: "Size" },
+            { ar: "وظيفته", en: "Purpose" },
+          ],
+          rows: [
+            [
+              { ar: "Version + IHL", en: "Version + IHL" },
+              { ar: "1 byte", en: "1 byte" },
+              { ar: "الإصدار (4) وطول الترويسة بوحدات 4 بايتات", en: "Version (4) and header length in 4-byte words" },
+            ],
+            [
+              { ar: "Total Length", en: "Total Length" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "طول الحزمة كاملاً حتى 65535 بايتاً", en: "Full packet length, up to 65535 bytes" },
+            ],
+            [
+              { ar: "Flags + Fragment Offset", en: "Flags + Fragment Offset" },
+              { ar: "3 + 13 bits", en: "3 + 13 bits" },
+              { ar: "التحكم بالتفتيت وموقع الشظية", en: "Fragmentation control and shard position" },
+            ],
+            [
+              { ar: "TTL", en: "TTL" },
+              { ar: "1 byte", en: "1 byte" },
+              { ar: "ينقص كل قفزة — يمنع التوهان الأبدي", en: "Decrements per hop — kills eternal loops" },
+            ],
+            [
+              { ar: "Protocol", en: "Protocol" },
+              { ar: "1 byte", en: "1 byte" },
+              { ar: "من يستلم الحمولة: 6=TCP، 17=UDP، 1=ICMP", en: "Who receives the payload: 6=TCP, 17=UDP, 1=ICMP" },
+            ],
+            [
+              { ar: "Header Checksum", en: "Header Checksum" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "فحص سلامة الترويسة فقط — يُعاد حسابه كل قفزة", en: "Header-only integrity check — recomputed each hop" },
+            ],
+            [
+              { ar: "Source / Destination IP", en: "Source / Destination IP" },
+              { ar: "4+4 bytes", en: "4+4 bytes" },
+              { ar: "العنوانان المنطقيان للطرفين", en: "The two logical endpoint addresses" },
+            ],
+          ],
+        },
         body: {
           ar: "حقل الإصدار (Version) طوله 4 بت وقيمته 4 لـ IPv4 و 6 لـ IPv6 — أول ما يقرأه المستقبِل ليعرف صيغة الحزمة.\n\nحقل DSCP (سابقاً Type of Service) طوله 6 بت يمنح الحزم درجات أولوية لجودة الخدمة (QoS) — كأن تُعطى حزم مكالمة صوتية أولوية أعلى من تنزيل ملف.\n\nحقل الطول الكلي (Total Length) طوله 16 بت ويقيس كامل الحزمة: الترويسة + البيانات، أي 20 إلى 65,535 بايت. لاحظ أن الطول الأقصى نظرياً 65,535 بايت، لكن إيثرنت يحدّه عملياً بـ 1500 بايت (MTU).\n\n- الإصدار 4 بت: 0100 لـ IPv4\n- DSCP: 6 بت للجودة، وبتّان لـ ECN لإشعار الازدحام\n- الطول الكلي يشمل الترويسة نفسها",
           en: "The Version field is 4 bits: value 4 for IPv4 and 6 for IPv6 — the very first thing a receiver reads to identify the packet format.\n\nThe DSCP field (formerly Type of Service) is 6 bits giving packets QoS priority classes — voice call packets can be prioritized over a file download, for instance.\n\nThe Total Length field is 16 bits and measures the entire packet: header + data, i.e. 20 to 65,535 bytes. Note the theoretical maximum of 65,535 bytes, though Ethernet practically limits it to 1500 bytes (MTU).\n\n- Version: 4 bits, 0100 for IPv4\n- DSCP: 6 bits for QoS, 2 bits for ECN congestion notification\n- Total Length includes the header itself",
@@ -256,6 +336,47 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الفئات الخمس كما صممت أصلاً", en: "The Five Classes as Originally Designed" },
+        table: {
+          caption: { ar: "فئات IPv4 التاريخية", en: "The historical IPv4 classes" },
+          headers: [
+            { ar: "الفئة", en: "Class" },
+            { ar: "مدى البايت الأول", en: "First-octet range" },
+            { ar: "القناع الافتراضي", en: "Default mask" },
+            { ar: "الاستخدام المخصص", en: "Intended use" },
+          ],
+          rows: [
+            [
+              { ar: "A", en: "A" },
+              { ar: "1 - 126", en: "1 - 126" },
+              { ar: "/8 (255.0.0.0)", en: "/8 (255.0.0.0)" },
+              { ar: "شبكات ضخمة (16.7 مليون عنوان)", en: "Huge networks (16.7M addresses)" },
+            ],
+            [
+              { ar: "B", en: "B" },
+              { ar: "128 - 191", en: "128 - 191" },
+              { ar: "/16 (255.255.0.0)", en: "/16 (255.255.0.0)" },
+              { ar: "مؤسسات متوسطة (65 ألف عنوان)", en: "Medium organizations (65K addresses)" },
+            ],
+            [
+              { ar: "C", en: "C" },
+              { ar: "192 - 223", en: "192 - 223" },
+              { ar: "/24 (255.255.255.0)", en: "/24 (255.255.255.0)" },
+              { ar: "شبكات صغيرة (254 مضيفاً)", en: "Small networks (254 hosts)" },
+            ],
+            [
+              { ar: "D", en: "D" },
+              { ar: "224 - 239", en: "224 - 239" },
+              { ar: "—", en: "—" },
+              { ar: "البث المتعدد Multicast", en: "Multicast" },
+            ],
+            [
+              { ar: "E", en: "E" },
+              { ar: "240 - 255", en: "240 - 255" },
+              { ar: "—", en: "—" },
+              { ar: "تجريبي محجوز", en: "Experimental, reserved" },
+            ],
+          ],
+        },
         body: {
           ar: "في التصميم الأصلي (Classful) قُسم فضاء العناوين إلى فئات حسب البتات الأولى من الخانة الأولى، لتحديد قناع افتراضي بلا كتابته صراحة:\n\n- الفئة A: أول بت 0 — المدى 1.0.0.0 إلى 126.255.255.255 — قناع /8 (255.0.0.0) — 16,777,214 مضيفاً لكل شبكة\n- الفئة B: أول بتين 10 — المدى 128.0.0.0 إلى 191.255.255.255 — قناع /16 (255.255.0.0) — 65,534 مضيفاً\n- الفئة C: أول ثلاثة بتات 110 — المدى 192.0.0.0 إلى 223.255.255.255 — قناع /24 (255.255.255.0) — 254 مضيفاً\n- الفئة D: 1110 — 224.0.0.0 إلى 239.255.255.255 — للبث المتعدد (Multicast) وليس للأجهزة\n- الفئة E: 1111 — 240.0.0.0 إلى 255.255.255.255 — تجريبية محجوزة\n\nلاحظ الفجوة: 127.x.x.x ليست فئة A عادية بل نطاق الاختبار العكسي (Loopback) — عنوان 127.0.0.1 يعني أنا نفسي.",
           en: "In the original classful design, the address space was split into classes based on the leading bits of the first octet, giving each an implied default mask:\n\n- Class A: first bit 0 — range 1.0.0.0 to 126.255.255.255 — mask /8 (255.0.0.0) — 16,777,214 hosts per network\n- Class B: first two bits 10 — range 128.0.0.0 to 191.255.255.255 — mask /16 (255.255.0.0) — 65,534 hosts\n- Class C: first three bits 110 — range 192.0.0.0 to 223.255.255.255 — mask /24 (255.255.255.0) — 254 hosts\n- Class D: 1110 — 224.0.0.0 to 239.255.255.255 — multicast, not for hosts\n- Class E: 1111 — 240.0.0.0 to 255.255.255.255 — experimental, reserved\n\nNote the gap: 127.x.x.x is not a normal Class A but the loopback range — 127.0.0.1 means myself.",
@@ -267,6 +388,46 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "النطاقات الخاصة RFC 1918: قلب شبكات اليوم", en: "RFC 1918 Private Ranges: The Heart of Modern Networks" },
+        table: {
+          caption: { ar: "النطاقات الخاصة والخاصة الأخرى التي تحفظها", en: "Private and other special ranges to memorize" },
+          headers: [
+            { ar: "النطاق", en: "Range" },
+            { ar: "النوع", en: "Type" },
+            { ar: "الملاحظة العملية", en: "Practical note" },
+          ],
+          rows: [
+            [
+              { ar: "10.0.0.0/8", en: "10.0.0.0/8" },
+              { ar: "خاص — كبير", en: "Private — large" },
+              { ar: "المؤسسات والمراكز الكبيرة", en: "Enterprises and large campuses" },
+            ],
+            [
+              { ar: "172.16.0.0/12", en: "172.16.0.0/12" },
+              { ar: "خاص — متوسط", en: "Private — medium" },
+              { ar: "من 172.16 حتى 172.31", en: "From 172.16 through 172.31" },
+            ],
+            [
+              { ar: "192.168.0.0/16", en: "192.168.0.0/16" },
+              { ar: "خاص — صغير", en: "Private — small" },
+              { ar: "المنازل والمعامل وكل راوتر منزلي", en: "Homes, labs, and every home router" },
+            ],
+            [
+              { ar: "127.0.0.0/8", en: "127.0.0.0/8" },
+              { ar: "Loopback", en: "Loopback" },
+              { ar: "اختبار الحزمة داخلياً — 127.0.0.1", en: "Internal stack testing — 127.0.0.1" },
+            ],
+            [
+              { ar: "169.254.0.0/16", en: "169.254.0.0/16" },
+              { ar: "APIPA", en: "APIPA" },
+              { ar: "علامة فشل DHCP — لا تدخلها في التصميم", en: "A DHCP failure flag — never design with it" },
+            ],
+            [
+              { ar: "100.64.0.0/10", en: "100.64.0.0/10" },
+              { ar: "CGNAT", en: "CGNAT" },
+              { ar: "ترجمة مشتركة لدى المشغلين", en: "Carrier-grade shared NAT space" },
+            ],
+          ],
+        },
         body: {
           ar: "عند اقتراب نفاد العناوين العامة، عرّف المعيار RFC 1918 ثلاث كتل للاستخدام الخاص داخل أي شبكة، ولا يجوز توجيهها في الإنترنت العام أبداً:\n\n- 10.0.0.0/8 : من 10.0.0.0 إلى 10.255.255.255 — 16,777,216 عنواناً — للشركات الكبيرة\n- 172.16.0.0/12 : من 172.16.0.0 إلى 172.31.255.255 — 1,048,576 عنواناً — للمتوسطة\n- 192.168.0.0/16 : من 192.168.0.0 إلى 192.168.255.255 — 65,536 عنواناً — للمنازل والصغيرة\n\nكل هذه العناوين تخرج للإنترنت عبر NAT (درس قادم)، ولهذا يمكن لملايين المنازل استخدام 192.168.1.0/24 نفسها دون تعارض.\n\nانتبه لخطأ شائع: النطاق الخاص الثاني هو 172.16 حتى 172.31 فقط — فـ 172.32.0.0 ليس خاصاً، و 172.15 كذلك ليس خاصاً.",
           en: "Facing public address exhaustion, RFC 1918 defined three blocks for private use inside any network, which must never be routed on the public Internet:\n\n- 10.0.0.0/8 : 10.0.0.0 to 10.255.255.255 — 16,777,216 addresses — for large enterprises\n- 172.16.0.0/12 : 172.16.0.0 to 172.31.255.255 — 1,048,576 addresses — for medium ones\n- 192.168.0.0/16 : 192.168.0.0 to 192.168.255.255 — 65,536 addresses — for homes and small offices\n\nAll of these reach the Internet through NAT (an upcoming lesson), which is why millions of homes can reuse the same 192.168.1.0/24 without conflict.\n\nBeware a common trap: the second private range is only 172.16 through 172.31 — 172.32.0.0 is not private, and neither is 172.15.",
@@ -364,6 +525,59 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "جدول البادئات التي ستحفظه مدى الحياة", en: "The Prefix Table You Will Keep for Life" },
+        table: {
+          caption: { ar: "جدول CIDR والمضيفين لكل قناع", en: "The CIDR table and hosts per mask" },
+          headers: [
+            { ar: "CIDR", en: "CIDR" },
+            { ar: "القناع", en: "Mask" },
+            { ar: "حجم الكتلة", en: "Block size" },
+            { ar: "المضيفون الصالحون", en: "Usable hosts" },
+          ],
+          rows: [
+            [
+              { ar: "/24", en: "/24" },
+              { ar: "255.255.255.0", en: "255.255.255.0" },
+              { ar: "256", en: "256" },
+              { ar: "254", en: "254" },
+            ],
+            [
+              { ar: "/25", en: "/25" },
+              { ar: "255.255.255.128", en: "255.255.255.128" },
+              { ar: "128", en: "128" },
+              { ar: "126", en: "126" },
+            ],
+            [
+              { ar: "/26", en: "/26" },
+              { ar: "255.255.255.192", en: "255.255.255.192" },
+              { ar: "64", en: "64" },
+              { ar: "62", en: "62" },
+            ],
+            [
+              { ar: "/27", en: "/27" },
+              { ar: "255.255.255.224", en: "255.255.255.224" },
+              { ar: "32", en: "32" },
+              { ar: "30", en: "30" },
+            ],
+            [
+              { ar: "/28", en: "/28" },
+              { ar: "255.255.255.240", en: "255.255.255.240" },
+              { ar: "16", en: "16" },
+              { ar: "14", en: "14" },
+            ],
+            [
+              { ar: "/29", en: "/29" },
+              { ar: "255.255.255.248", en: "255.255.255.248" },
+              { ar: "8", en: "8" },
+              { ar: "6", en: "6" },
+            ],
+            [
+              { ar: "/30", en: "/30" },
+              { ar: "255.255.255.252", en: "255.255.255.252" },
+              { ar: "4", en: "4" },
+              { ar: "2 — وصلات WAN نقطية", en: "2 — point-to-point WAN links" },
+            ],
+          ],
+        },
         body: {
           ar: "عدد المضيفين القابل للاستخدام في أي شبكة = 2^(عدد بتات المضيف) - 2، لأننا نطرح عنوانين مقدسيين: عنوان الشبكة نفسها (كل بتات المضيف صفر) وعنوان البث (كل بتات المضيف واحد).\n\nاحفظ هذا الجدول من القلب — إنه جهاز الحاسبة الذي ستحمله في رأسك:\n\n- /24: 8 بتات مضيف → 256-2 = 254 مضيفاً (الشبكة المنزلية الكلاسيكية)\n- /25: 7 بتات → 128-2 = 126\n- /26: 6 بتات → 64-2 = 62\n- /27: 5 بتات → 32-2 = 30\n- /28: 4 بتات → 16-2 = 14\n- /30: بتان → 4-2 = 2 (روابط WAN حصراً)\n\nلاحظ النمط الجميل: كل بت تستلفه من المضيفين يضاعف عدد الشبكات الفرعية ويقسم عدد المضيفين تقريباً إلى النصف.",
           en: "Usable hosts in any network = 2^(host bits) - 2, because we subtract two sacred addresses: the network address itself (all host bits zero) and the broadcast address (all host bits one).\n\nMemorize this table by heart — it is the calculator you will carry in your head:\n\n- /24: 8 host bits → 256-2 = 254 hosts (the classic home network)\n- /25: 7 bits → 128-2 = 126\n- /26: 6 bits → 64-2 = 62\n- /27: 5 bits → 32-2 = 30\n- /28: 4 bits → 16-2 = 14\n- /30: 2 bits → 4-2 = 2 (WAN links only)\n\nNotice the elegant pattern: every bit borrowed from hosts doubles the subnet count and nearly halves the host count.",
@@ -379,6 +593,17 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "عملية AND: كيف يعرف جهازك شبكته؟", en: "The AND Operation: How Your Device Knows Its Network" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "خطوات تحديد الشبكة بالقناع", en: "Deriving the network with the mask" },
+          items: [
+            { ar: "اكتب العنوان والقناع بصيغة ثنائية 32 بتاً", en: "Write the address and mask as 32 binary bits" },
+            { ar: "طبّق عملية AND بتاً مقابل بت", en: "AND them bit by bit" },
+            { ar: "الناتج هو عنوان الشبكة", en: "The result is the network address" },
+            { ar: "كرر العملية مع وجهة الرحلة", en: "Repeat the operation for the trip's destination" },
+            { ar: "نفس الشبكة؟ أرسل مباشرة — وإلا فإلى البوابة", en: "Same network? Send direct — otherwise, to the gateway" },
+          ],
+        },
         body: {
           ar: "كل جهاز يجري عملية منطقية بسيطة عند كل إرسال: AND بين عنوانه وعنوان الوجهة مع قناعه، والنتيجتان تحددان إن كان الوجهة في شبكته أم لا.\n\nقاعدة AND: الناتج 1 فقط إذا كان المدخلان 1، وغير ذلك صفر. مثال محسوب كامل — العنوان 192.168.10.75 مع القناع /26 (255.255.255.192):\n\nانظر المثال الثنائي في الكود أدناه سطراً سطراً. النتيجة: عنوان الشبكة 192.168.10.64.\n\nومنه نستخرج كل شيء عن هذه الشبكة الفرعية:\n\n- حجم الكتلة: 256-192 = 64 عنواناً\n- المدى: من 192.168.10.64 (عنوان الشبكة) إلى 192.168.10.127 (البث)\n- المضيفون: 192.168.10.65 حتى 192.168.10.126 = 62 مضيفاً قابلاً للاستخدام",
           en: "Every device runs one simple logic operation on every send: AND between its address and the destination address using its mask; the two results decide whether the destination is in its own network.\n\nAND rule: output is 1 only when both inputs are 1, otherwise zero. A fully worked example — address 192.168.10.75 with mask /26 (255.255.255.192):\n\nRead the binary example below line by line. The result: network address 192.168.10.64.\n\nFrom it we derive everything about this subnet:\n\n- Block size: 256-192 = 64 addresses\n- Range: 192.168.10.64 (network address) to 192.168.10.127 (broadcast)\n- Hosts: 192.168.10.65 through 192.168.10.126 = 62 usable hosts",
@@ -394,6 +619,10 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "قرار الإرسال: مباشرة أم عبر البوابة؟", en: "The Send Decision: Direct or via Gateway?" },
+        tip: {
+          ar: "أسرع فحص لأعطال القناع: إذا تحدث جاران على المنفذ نفسه ولا يصل أحدهما للآخر فقارن أقنعة الشبكة قبل أي شيء آخر — قناع مخطئ يرسل الحزم إلى بوابة غريبة.",
+          en: "The fastest mask-fault check: when two neighbors on the same port cannot reach each other, compare their subnet masks before anything else — a wrong mask detours packets to a strange gateway.",
+        },
         body: {
           ar: "عندما يريد جهازك إرسال حزمة، يجري العملية التالية تلقائياً في أجزاء من الميكروثانية:\n\n- يحسب AND لعنوانه مع قناعه → شبكته\n- يحسب AND لعنوان الوجهة مع القناع نفسه → شبكة الوجهة كما يراها\n- إذا تطابق الناتجان: الوجهة محلية — يرسل إطاراً مباشراً إلى MAC الوجهة بعد استعلام ARP\n- إذا اختلفا: الوجهة بعيدة — يرسل الإطار إلى MAC البوابة الافتراضية (Default Gateway) بينما يبقى IP للوجهة الأصلية\n\nهذه هي الآلية التي تحدد حياة كل حزمة: نفس الفلسفة في أنظمة التشغيل والموجّهات ومكدسات TCP/IP في كل مكان.\n\nملاحظة عملية: البوابة الافتراضية هي جهاز توجيه له واجهة في شبكتك، وعنوانه يجب أن يكون من نفس الشبكة الفرعية — خطأ شائع جداً: إدخال بوابة من شبكة أخرى فيجعل الجهاز عاجزاً عن الوصول لما هو خارج شبكته.",
           en: "When your device wants to send a packet, it automatically runs this in microseconds:\n\n- ANDs its own address with its mask → its network\n- ANDs the destination address with the same mask → the destination network as it sees it\n- If the two results match: destination is local — send a frame directly to the destination MAC after an ARP query\n- If they differ: destination is remote — send the frame to the default gateway MAC while the IP header keeps the real destination\n\nThis is the mechanism that shapes every packet's life: identical philosophy in operating systems, routers, and every TCP/IP stack.\n\nPractical note: the default gateway is a router with an interface in your network, and its address must belong to your own subnet — a very common mistake is entering a gateway from another network, leaving the device unable to reach anything beyond it.",
@@ -469,6 +698,17 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المنهجية الخمسية", en: "The Five-Step Method" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "منهجية التقسيم الفرعي في خمس خطوات", en: "The subnetting method in five steps" },
+          items: [
+            { ar: "حدد عدد الشبكات الفرعية المطلوب", en: "Determine how many subnets you need" },
+            { ar: "اقترض بتات: 2^بتات ≥ المطلوب", en: "Borrow bits: 2^bits ≥ needed" },
+            { ar: "احسب القناع الجديد وحجم الكتلة", en: "Compute the new mask and block size" },
+            { ar: "ارسم حدود الشبكات بمضاعفات الكتلة", en: "Lay out boundaries at block multiples" },
+            { ar: "خصّص عنوان البوابة أول مضيف في كل شبكة", en: "Assign the gateway as the first host of each subnet" },
+          ],
+        },
         body: {
           ar: "سنستخدم منهجية موحدة لكل مسألة تقسيم، بالترتيب نفسه دائماً:\n\nالخطوة 1 — حدد المتطلبين: كم شبكة فرعية تحتاج (S) وكم أكبر عدد مضيفين في أي شبكة (H)؟\n\nالخطوة 2 — أوجد بتات الاستلاف: بتات الشبكات s تحقق 2^s ≥ S، وبتات المضيفين h تحقق 2^h - 2 ≥ H. تحقق دائماً من العددين معاً — ميزانية الخانات 32 بتاً مشتركة.\n\nالخطوة 3 — اكتب القناع الجديد: القناع الأصلي + s بتاً مستلفاً. مثلاً /24 + 2 = /26.\n\nالخطوة 4 — احسب حجم الكتلة: في الخانة المهمة (آخر خانة فيها بتات آحادية)، Block Size = 256 - قيمة القناع. مع /26: 256-192 = 64.\n\nالخطوة 5 — اعدّ الكتل من الصفر: الشبكات الفرعية تبدأ عند 0، 64، 128، 192 — وكل كتلة: أولها عنوان الشبكة، آخرها عنوان البث، وما بينهما مضيفون.\n\n- الرقم السحري (Magic Number) = حجم الكتلة نفسه\n- القفزات تكون دائماً مضاعفات حجم الكتلة\n- ناقش دائماً: هل 2^s و 2^h يتسعان معاً في 32 بتاً؟",
           en: "We will use one unified method for every problem, always in the same order:\n\nStep 1 — Define the two requirements: how many subnets you need (S) and the largest host count in any subnet (H).\n\nStep 2 — Find the borrowed bits: network bits s must satisfy 2^s ≥ S, and host bits h must satisfy 2^h - 2 ≥ H. Always check both together — the 32-bit budget is shared.\n\nStep 3 — Write the new mask: original mask + s borrowed bits. E.g. /24 + 2 = /26.\n\nStep 4 — Compute the block size: in the interesting octet (last one with 1-bits), Block Size = 256 - mask value. For /26: 256-192 = 64.\n\nStep 5 — Count blocks from zero: subnets start at 0, 64, 128, 192 — and in each block: the first address is the network, the last is broadcast, everything between is hosts.\n\n- The magic number equals the block size itself\n- Jumps are always multiples of the block size\n- Always sanity-check: do 2^s and 2^h both fit within 32 bits together?",
@@ -480,6 +720,45 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "مثال محلول بالكامل: 192.168.1.0/24 إلى /26", en: "Fully Worked Example: 192.168.1.0/24 into /26" },
+        table: {
+          caption: { ar: "الكتل الأربع الناتجة عن تقسيم /24 إلى /26", en: "The four blocks resulting from /24 into /26" },
+          headers: [
+            { ar: "الشبكة", en: "Network" },
+            { ar: "نطاق المضيفين", en: "Host range" },
+            { ar: "البث Broadcast", en: "Broadcast" },
+            { ar: "المضيفون", en: "Hosts" },
+          ],
+          rows: [
+            [
+              { ar: "192.168.1.0/26", en: "192.168.1.0/26" },
+              { ar: ".1 - .62", en: ".1 - .62" },
+              { ar: "192.168.1.63", en: "192.168.1.63" },
+              { ar: "62", en: "62" },
+            ],
+            [
+              { ar: "192.168.1.64/26", en: "192.168.1.64/26" },
+              { ar: ".65 - .126", en: ".65 - .126" },
+              { ar: "192.168.1.127", en: "192.168.1.127" },
+              { ar: "62", en: "62" },
+            ],
+            [
+              { ar: "192.168.1.128/26", en: "192.168.1.128/26" },
+              { ar: ".129 - .190", en: ".129 - .190" },
+              { ar: "192.168.1.191", en: "192.168.1.191" },
+              { ar: "62", en: "62" },
+            ],
+            [
+              { ar: "192.168.1.192/26", en: "192.168.1.192/26" },
+              { ar: ".193 - .254", en: ".193 - .254" },
+              { ar: "192.168.1.255", en: "192.168.1.255" },
+              { ar: "62", en: "62" },
+            ],
+          ],
+        },
+        tip: {
+          ar: "عنوان البوابة لا يشترط أن يكون أول مضيف، لكن جعله كذلك (‎.1 أو ‎.65 في الكتلة الثانية) يسهّل الحفظ والتوثيق ويمنع تفرّقاً محرجاً في التصميم.",
+          en: "The gateway need not be the first usable host, but making it so (‎.1 or ‎.65 in the second block) eases memory and documentation and prevents awkward design drift.",
+        },
         body: {
           ar: "المطلوب: أربع شبكات فرعية من 192.168.1.0/24 بأقل هدر.\n\nالخطوة 1: S = 4 شبكات، H = 60 مضيفاً للكبرى (لنقل قسم المبيعات).\n\nالخطوة 2: 2^s ≥ 4 يعطي s = 2 (1 يمنح شبكتين فقط — لا يكفي). و 2^h - 2 ≥ 60 يعطي h = 6 (64-2 = 62 ≥ 60 ✓). تحقق: 24 + 2 = 26 بتاً للشبكة + 6 للمضيف = 32 بالضبط ✓\n\nالخطوة 3: القناع الجديد /26 = 255.255.255.192.\n\nالخطوة 4: حجم الكتلة = 256 - 192 = 64.\n\nالخطوة 5: الكتل الأربع مذكورة في الجدول أدناه مع الثنائي الذي يثبت أن البتين المستلفين يميزان كل كتلة — لاحظ بت الخانة الرابعة الأخيران: 00، 01، 10، 11.",
           en: "Requirement: four subnets out of 192.168.1.0/24 with minimal waste.\n\nStep 1: S = 4 subnets, H = 60 hosts for the largest (say Sales).\n\nStep 2: 2^s ≥ 4 gives s = 2 (1 bit yields only two subnets — insufficient). And 2^h - 2 ≥ 60 gives h = 6 (64-2 = 62 ≥ 60 ✓). Check: 24 + 2 network bits + 6 host bits = 32 exactly ✓\n\nStep 3: New mask /26 = 255.255.255.192.\n\nStep 4: Block size = 256 - 192 = 64.\n\nStep 5: The four blocks are listed below, with the binary proving the two borrowed bits distinguish each block — watch the final two bits of the fourth octet: 00, 01, 10, 11.",
@@ -588,6 +867,41 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "خطة تصميم كاملة: شركة المثال", en: "A Complete Design Plan: The Example Company" },
+        table: {
+          caption: { ar: "توزيع VLSM من 192.168.10.0/24", en: "A VLSM allocation from 192.168.10.0/24" },
+          headers: [
+            { ar: "الإدارة", en: "Department" },
+            { ar: "المضيفون المطلوبون", en: "Hosts needed" },
+            { ar: "الشبكة المخصصة", en: "Allocated subnet" },
+            { ar: "المتاح", en: "Available" },
+          ],
+          rows: [
+            [
+              { ar: "الإنتاج", en: "Production" },
+              { ar: "100", en: "100" },
+              { ar: "192.168.10.0/25", en: "192.168.10.0/25" },
+              { ar: "126", en: "126" },
+            ],
+            [
+              { ar: "الدعم", en: "Support" },
+              { ar: "50", en: "50" },
+              { ar: "192.168.10.128/26", en: "192.168.10.128/26" },
+              { ar: "62", en: "62" },
+            ],
+            [
+              { ar: "الإدارة", en: "Admin" },
+              { ar: "20", en: "20" },
+              { ar: "192.168.10.192/27", en: "192.168.10.192/27" },
+              { ar: "30", en: "30" },
+            ],
+            [
+              { ar: "وصلات WAN", en: "WAN links" },
+              { ar: "2 لكل وصلة", en: "2 each" },
+              { ar: "192.168.10.224/30 و ‎.228/30", en: "192.168.10.224/30 and ‎.228/30" },
+              { ar: "2", en: "2" },
+            ],
+          ],
+        },
         body: {
           ar: "الشركة تملك 192.168.1.0/24 وتحتاج:\n\n- المبيعات: 100 مضيف\n- الهندسة: 50 مضيفاً\n- تقنية المعلومات: 25 مضيفاً\n- الإدارة: 10 مضيفين\n- رابطا WAN بين المقر والفرع: مضيفان لكل رابط\n\nالترتيب تنازلياً وحلّ كل متطلب:\n\n- 100 مضيفاً → 2^7-2 = 126 ≥ 100 → /25 → الكتلة الأولى: 192.168.1.0/25 (من .0 إلى .127)\n- 50 مضيفاً → 2^6-2 = 62 ≥ 50 → /26 → التالية المتاحة: 192.168.1.128/26 (من .128 إلى .191)\n- 25 مضيفاً → 2^5-2 = 30 ≥ 25 → /27 → 192.168.1.192/27 (من .192 إلى .223)\n- 10 مضيفين → 2^4-2 = 14 ≥ 10 → /28 → 192.168.1.224/28 (من .224 إلى .239)\n- رابطا WAN → /30 لكل واحد → 192.168.1.240/30 (240-243) و 192.168.1.244/30 (244-247)\n\nالمتبقي: من 192.168.1.248 إلى 192.168.1.255 — كتلة /29 قابلة للتوسع المستقبلي. لاحظ الجدول الدقيق في الكود أدناه.",
           en: "The company owns 192.168.1.0/24 and needs:\n\n- Sales: 100 hosts\n- Engineering: 50 hosts\n- IT: 25 hosts\n- Administration: 10 hosts\n- Two WAN links HQ-branch: 2 hosts each\n\nSorted descending, each requirement solved:\n\n- 100 hosts → 2^7-2 = 126 ≥ 100 → /25 → first block: 192.168.1.0/25 (.0 to .127)\n- 50 hosts → 2^6-2 = 62 ≥ 50 → /26 → next available: 192.168.1.128/26 (.128 to .191)\n- 25 hosts → 2^5-2 = 30 ≥ 25 → /27 → 192.168.1.192/27 (.192 to .223)\n- 10 hosts → 2^4-2 = 14 ≥ 10 → /28 → 192.168.1.224/28 (.224 to .239)\n- Two WAN links → /30 each → 192.168.1.240/30 (240-243) and 192.168.1.244/30 (244-247)\n\nLeftover: 192.168.1.248 to 192.168.1.255 — a future-growth /29 block. See the precise table in the code below.",
@@ -671,6 +985,36 @@ export const m05_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "ما غيره CIDR في القواعد", en: "What CIDR Changed in the Rules" },
+        table: {
+          caption: { ar: "التوجيه الطبقي مقابل CIDR", en: "Classful addressing vs CIDR" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "طبقي Classful", en: "Classful" },
+            { ar: "CIDR", en: "CIDR" },
+          ],
+          rows: [
+            [
+              { ar: "الأقنعة", en: "Masks" },
+              { ar: "ثابتة ضمنية حسب الفئة", en: "Implicit and fixed by class" },
+              { ar: "أي طول بادئة /8 حتى /32", en: "Any prefix length /8 to /32" },
+            ],
+            [
+              { ar: "هدر العناوين", en: "Address waste" },
+              { ar: "كبير — فئة B لعشرات المضيفين", en: "Huge — a Class B for dozens of hosts" },
+              { ar: "بالحد الأدنى المطلوب فعلاً", en: "Only what is actually needed" },
+            ],
+            [
+              { ar: "دعم VLSM", en: "VLSM support" },
+              { ar: "غير مدعوم", en: "Not supported" },
+              { ar: "أصلي ومطلوب", en: "Native and expected" },
+            ],
+            [
+              { ar: "جدول التوجيه العالمي", en: "Global routing table" },
+              { ar: "ينفجر مع نمو الشبكات", en: "Explodes with network growth" },
+              { ar: "يُضغط بالتجميع Aggregation", en: "Compressed via aggregation" },
+            ],
+          ],
+        },
         body: {
           ar: "CIDR (Classless Inter-Domain Routing) — التوجيه بين النطاقات اللا طبقي — وُلد عام 1993 في RFC 1519 ليقتل نظام الفئات الذي هدر الفضاء هدراً مروعاً.\n\nفكرة واحدة بسيطة غيّرت كل شيء: القناع يمكن أن يقع عند أي بت، في أي خانة — لا حدود جاهزة عند 8 و 16 و 24 بتاً.\n\n- قبل CIDR: مزود يحتاج 300 عنوان يُمنح فئة C كاملة (256) لا تكفيه، فيُمنح فئتين أو فئة B بـ 65 ألف عنوان — هدر فاحش\n- بعد CIDR: يُمنح /23 بالضبط = 512 عنواناً\n- العنوان والقناع يكتبان معاً: 203.0.113.0/23 — لا مجال للالتباس\n\nمع CIDR صار تخصيص العناوين بمقاس الحاجة تماماً، وأصبح تجميع المسارات ممكناً — موضوع بقية الدرس.",
           en: "CIDR (Classless Inter-Domain Routing) was born in 1993 in RFC 1519 to kill the class system that squandered address space horribly.\n\nOne simple idea changed everything: the mask may sit at any bit, in any octet — no ready-made boundaries at 8, 16, or 24 bits.\n\n- Pre-CIDR: a provider needing 300 addresses got a full Class C (256 — insufficient), so two of them, or a Class B with 65 thousand — flagrant waste\n- Post-CIDR: they get exactly a /23 = 512 addresses\n- Address and mask are written together: 203.0.113.0/23 — no room for ambiguity\n\nWith CIDR, allocations fit needs precisely, and route aggregation became possible — the rest of this lesson.",
@@ -775,6 +1119,16 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المصطلحات الأربعة التي يجب أن تتقنها", en: "The Four Terms You Must Master" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "رحلة حزمة عبر ترجمة PAT", en: "A packet's journey through PAT translation" },
+          items: [
+            { ar: "الحزمة تخرج من الشبكة الداخلية بعنوان خاص", en: "The packet leaves the LAN with a private source" },
+            { ar: "الراوتر يستبدل المصدر بعنوانه العام ويسجل الربط بالمنفذ", en: "The router swaps in its public IP and logs the port mapping" },
+            { ar: "الخادم البعيد يرد إلى العنوان العام والمنفذ", en: "The remote server replies to the public address and port" },
+            { ar: "الراوتر يراجع جدوله ويعيد العنوان الخاص للمستقبِل", en: "The router consults its table and restores the private address" },
+          ],
+        },
         body: {
           ar: "وثيقة Cisco الشهيرة تصف NAT بأربعة مصطلحات دقيقة — فهمها يحل نصف الالتباس:\n\n- داخلي محلي (Inside Local): عنوان الجهاز كما يراه داخل الشبكة الخاصة — 192.168.1.50 مثلاً\n- داخلي عام (Inside Global): العنوان العام الذي يترجم إليه عنوان الجهاز عند خروجه — 203.0.113.5\n- خارجي محلي (Outside Local): عنوان الخادم الخارجي كما يراه أجهزتك الداخلية — غالباً عنوانه العام نفسه\n- خارجي عام (Outside Global): العنوان الحقيقي للخادم الخارجي — 8.8.8.8 مثلاً\n\nقاعدة فهم سريعة: كلمة داخلي/خارجي تصف مكان الجهاز (داخل شبكتك أم خارجها)، ومحلي/عام تصف كيف يظهر العنوان (خاص أم قابل للتوجيه عاماً).",
           en: "The classic Cisco documentation defines NAT with four precise terms — understanding them dissolves half the confusion:\n\n- Inside Local: the device's address as seen inside the private network — e.g. 192.168.1.50\n- Inside Global: the public address it translates to when leaving — 203.0.113.5\n- Outside Local: the external server's address as your inside devices see it — usually its real public address\n- Outside Global: the external server's true address — e.g. 8.8.8.8\n\nQuick comprehension rule: inside/outside describes where the device lives (in your network or beyond it); local/global describes how the address appears (private or publicly routable).",
@@ -786,6 +1140,31 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الأنواع الثلاثة: ثابتة، ديناميكية، وفائقة", en: "The Three Types: Static, Dynamic, and Overload" },
+        table: {
+          caption: { ar: "أنواع NAT ومتى تستخدم كلاً منها", en: "NAT types and when to use each" },
+          headers: [
+            { ar: "النوع", en: "Type" },
+            { ar: "كيف يعمل", en: "How it works" },
+            { ar: "الاستخدام الأمثل", en: "Best use" },
+          ],
+          rows: [
+            [
+              { ar: "ثابت Static NAT", en: "Static NAT" },
+              { ar: "علاقة 1:1 — خادم داخلي بعنوان عام ثابت", en: "A 1:1 mapping — an internal server pinned to one public IP" },
+              { ar: "خادم يستقبل اتصالات واردة", en: "A server receiving inbound connections" },
+            ],
+            [
+              { ar: "ديناميكي Dynamic NAT", en: "Dynamic NAT" },
+              { ar: "مجموعة عناوين عامة تُخصص من الخزان بالترتيب", en: "A pool of public addresses allocated in turn" },
+              { ar: "عدة مستخدمين بلا حاجة لعنوان لكل واحد", en: "Several users without per-user addresses" },
+            ],
+            [
+              { ar: "PAT / Overload", en: "PAT / Overload" },
+              { ar: "منفذ مصدر فريد لكل جلسة على عنوان واحد", en: "A unique source port per session on one address" },
+              { ar: "الراوتر المنزلي — آلاف الجلسات على IP واحد", en: "The home router — thousands of sessions on one IP" },
+            ],
+          ],
+        },
         body: {
           ar: "NAT الثابت (Static NAT): ترجمة واحد لواحد دائمة — العنوان الخاص 192.168.1.10 يظهر دائماً بالعام 203.0.113.5. الاستخدام: نشر خادم داخلي للعالم الخارجي باتصالات واردة.\n\nNAT الديناميكي (Dynamic NAT): مجموعة عناوين خاصة تترجم إلى مجموعة عامة (Pool) بحسب الطلب — أول مجيء أول ترجمة، وتتحرر الترجمة عند انتهاء الجلسة. عملياً: يستهلك عناوين عامة بعدد المتصلين المتزامنين، لذا نادر اليوم.\n\nPAT (Port Address Translation) — الترجمة الفائقة Overload: العجيبة العملية — آلاف الأجهزة تشارك عنواناً عاماً واحداً عبر تمييز كل جلسة برقم منفذ مصدر مختلف. هذا ما يعمل في راوتر منزلك الآن.\n\n- كيف يميز PAT الجلسات؟ ثنائية (عنوان:منفذ) الداخل والعنوان الخارجي الرباعية\n- عند تصادم منفذين случайно يختار الموجّه منفذاً بديلاً — عنده 64 ألف احتمال لكل عنوان\n- كل الجلسات في جدول ترجمة (Translations Table) له مهلة انتهاء (24 ساعة للـ TCP الافتراضية في Cisco، 60 ثانية DNS... حسب البروتوكول)",
           en: "Static NAT: a permanent one-to-one mapping — private 192.168.1.10 always appears as public 203.0.113.5. Use case: publishing an internal server for inbound connections.\n\nDynamic NAT: a set of private addresses translates into a public pool on demand — first come, first served, freed at session end. Practically: consumes one public address per simultaneous user, hence rare today.\n\nPAT (Port Address Translation) — overload: the practical marvel — thousands of devices share one public address, each session distinguished by a different source port. This is what your home router runs right now.\n\n- How does PAT tell sessions apart? The 4-tuple of (inside address:port) plus the outside destination\n- On a random port collision the router picks another — it has about 64 thousand options per address\n- All sessions live in a translations table with per-protocol timeouts (24 hours for TCP by Cisco default, 60 seconds for DNS...)",
@@ -876,6 +1255,46 @@ export const m05_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "من 32 إلى 128 بتاً: لعبة الأرقام الجديدة", en: "From 32 to 128 Bits: The New Numbers Game" },
+        table: {
+          caption: { ar: "IPv4 مقابل IPv6: الفروقات الجوهرية", en: "IPv4 vs IPv6: the essential differences" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "IPv4", en: "IPv4" },
+            { ar: "IPv6", en: "IPv6" },
+          ],
+          rows: [
+            [
+              { ar: "طول العنوان", en: "Address length" },
+              { ar: "32 بتاً", en: "32 bits" },
+              { ar: "128 بتاً", en: "128 bits" },
+            ],
+            [
+              { ar: "الكتابة", en: "Notation" },
+              { ar: "عشري منقط 192.168.1.1", en: "Dotted decimal 192.168.1.1" },
+              { ar: "سداسي عشري بمجموعات 2001:db8::1", en: "Hex groups 2001:db8::1" },
+            ],
+            [
+              { ar: "الترويسة", en: "Header" },
+              { ar: "20-60 بايتاً مع خيارات", en: "20-60 bytes with options" },
+              { ar: "40 بايتاً ثابتة مبسطة", en: "A fixed simplified 40 bytes" },
+            ],
+            [
+              { ar: "التهيئة", en: "Configuration" },
+              { ar: "يدوي أو DHCP", en: "Manual or DHCP" },
+              { ar: "تلقائية SLAAC + DHCPv6 اختياري", en: "Automatic SLAAC + optional DHCPv6" },
+            ],
+            [
+              { ar: "البث العام", en: "Broadcast" },
+              { ar: "موجود ويصل الجميع", en: "Exists and reaches everyone" },
+              { ar: "لا يوجد — بث متعدد بدلاً منه", en: "None — multicast instead" },
+            ],
+            [
+              { ar: "دعم IPsec", en: "IPsec" },
+              { ar: "اختياري", en: "Optional" },
+              { ar: "مصمم ليكون أصلياً وداعماً", en: "Designed-in and supported natively" },
+            ],
+          ],
+        },
         body: {
           ar: "IPv6 عنوان من 128 بتاً — العدد 2^128 ≈ 340 undecillion (3.4×10^38)، أي 340 مليار مليار مليار مليار عنوان: ما يكفي لعنوان لكل حبة رمل على الأرض مرات عدة، وبفائض هائل.\n\nنكتب العنوان في 32 خانة سداسية عشر (0-9 و a-f) مقسمة إلى 8 مجموعات رباعية تسمى (Hextets) تفصلها نقطتان:\n\n2001:0db8:0000:0000:0000:ff00:0042:8329\n\nكل مجموعة أربعة خانات سداسية = 16 بتاً (لأن كل خانة 4 بتات). المجموعات الثماني × 16 بتاً = 128 بتاً بالضبط.\n\n- تُكتب الخانات بأحرف صغيرة عرفاً (a وليس A)\n- كل خانة سداسية قيمتها 0-15\n- البادئة القياسية للشبكات المحلية /64 — النصف الأول شبكة والنصف الثاني معرف واجهة",
           en: "An IPv6 address is 128 bits — the number 2^128 ≈ 340 undecillion (3.4×10^38), enough to address every grain of sand on Earth many times over, with room to spare.\n\nWe write it as 32 hexadecimal digits (0-9, a-f) split into eight groups of four called hextets, separated by colons:\n\n2001:0db8:0000:0000:0000:ff00:0042:8329\n\nEach hextet is four hex digits = 16 bits (each digit is 4 bits). Eight groups × 16 bits = exactly 128 bits.\n\n- Digits are lowercase by convention (a, not A)\n- Each hex digit ranges 0-15\n- The standard LAN prefix is /64 — first half network, second half interface ID",
@@ -894,6 +1313,41 @@ export const m05_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "أنواع العناوين: تعرف على السكان", en: "Address Types: Meet the Residents" },
+        table: {
+          caption: { ar: "أنواع عناوين IPv6", en: "IPv6 address types" },
+          headers: [
+            { ar: "النوع", en: "Type" },
+            { ar: "البادئة", en: "Prefix" },
+            { ar: "الاستخدام", en: "Use" },
+          ],
+          rows: [
+            [
+              { ar: "عام قابل للتوجيه GUA", en: "Global unicast (GUA)" },
+              { ar: "2000::/3", en: "2000::/3" },
+              { ar: "المكافئ للعنوان العام في IPv4", en: "The IPv4 public-address equivalent" },
+            ],
+            [
+              { ar: "ربط محلي Link-Local", en: "Link-local" },
+              { ar: "FE80::/10", en: "FE80::/10" },
+              { ar: "التخاطب داخل الوصلة — موجود دائماً على كل واجهة", en: "On-link talk — present on every interface" },
+            ],
+            [
+              { ar: "محلي فريد ULA", en: "Unique local (ULA)" },
+              { ar: "FC00::/7 (FD00 عملياً)", en: "FC00::/7 (FD00 in practice)" },
+              { ar: "المكافئ لنطاقات RFC 1918 الخاصة", en: "The RFC 1918 private equivalent" },
+            ],
+            [
+              { ar: "بث متعدد Multicast", en: "Multicast" },
+              { ar: "FF00::/8", en: "FF00::/8" },
+              { ar: "بديل البث — لا يوجد بث عام في IPv6", en: "Replaces broadcast — no broadcast in IPv6" },
+            ],
+            [
+              { ar: "Loopback", en: "Loopback" },
+              { ar: "::1/128", en: "::1/128" },
+              { ar: "اختبار المكدس داخلياً", en: "Internal stack testing" },
+            ],
+          ],
+        },
         body: {
           ar: "IPv6 نظّم أنواع العناوين ببادئات دقيقة — تعلمها كجدول جيوب:\n\n- GUA (Global Unicast): 2000::/3 — أي 2000 حتى 3fff كبداية — المعادل لعنوان IPv4 العام، قابل للتوجيه عالمياً\n- Link-Local: fe80::/10 — يعمل على القسم المحلي فقط ولا يعبر موجّهاً أبداً — إلزامي لكل واجهة IPv6 لعمليات مثل اكتشاف الجيران NDP\n- ULA (Unique Local): fc00::/7 عملياً fd00::/8 — المعادل الخاص لـ RFC 1918، بمعرف شبه عشوائي 40 بتاً\n- Multicast: ff00::/8 — البث المتعدد (لا بث عام في IPv6 — البث أُلغي وحُلّ محلّه بالبث المتعدد)\n- Loopback: ::1 — الاختبار المحلي\n- Anycast: يُخصص من نطاق GUA لكن يوجّه لأقرب عقدة تحمل العنوان نفسه — تستخدمه جذور DNS\n\nلاحظ اختلافاً جذرياً عن IPv4: الواجهة الواحدة تحمل عدة عناوين قانونياً في آن واحد — عادةً GUA و Link-Local معاً.",
           en: "IPv6 organized address types on precise prefixes — learn them as a pocket table:\n\n- GUA (Global Unicast): 2000::/3 — i.e. 2000 through 3fff as the leading hextet — the IPv4-public equivalent, globally routable\n- Link-Local: fe80::/10 — works on the local segment only, never crosses a router — mandatory on every IPv6 interface for protocols like NDP neighbor discovery\n- ULA (Unique Local): fc00::/7, practically fd00::/8 — the RFC 1918 private equivalent, with a 40-bit pseudo-random ID\n- Multicast: ff00::/8 — group traffic (no broadcast in IPv6 — it was abolished and replaced by multicast)\n- Loopback: ::1 — local testing\n- Anycast: allocated from GUA space but routed to the nearest node holding the same address — used by DNS roots\n\nNote a radical difference from IPv4: one interface legally holds several addresses at once — typically a GUA and a Link-Local together.",

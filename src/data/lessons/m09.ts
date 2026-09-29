@@ -30,6 +30,51 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "هجمات الشبكات الكلاسيكية", en: "Classic Network Attacks" },
+        table: {
+          caption: { ar: "هجمات الشبكات الكلاسيكية: الهدف والدفاع", en: "Classic network attacks: target and defense" },
+          headers: [
+            { ar: "الهجوم", en: "Attack" },
+            { ar: "ما يستهدفه", en: "What it targets" },
+            { ar: "الدفاع الأساسي", en: "Primary defense" },
+          ],
+          rows: [
+            [
+              { ar: "التنصت Sniffing", en: "Sniffing" },
+              { ar: "السرية — قراءة المرور", en: "Confidentiality — reading traffic" },
+              { ar: "التبديل + التشفير (TLS/VPN)", en: "Switching + encryption (TLS/VPN)" },
+            ],
+            [
+              { ar: "انتحال ARP", en: "ARP spoofing" },
+              { ar: "رجل في المنتصف على الشبكة الفرعية", en: "Man-in-the-middle on the subnet" },
+              { ar: "Dynamic ARP Inspection + DHCP Snooping", en: "Dynamic ARP Inspection + DHCP snooping" },
+            ],
+            [
+              { ar: "انتحال IP/DNS", en: "IP/DNS spoofing" },
+              { ar: "الهوية والوجهة الحقيقية للمواقع", en: "Identity and true destination of sites" },
+              { ar: "uRPF، DNSSEC، DoT/DoH", en: "uRPF, DNSSEC, DoT/DoH" },
+            ],
+            [
+              { ar: "مسح المنافذ", en: "Port scanning" },
+              { ar: "اكتشاف الخدمات المكشوفة", en: "Discovering exposed services" },
+              { ar: "جدران نارية + IPS + تصغير السطح", en: "Firewalls + IPS + shrinking the surface" },
+            ],
+            [
+              { ar: "التصيد Phishing", en: "Phishing" },
+              { ar: "بوابة الدخول عبر الإنسان", en: "The human entry gate" },
+              { ar: "تدريب + MFA + فلترة البريد", en: "Training + MFA + mail filtering" },
+            ],
+            [
+              { ar: "الحركة الجانبية", en: "Lateral movement" },
+              { ar: "التوسع داخل الشبكة بعد أول قدم", en: "Expanding inside after the first foothold" },
+              { ar: "التقطيع + أقل امتياز + مراقبة شرق-غرب", en: "Segmentation + least privilege + east-west monitoring" },
+            ],
+            [
+              { ar: "رفض الخدمة DoS/DDoS", en: "DoS/DDoS" },
+              { ar: "التوافر", en: "Availability" },
+              { ar: "CoPP + uRPF + مراكز التنقية", en: "CoPP + uRPF + scrubbing centers" },
+            ],
+          ],
+        },
         body: {
           ar: "قائمة الهجمات التي يجب أن يحفظها مهندس الشبكات عن ظهر قلب:\n\n- التنصت (Sniffing): قراءة المرور — كان سهلاً في عصر Hubs، وفي عصر المبدلات يتطلب خداعاً\n- انتحال ARP (ARP Spoofing): المهاجم يعلن: أنا البوابة! فيتدفق إليه مرور الشبكة الفرعية كلها — رجل في المنتصف حقيقي\n- انتحال IP/DNS: التظاهر بعنوان آخر، أو تسميم خزانة DNS لتحويلك لموقع مزيف\n- هجمات المنفذ والاستطلاع: nmap يكتشف خدماتك المكشوفة — أول ما يفعله أي مهاجم\n- التصيد (Phishing): بوابة الدخول الأولى في أكثر من 90% من الحوادث — بريد يخدع موظفاً فيفتح باباً\n- البرمجيات الخبيثة (Malware): فيروسات وديدان وأحصنة طروادة وبرمجيات فدية\n- الحركة الجانبية (Lateral Movement): بعد أول قدم في الشبكة يتحرك المهاجم داخلياً نحو الأهداف الثمينة\n- رفض الخدمة (DoS/DDoS): درس كامل قادم له\n\nلاحظ النمط: التوصيل عبر البريد أو الويب، ثم الاستغلال، ثم الانتشار — وهذا يقودنا للدفاع الطبقي.",
           en: "The list every network engineer must memorize:\n\n- Sniffing: reading traffic — easy in the hub era; in the switch era it requires a trick\n- ARP spoofing: the attacker announces: I am the gateway! — the whole subnet's traffic flows to him, a true man-in-the-middle\n- IP/DNS spoofing: pretending to be another address, or poisoning the DNS cache to redirect you to fake sites\n- Port scanning and reconnaissance: nmap discovering your exposed services — any attacker's first move\n- Phishing: the number-one entry gate in over 90% of incidents — an email deceiving an employee opens the door\n- Malware: viruses, worms, trojans, ransomware\n- Lateral movement: after the first foothold the attacker moves internally toward valuable targets\n- Denial of service (DoS/DDoS): a full upcoming lesson\n\nNotice the pattern: delivery via email or web, then exploitation, then propagation — which leads us to layered defense.",
@@ -48,6 +93,19 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الدفاع في العمق: لا سحر بلا طبقات", en: "Defense in Depth: No Magic Without Layers" },
+        diagram: {
+          kind: "layers",
+          title: { ar: "طبقات الدفاع في العمق من الخارج إلى البيانات", en: "Defense-in-depth layers from outside to data" },
+          items: [
+            { ar: "الفيزيائي: أقفال غرف الخوادم وكاميرات", en: "Physical: server-room locks and cameras" },
+            { ar: "المحيطي: جدران نارية وحماية DDoS", en: "Perimeter: firewalls and DDoS protection" },
+            { ar: "الشبكة: تقطيع VLAN و ACL ومراقبة", en: "Network: VLAN segmentation, ACLs, monitoring" },
+            { ar: "الهوية: MFA وأقل امتياز", en: "Identity: MFA and least privilege" },
+            { ar: "نقطة النهاية: EDR وتصحيح", en: "Endpoint: EDR and patching" },
+            { ar: "التطبيق: تحقق المدخلات وترقيع", en: "Application: input validation and patching" },
+            { ar: "البيانات: تشفير ونسخ احتياطية معزولة", en: "Data: encryption and isolated backups" },
+          ],
+        },
         body: {
           ar: "الافتراض التأسيسي: كل حاجز سيفشل يوماً ما. لذلك لا نبني حاجزاً واحداً بل طبقات متتالية يعمل فشل إحداها كفرصة للطبقة التالية:\n\n- الفيزيائي: خزائن الرفوف، أقفال غرف الخوادم، كاميرات\n- المحيطي: جدران نارية وحماية DDoS على الحدود\n- الشبكة: تقطيع VLAN و ACL وقوائم التحكم والمراقبة\n- الهوية: مصادقة متعددة العوامل وأقل امتياز\n- نقطة النهاية: مضاد فيروسات، تصحيح، EDR\n- التطبيق: تحقق المدخلات وترقيع التبعيات\n- البيانات: تشفير في السكون والنقل ونسخ احتياطية معزولة\n\nاعتبار الاختراق (Assume Breach): صمم وكأن المهاجم داخل شبكتك الآن — ماذا يمنعه من الوصول لقاعدة البيانات؟ الإجابة: التقطيع + الهوية + التشفير... هذا تحديداً موضوع درس Zero Trust في نهاية الوحدة.",
           en: "The foundational assumption: every barrier will fail one day. So we do not build one barrier but successive layers, where each failure is a chance for the next layer:\n\n- Physical: rack cabinets, server room locks, cameras\n- Perimeter: firewalls and DDoS protection at the edge\n- Network: VLAN segmentation, ACLs, monitoring\n- Identity: multi-factor authentication and least privilege\n- Endpoint: antivirus, patching, EDR\n- Application: input validation and dependency patching\n- Data: encryption at rest and in transit, isolated backups\n\nAssume breach: design as if the attacker is inside your network right now — what stops him from reaching the database? The answer: segmentation + identity + encryption... which is precisely the Zero Trust lesson at the end of this module.",
@@ -146,6 +204,46 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الجدار ذو الحالة: ذاكرة الاتصالات", en: "The Stateful Firewall: Connection Memory" },
+        table: {
+          caption: { ar: "الفلتر عديم الحالة مقابل الجدار ذي الحالة", en: "Stateless filter vs stateful firewall" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "عديم الحالة", en: "Stateless" },
+            { ar: "ذو الحالة", en: "Stateful" },
+          ],
+          rows: [
+            [
+              { ar: "ما يراه", en: "What it sees" },
+              { ar: "الحزمة الواحدة معزولة", en: "Each packet in isolation" },
+              { ar: "الحزم + الجلسات وحالاتها", en: "Packets + sessions and their states" },
+            ],
+            [
+              { ar: "الذاكرة", en: "Memory" },
+              { ar: "بلا جدول اتصالات", en: "No connection table" },
+              { ar: "جدول حالات لكل TCP/UDP", en: "A state table per TCP/UDP flow" },
+            ],
+            [
+              { ar: "قواعد العودة", en: "Return traffic" },
+              { ar: "تفتح قواعد واسعة — أبواب خلفية", en: "Broad open rules — backdoors" },
+              { ar: "مسموحة تلقائياً لمطابقة الجلسة", en: "Allowed automatically by session match" },
+            ],
+            [
+              { ar: "حزم ACK مزيفة", en: "Forged ACKs" },
+              { ar: "قد تمر", en: "May pass" },
+              { ar: "تُرفض لغياب الجلسة", en: "Dropped for lack of session" },
+            ],
+            [
+              { ar: "الأداء والكلفة", en: "Performance & cost" },
+              { ar: "أسرع وأخف — على كل الموجهات", en: "Faster, lighter — on every router" },
+              { ar: "أعلى حملاً — أجهزة مخصصة", en: "Heavier — dedicated appliances" },
+            ],
+            [
+              { ar: "المكان الأمثل", en: "Best placement" },
+              { ar: "حجب شبكات معروفة على الحافة", en: "Blocking known networks at the edge" },
+              { ar: "بوابات الإنترنت وبين المناطق", en: "Internet gateways and between zones" },
+            ],
+          ],
+        },
         body: {
           ar: "الجيل الحقيقي جاء مع تتبع الحالة (Stateful Inspection): الجدار يبني جدول اتصالات يرى فيه كل جلسة TCP/UDP مع حالتها:\n\n- SYN_SENT → ESTABLISHED → FIN_WAIT → CLOSED لدورة TCP الكاملة\n- المنافذ المؤقتة المفتوحة للأجوبة، مع مهلة زمنية لكل بروتوكول\n\nالميزة الجوهرية: القاعدة تكتب للاتجاه المبادر فقط (اتصالات خارجية من الداخل مسموحة)، والردود تسمح تلقائياً لأنها تطابق حالة في الجدول — لا قواعد عودة واسعة أبداً.\n\n- يرفض حزم ACK مزيفة بلا جلسة مقابلة — الفلتر عديم الحالة كان يمررها\n- يكشف المحاولات الشاذة: SYN نصف مفتوحة (هجوم!) وإعادة تعيين غريبة\n- يفهم بروتوكولات ديناميكية المنافذ (FTP و SIP) عبر ALB/الاستماع للتطبيق\n\nحدوده: يرى الحزم والاتصالات لا التطبيقات — لهذا ولد NGFW.",
           en: "The real leap came with stateful inspection: the firewall builds a connection table tracking every TCP/UDP session and its state:\n\n- SYN_SENT → ESTABLISHED → FIN_WAIT → CLOSED for the full TCP cycle\n- Ephemeral ports opened for replies, with per-protocol timeouts\n\nThe core advantage: rules are written for the initiating direction only (outbound connections allowed), and replies are permitted automatically because they match a table entry — never broad return rules.\n\n- It rejects forged ACKs with no matching session — a stateless filter would pass them\n- It spots anomalies: half-open SYNs (an attack!) and odd resets\n- It understands dynamically-ported protocols (FTP, SIP) via application awareness/ALGs\n\nIts limit: it sees packets and connections, not applications — hence the NGFW was born.",
@@ -157,6 +255,12 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "التصميم بالمناطق (Zones)", en: "Zone-Based Design" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "مناطق الثقة الأربع عبر جدار ناري واحد", en: "The four trust zones across one firewall" },
+          nodes: ["Internet", "FW-الجدار", "DMZ", "INSIDE-داخلي", "MGMT-إدارة"],
+          edges: [[0, 1], [1, 2], [1, 3], [1, 4]],
+        },
         body: {
           ar: "المنهجية الحديثة تقسم الشبكة إلى مناطق أمنية (Security Zones) حسب مستوى الثقة: الإنترنت (خارج، لا ثقة)، DMZ (ثقة جزئية: خوادم عامة)، الداخلية (ثقة عالية)، الإدارة (أعلى ثقة وأعلى سرية).\n\nالقاعدة الناظمة: السياسات تكتب بين منطقتين (Zone Pair) لا بين عناوين متفرقة — المرور من منطقة إلى أخرى يخضع للفحص، وما داخل المنطقة الواحدة أمرها الداخلي.\n\nعلى Cisco IOS يتحقق هذا عبر Zone-Based Firewall (ZBF):\n\n- تحديد المناطق وربط الواجهات بها\n- policy-map نوع inspect يحدد ما يُسمح ويُراقب بين منطقتين\n- الحركة من منطقة عضو إلى منطقة بلا سياسة ترفض تلقائياً (سلوك آمن افتراضياً)\n\nهذا النموذج يمنحك تماسكاً معمارياً: كل واجهة تنتمي لمنطقة، وكل سياسة نقطة واضحة بين منطقتين — بدل مئات ACL متناثرة على عشرات الواجهات.",
           en: "The modern methodology divides the network into security zones by trust level: Internet (outside, no trust), DMZ (partial trust: public servers), Inside (high trust), Management (highest trust and secrecy).\n\nThe governing rule: policies are written between two zones (zone pairs), not between scattered addresses — traffic crossing zones is inspected, while intra-zone traffic is that zone's own business.\n\nOn Cisco IOS this is implemented via the Zone-Based Firewall (ZBF):\n\n- Define zones and attach interfaces to them\n- A policy-map of type inspect defines what is allowed and watched between two zones\n- Traffic from a member zone to a zone with no policy is dropped implicitly (secure by default)\n\nThis model grants architectural coherence: every interface belongs to a zone, and every policy is a clear point between two zones — instead of hundreds of ACLs scattered across dozens of interfaces.",
@@ -266,6 +370,41 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "IDS أم IPS؟ السؤال ليس تقنياً بل هندسي", en: "IDS or IPS? An Engineering, Not Technical, Question" },
+        table: {
+          caption: { ar: "IDS مقابل IPS: قرار هندسي", en: "IDS vs IPS: an engineering decision" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "IDS", en: "IDS" },
+            { ar: "IPS", en: "IPS" },
+          ],
+          rows: [
+            [
+              { ar: "الموضع", en: "Placement" },
+              { ar: "خارج المسار — SPAN أو TAP", en: "Out-of-band — SPAN or TAP" },
+              { ar: "في مسار الحزم مباشرة", en: "Inline, in the packet path" },
+            ],
+            [
+              { ar: "القدرة", en: "Capability" },
+              { ar: "يراقب وينبّه فقط", en: "Watches and alerts only" },
+              { ar: "يسقط ويحاصر الجلسة لحظياً", en: "Drops and contains sessions live" },
+            ],
+            [
+              { ar: "عند الفشل", en: "On failure" },
+              { ar: "لا يعطل شيئاً — رصد آمن", en: "Breaks nothing — safe monitoring" },
+              { ar: "fail-open يمرر / fail-close يوقف", en: "fail-open passes / fail-close stops" },
+            ],
+            [
+              { ar: "الزمن المضاف", en: "Added latency" },
+              { ar: "صفر على المسار", en: "Zero on the path" },
+              { ar: "زمن فحص في كل حزمة", en: "Inspection latency per packet" },
+            ],
+            [
+              { ar: "الموضع الأمثل", en: "Best spot" },
+              { ar: "الشبكات الداخلية والمناطق التحليلية", en: "Internal networks and analytical zones" },
+              { ar: "المحيط ومداخل مراكز البيانات", en: "Perimeter and datacenter entrances" },
+            ],
+          ],
+        },
         body: {
           ar: "الفرق العملي الواحد: هل الجهاز في مسار الحزم (Inline) أم يراقب نسخة منها (Out-of-Band)؟\n\nIPS في المسار:\n\n- كل حزمة تمر عبره: يستطيع الإسقاط وإعادة التعيين ومحاصرة الجلسة لحظياً\n- الثمن: نقطة فشل إضافية — وسلوكه عند الانهيار حاسم: fail-open (يمر المرور إن سقط) أو fail-close (تتوقف الشبكة إن سقط)\n- قرار السلوك فلسفي: أمن أولاً أم توافر أولاً؟ مراكز البيانات المالية تختار غالباً close، والتجارة الإلكترونية تفتح غالباً\n\nIDS خارج المسار:\n\n- يستقبل نسخة من المرور عبر منفذ SPAN/Mirror أو TAP فيزيائي\n- لا يستطيع المنع لكنه لا يعطل شيئاً إن فشل — رصد آمن\n- مثالي للرصد العميق على مناطق حساسة لا ترغب بإضافة زمن إليها\n\nقاعدة الانتشار المعروفة: IPS على المحيط ومراكز البيانات (مواقع القرار)، IDS على الشبكات الداخلية والمناطق التحليلية.",
           en: "The single practical difference: is the device in the packet path (inline) or watching a copy (out-of-band)?\n\nIPS inline:\n\n- Every packet flows through it: it can drop, reset, and contain sessions in real time\n- The price: an extra failure point — and its behavior on crash is decisive: fail-open (traffic passes if it dies) or fail-close (the network stops if it dies)\n- The behavior decision is philosophical: security first or availability first? Financial datacenters often choose close; e-commerce often opens\n\nIDS out-of-band:\n\n- It receives a copy of traffic via a SPAN/mirror port or a physical tap\n- It cannot block but breaks nothing if it fails — safe monitoring\n- Ideal for deep monitoring of sensitive zones where you refuse added latency\n\nThe common deployment rule: IPS at the perimeter and datacenter (decision points), IDS on internal networks and analytical zones.",
@@ -273,6 +412,12 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "التموضع: أين نضع العين؟", en: "Placement: Where to Put the Eye?" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "سلسلة الحافة: راوتر ثم جدار ثم IPS مع مستشعر SPAN داخلي", en: "The edge chain: router, firewall, IPS, plus an internal SPAN sensor" },
+          nodes: ["Internet", "Edge-Router", "FW-جدار", "IPS-inline", "LAN-المبدل", "IDS-SPAN"],
+          edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]],
+        },
         body: {
           ar: "التموضع النموذجي المتدرج في مؤسسة:\n\n- خلف الجدار المحيطي مباشرة: يرى ما نجا من الجدار — الأهم للرصد الخارجي\n- قبل الجدار (الخارج): يرى كل شيء حتى الضجيج — قيمة تحليلية أمنية لكن إنذارات كثيرة\n- داخل مناطق DMZ: مراقبة الخوادم المعرضة\n- بين الشبكات الداخلية (East-West): حيث الحركة الجانبية للمهاجم — الأكثر إهمالاً والأعلى مردوداً اليوم\n\nأدوات النسخ: SPAN على المبدل (نسخة برمجية، بلا تعطيل، قد تسقط حزم عند الحمل العالي) مقابل TAP فيزيائي (نسخة كهربائية دائماً كاملة بلا استثناء، كلفة شراء).\n\nترتيب الأجهزة عند التسلسل له منطق: الراوتر (حافة) ← الجدار الناري ← IPS — لأن IPS يحتاج مروراً منظفاً من الضجيج ليقرأ العميق.",
           en: "The staged typical placement in an enterprise:\n\n- Directly behind the perimeter firewall: sees what survived the firewall — most important for external monitoring\n- Outside the firewall: sees everything including noise — analytical value but many alerts\n- Inside DMZ zones: watching exposed servers\n- Between internal networks (east-west): where the attacker's lateral movement lives — the most neglected and highest-yield spot today\n\nCopy tools: SPAN on the switch (software copy, no disruption, may drop packets under load) versus a physical TAP (always-complete electrical copy, purchase cost).\n\nThe serial order of devices has logic: router (edge) ← firewall ← IPS — because the IPS needs noise-filtered traffic to read deeply.",
@@ -382,6 +527,17 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "مرحلتا IKE: التفاوض ثم النفق", en: "The Two IKE Phases: Negotiate, Then Tunnel" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "مسار إنشاء نفق IPsec من التفاوض إلى البيانات", en: "The IPsec establishment path from negotiation to data" },
+          items: [
+            { ar: "المرحلة 1: تفاوض آمن ومصادَق (PSK أو شهادات) يبني قناة IKE", en: "Phase 1: secure authenticated negotiation (PSK or certificates) builds the IKE channel" },
+            { ar: "المرحلة 2: فوق القناة الآمنة تُتفاوَض أنفاق البيانات وشبكاتها", en: "Phase 2: data tunnels and their protected networks negotiated over the secure channel" },
+            { ar: "المرور المثير للاهتمام يُغلف بـ ESP ويُشفّر", en: "Interesting traffic gets encapsulated in ESP and encrypted" },
+            { ar: "بيانات المستخدم تعبر النفق بين البوابتين", en: "User data crosses the tunnel between the two gateways" },
+            { ar: "انتهاء عمر SA يعيد التفاوض بمفاتيح جديدة دورياً", en: "SA lifetime expiry renegotiates with fresh keys periodically" },
+          ],
+        },
         body: {
           ar: "بناء IPsec يحصل على مرحلتين منفصلتين منطقياً:\n\nالمرحلة الأولى (IKE Phase 1 / ISAKMP SA): بناء قناة آمنة للإدارة\n\n- الهدف: تفاوض آمن ومصادَق عليه لإنشاء قناة التفاوض نفسها\n- الوضع الرئيسي (Main Mode): 6 رسائل — هوية محمية (مشفرة)\n- الوضع الهجومي/المتسرع (Aggressive Mode): 3 رسائل أسرع لكن الهوية مكشوفة — مرفوض في المعايير الحديثة\n- المكونات التفاوضية: خوارزمية التشفير والتوقيع، مجموعة Diffie-Hellman، ومدة عمر القناة\n- المصادقة: مفتاح مشترك مسبق (PSK) أو شهادات رقمية\n\nالمرحلة الثانية (IKE Phase 2 / Quick Mode): إنشاء أنفاق البيانات\n\n- تفاوض سريع فوق القناة الآمنة التي بنتها المرحلة الأولى\n- يحدد: SA للبيانات، الخوارزميات، الشبكات المحمية (المرور المثير للاهتمام)، و PFS (سرية أمامية: مفاتيح جديدة عبر DH جديدة لا مشتقة من المرحلة الأولى)\n\nإعادة التفاوض: كل SA عمر محدد (Phase1 عادة 8-24 ساعة و Phase2 ساعة-8 ساعات) فيتجدد الدوران دورياً.",
           en: "Building IPsec happens in two logically separate phases:\n\nPhase one (IKE Phase 1 / ISAKMP SA): building the secure management channel\n\n- Goal: a secure, authenticated negotiation to create the negotiation channel itself\n- Main mode: 6 messages — identity protected (encrypted)\n- Aggressive mode: 3 messages, faster but identity exposed — rejected by modern standards\n- Negotiated components: encryption and hashing algorithms, the Diffie-Hellman group, and the channel's lifetime\n- Authentication: a pre-shared key (PSK) or digital certificates\n\nPhase two (IKE Phase 2 / Quick Mode): building the data tunnels\n\n- Fast negotiation riding the secure channel phase one built\n- It defines: the data SAs, algorithms, the protected networks (interesting traffic), and PFS (forward secrecy: fresh keys via a new DH, not derived from phase one)\n\nRenegotiation: every SA has a lifetime (phase 1 typically 8-24 hours, phase 2 one-to-eight hours), so keys rotate periodically.",
@@ -400,6 +556,46 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "WireGuard: المينيمالية المتقدمة", en: "WireGuard: Advanced Minimalism" },
+        table: {
+          caption: { ar: "IPsec مقابل WireGuard", en: "IPsec vs WireGuard" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "IPsec/IKE", en: "IPsec/IKE" },
+            { ar: "WireGuard", en: "WireGuard" },
+          ],
+          rows: [
+            [
+              { ar: "قاعدة الكود", en: "Codebase" },
+              { ar: "مئات آلاف الأسطر", en: "Hundreds of thousands of lines" },
+              { ar: "~4000 سطر قابلة للتدقيق كاملة", en: "~4,000 fully auditable lines" },
+            ],
+            [
+              { ar: "النقل", en: "Transport" },
+              { ar: "ESP بروتوكول 50 + IKE UDP 500/4500", en: "ESP protocol 50 + IKE UDP 500/4500" },
+              { ar: "UDP 51820 فقط", en: "Just UDP 51820" },
+            ],
+            [
+              { ar: "التفاوض", en: "Negotiation" },
+              { ar: "قابل للتهيئة — وله مخاطر هبوط التفاوض", en: "Configurable — with downgrade risks" },
+              { ar: "خوارزميات ثابتة — لا هجوم هبوط", en: "Fixed algorithms — no downgrade attack" },
+            ],
+            [
+              { ar: "الهوية", en: "Identity" },
+              { ar: "PSK أو شهادات X.509", en: "PSK or X.509 certificates" },
+              { ar: "مفاتيح عامة Curve25519 فقط", en: "Curve25519 public keys only" },
+            ],
+            [
+              { ar: "التجوال بين الشبكات", en: "Network roaming" },
+              { ar: "مؤلم — النفق مرتبط بالعناوين", en: "Painful — the tunnel is address-bound" },
+              { ar: "هيّن — النفق يتبع هوية المفاتيح", en: "Trivial — the tunnel follows key identity" },
+            ],
+            [
+              { ar: "الانتشار الأمثل", en: "Best fit" },
+              { ar: "المؤسسات الضخمة والمتطلبات التنظيمية", en: "Large enterprises and regulatory demands" },
+              { ar: "الوصول البعيد والشبكات الصغيرة/المتوسطة", en: "Remote access and small/medium networks" },
+            ],
+          ],
+        },
         body: {
           ar: "WireGuard (2020 رسمياً في نواة لينكس) أعاد التفكير من الصفر واكتسب احترام الأمن بفلسفة معاكسة ل IPsec:\n\n- قاعدة كود ~4000 سطر مقابل مئات آلاف ل IPsec/IKE — قابلة للتدقيق الأمني الكامل فعلاً\n- بروتوكول Noise (النمط IK) فوق UDP 51820: مصافحة واحدة قصيرة\n- خيارات ثابتة مثبتة أفضل الممارسات: Curve25519 للتبادل، ChaCha20-Poly1305 للتشفير، BLAKE2s للتجزئة — لا تفاوض يعني لا هجمات تفاوض هبوطاً\n- كل نظير يعرَّف بمفتاحه العام فقط — لا وضع عميل/خادم إجباري: كل جهاز نظير متساوٍ\n- التجوال بين الشبكات هيّن: النفق مبني على هوية المفاتيح لا على العناوين\n\nالإعداد يستغرق دقائق: زوج مفاتيح لكل جهاز، وملف .conf واحد يصف الواجهة والنظراء و IP المسموحة لكل واحد، ثم wg-quick up.\n\nحالتا الاستخدام اليوم: الوصول البعيد الشخصي والشبكات الصغيرة/المتوسطة (مع WireGuard ك mesh)، بينما تبقى IPsec و TLS-VPN في المؤسسات الضخمة حيث المتطلبات التنظيمية والاندماج مع بنى قائمة.",
           en: "WireGuard (officially in the Linux kernel in 2020) rethought everything from scratch and earned security's respect with an anti-IPsec philosophy:\n\n- A ~4000-line codebase versus hundreds of thousands for IPsec/IKE — genuinely fully auditable\n- The Noise protocol (IK pattern) over UDP 51820: one short handshake\n- Fixed, best-practice crypto: Curve25519 for exchange, ChaCha20-Poly1305 for encryption, BLAKE2s for hashing — no negotiation means no downgrade attacks\n- Every peer defined solely by its public key — no forced client/server model: all devices are equal peers\n- Network roaming is trivial: the tunnel rides key identity, not addresses\n\nSetup takes minutes: a key pair per device, one .conf file describing the interface, peers, and each one's allowed IPs, then wg-quick up.\n\nToday's use cases: personal remote access and small/medium networks (including WireGuard meshes), while IPsec and TLS-VPN remain in large enterprises with regulatory demands and legacy integration.",
@@ -484,6 +680,41 @@ export const m09_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "لماذا اللاسلكي ساحة أصعب؟", en: "Why Wireless Is a Harder Battlefield" },
+        table: {
+          caption: { ar: "أجيال أمن Wi-Fi الأربعة: من WEP المكسور إلى WPA3", en: "The four Wi-Fi security generations: from broken WEP to WPA3" },
+          headers: [
+            { ar: "الجيل", en: "Generation" },
+            { ar: "السنة", en: "Year" },
+            { ar: "التشفير والمصادقة", en: "Cipher & auth" },
+            { ar: "حالته اليوم", en: "Status today" },
+          ],
+          rows: [
+            [
+              { ar: "WEP", en: "WEP" },
+              { ar: "1999", en: "1999" },
+              { ar: "RC4 بمفتاح ثابت و IV بطول 24 بت", en: "RC4, static key, 24-bit IV" },
+              { ar: "مكسور بالكامل — ممنوع استخدامه", en: "Fully broken — forbidden to use" },
+            ],
+            [
+              { ar: "WPA", en: "WPA" },
+              { ar: "2003", en: "2003" },
+              { ar: "TKIP فوق RC4 كإصلاح طوارئ", en: "TKIP over RC4 as an emergency fix" },
+              { ar: "مهمل — جسر انتقالي", en: "Deprecated — a transitional bridge" },
+            ],
+            [
+              { ar: "WPA2", en: "WPA2" },
+              { ar: "2004", en: "2004" },
+              { ar: "AES-CCMP ومصافحة رباعية (PSK أو 802.1X)", en: "AES-CCMP, four-way handshake (PSK or 802.1X)" },
+              { ar: "الحد الأدنى المقبول — PSK عرضة للقاموس", en: "The accepted minimum — PSK prone to dictionaries" },
+            ],
+            [
+              { ar: "WPA3", en: "WPA3" },
+              { ar: "2018", en: "2018" },
+              { ar: "SAE + PMF إلزامي + سرية أمامية", en: "SAE + mandatory PMF + forward secrecy" },
+              { ar: "المعيار الحالي الموصى به", en: "The recommended current standard" },
+            ],
+          ],
+        },
         body: {
           ar: "الشبكة السلكية تحرس مدخلها الفيزيائي: من يصل للمنفذ يحتاج حضوراً مادياً. اللاسلكي يبث في المحيط كله:\n\n- حدود تغطيته تتجاوز جدران المبنى — سيارة في الشارع ترى شبكتك\n- الوسط مشترك: كل جهاز في نفس الخلية يسمع إطار الآخر\n- لا يمكن حصر المستقبلين فيزيائياً — التشفير هو الخط الوحيد الفعلي\n- هجمات التشويش (Jamming) و deauthentication ممكنة بعتاد رخيص\n\nلهذا كل جيل من معايير Wi-Fi صاحبه جيل من أمن التشفير: WEP ثم WPA ثم WPA2 ثم WPA3 — قصة صعود وخروق تحفظها كي لا تعيدها.",
           en: "A wired network guards a physical entrance: reaching a port requires physical presence. Wireless broadcasts into the surroundings:\n\n- Its coverage spills beyond the building walls — a car on the street sees your network\n- The medium is shared: every device in the cell hears others' frames\n- Receivers cannot be physically contained — encryption is the only real line\n- Jamming and deauthentication attacks run on cheap hardware\n\nHence every Wi-Fi generation came with a security generation: WEP, then WPA, then WPA2, then WPA3 — a rise-and-breach story you memorize so as not to repeat it.",
@@ -610,6 +841,46 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "TACACS+: بروتوكول إداريي الأجهزة", en: "TACACS+: The Device Administrators' Protocol" },
+        table: {
+          caption: { ar: "RADIUS مقابل TACACS+", en: "RADIUS vs TACACS+" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "RADIUS", en: "RADIUS" },
+            { ar: "TACACS+", en: "TACACS+" },
+          ],
+          rows: [
+            [
+              { ar: "النقل", en: "Transport" },
+              { ar: "UDP 1812/1813", en: "UDP 1812/1813" },
+              { ar: "TCP 49", en: "TCP 49" },
+            ],
+            [
+              { ar: "التشفير", en: "Encryption" },
+              { ar: "كلمة المرور فقط (MD5 + سر مشترك)", en: "Password only (MD5 + shared secret)" },
+              { ar: "جسم الحزمة كاملاً", en: "The full packet body" },
+            ],
+            [
+              { ar: "فصل AAA", en: "AAA separation" },
+              { ar: "المصادقة والتفويض في رسالة واحدة", en: "Authentication and authorization fused in one message" },
+              { ar: "وظائف الثلاث مفصولة تماماً", en: "All three functions fully separated" },
+            ],
+            [
+              { ar: "تفويض الأمر الواحد", en: "Per-command authorization" },
+              { ar: "غير مدعوم", en: "Unsupported" },
+              { ar: "مدعوم — كل سطر CLI يُفوَّض", en: "Supported — every CLI line authorized" },
+            ],
+            [
+              { ar: "تمرير EAP", en: "EAP passthrough" },
+              { ar: "ممتاز — أساس 802.1X", en: "Excellent — the 802.1X backbone" },
+              { ar: "ليس مجاله", en: "Not its domain" },
+            ],
+            [
+              { ar: "الاستخدام الأمثل", en: "Best use" },
+              { ar: "مستخدمو الشبكة: Wi-Fi و VPN و NAC", en: "Network users: Wi-Fi, VPN, NAC" },
+              { ar: "إداريو الأجهزة: SSH للبدلات والموجهات", en: "Device admins: SSH to switches and routers" },
+            ],
+          ],
+        },
         body: {
           ar: "TACACS+ (Terminal Access Controller Access-Control System Plus، RFC 8907، ملكية Cisco) صُمم خصيصاً لإدارة أجهزة الشبكات:\n\n- TCP 49: موثوقية الاتصال والتحكم بالزمن مضمونة من TCP نفسه\n- تشفير جسم الحزمة كاملاً (باستثناء رأس 12 بايت) عبر السر المشترك — كل شيء سري: المستخدم والأوامر والصلاحيات\n- يفصل AAA فعلياً: رسالة START/CONTINUE/REPLY للمصادقة، ثم طلبات تفويض مستقلة، ثم محاسبة مستقلة — مرونة هندسية\n\nالميزة الفارقة الحقيقية: التفويض على مستوى الأمر (Per-Command Authorization). عند كتابة كل سطر في CLI، يرسل الجهاز سؤال تفويض للخادم: هل يحق للمستخدم ali تنفيذ show ip route؟ و show run؟ و reload؟ — تجزئة صلاحيات دقيقة مستحيلة في RADIUS الكلاسيكي.\n\nالاستخدام الأمثل: إدخال المهندسين لأجهزة الشبكة (SSH إلى البدلات والموجهات) مع صلاحيات متدرجة وتدقيق كل أمر.\n\nفي الواقع المعاصر: كثير من المؤسسات تعمل RADIUS للمستخدمين و TACACS+ للإداريين — معاً لا بديلاً عن بعض.",
           en: "TACACS+ (Terminal Access Controller Access-Control System Plus, RFC 8907, Cisco-owned) was designed specifically for network device administration:\n\n- TCP 49: connection reliability and timing control come free from TCP itself\n- Full body encryption (minus a 12-byte header) via the shared secret — everything is secret: user, commands, permissions\n- It truly separates AAA: START/CONTINUE/REPLY messages for authentication, then independent authorization requests, then independent accounting — engineering flexibility\n\nThe real distinguishing feature: per-command authorization. As each CLI line is typed, the device sends an authorization query: may user ali run show ip route? show run? reload? — granular privilege splitting impossible in classic RADIUS.\n\nBest use: engineers logging into network gear (SSH to switches and routers) with graduated privileges and per-command auditing.\n\nIn today's practice: many enterprises run RADIUS for users and TACACS+ for admins — together, not as substitutes.",
@@ -712,6 +983,17 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "أبطال الثلاثة في 802.1X", en: "The Three Actors in 802.1X" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "حوار EAP عبر المبدل إلى خادم RADIUS حتى فتح المنفذ", en: "The EAP dialog through the switch to RADIUS until the port opens" },
+          items: [
+            { ar: "Supplicant يبدأ EAPOL على الطبقة الثانية — المنفذ مُقفل", en: "The supplicant starts EAPOL at layer 2 — the port locked" },
+            { ar: "المبدل (Authenticator) يمرر EAP إلى خادم RADIUS بلا فهمه", en: "The switch (authenticator) relays EAP to RADIUS without understanding it" },
+            { ar: "الخادم يتحقق من الهوية (شهادة أو بيانات داخل نفق TLS)", en: "The server verifies identity (certificate or credentials inside a TLS tunnel)" },
+            { ar: "Access-Accept يعود مع سياسة الجلسة: VLAN و ACL ومدة", en: "Access-Accept returns with session policy: VLAN, ACL, duration" },
+            { ar: "المنفذ يتحول Authorized — يمرر المرور كاملاً", en: "The port turns Authorized — full traffic passes" },
+          ],
+        },
         body: {
           ar: "المعمارية تعرف ثلاثة أدوار واضحة:\n\n- Supplicant (مقدم الطلب): برنامج على جهاز المستخدم يصارع لإثبات الهوية — مدمج في Windows (خدمة Wired Autoconfig) و macOS و Android\n- Authenticator (المصادِق): المبدل أو نقطة الوصول — البوابة المادية. دوره رجل بريد أمين: يمرر رسائل EAP بين الطرفين ولا يفهمها، ولا يفتح المنفذ إلا بأمر من الخادم\n- Authentication Server (خادم المصادقة): RADIUS (Cisco ISE، Aruba ClearPass، FreeRADIUS) — صاحب القرار الذي يتحقق من الهوية ويرسل نتيجة قبول مع سياسة (VLAN، ACL، مدة جلسة)\n\nالحوار يجري عبر إطارات EAPOL (EAP over LAN) مباشرة على الطبقة الثانية:\n\n- المنفذ يبدأ في حالة Unauthorized: يمرر فقط رسائل EAPOL (وغالباً CDP/DHCP في وضع monitor)\n- بعد نجاح المصادقة يتحول Authorized فيفتح كل المرور\n- EAPOL-Logoff عند انتهاء الجلسة يعيد القفل",
           en: "The architecture defines three clear roles:\n\n- Supplicant: software on the user's device fighting to prove identity — built into Windows (Wired Autoconfig), macOS, and Android\n- Authenticator: the switch or access point — the physical gate. Its role is an honest mailman: relaying EAP messages between the two parties without understanding them, and opening the port only on the server's command\n- Authentication server: RADIUS (Cisco ISE, Aruba ClearPass, FreeRADIUS) — the decision maker verifying identity and returning an accept with policy (VLAN, ACL, session duration)\n\nThe dialog runs over EAPOL (EAP over LAN) frames directly at layer 2:\n\n- The port starts Unauthorized: passing only EAPOL messages (and usually CDP/DHCP in monitor mode)\n- After successful authentication it turns Authorized, opening all traffic\n- EAPOL-Logoff at session end re-locks it",
@@ -723,6 +1005,41 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "عائلة EAP: طرق إثبات الهوية", en: "The EAP Family: Ways to Prove Identity" },
+        table: {
+          caption: { ar: "طرق EAP الشائعة مقارنةً", en: "The common EAP methods compared" },
+          headers: [
+            { ar: "الطريقة", en: "Method" },
+            { ar: "آلية الإثبات", en: "Proof mechanism" },
+            { ar: "المتطلبات", en: "Requirements" },
+            { ar: "الحكم", en: "Verdict" },
+          ],
+          rows: [
+            [
+              { ar: "EAP-TLS", en: "EAP-TLS" },
+              { ar: "شهادات رقمية للطرفين", en: "Certificates for both parties" },
+              { ar: "بنية PKI كاملة", en: "A full PKI" },
+              { ar: "الأقوى — الطريق الذهبي", en: "The strongest — the golden path" },
+            ],
+            [
+              { ar: "PEAP (MSCHAPv2)", en: "PEAP (MSCHAPv2)" },
+              { ar: "شهادة خادم فقط + بيانات داخل نفق TLS", en: "Server cert only + credentials inside a TLS tunnel" },
+              { ar: "شهادة خادم + التحقق منها لدى العميل", en: "A server cert + client-side validation" },
+              { ar: "الأوسع انتشاراً — توازن جيد", en: "Most widespread — a good balance" },
+            ],
+            [
+              { ar: "EAP-TTLS", en: "EAP-TTLS" },
+              { ar: "نفق TLS وبروتوكول داخلي مرن", en: "A TLS tunnel with a flexible inner protocol" },
+              { ar: "شهادة خادم فقط", en: "Server cert only" },
+              { ar: "بديل PEAP بمرونة أكبر", en: "A PEAP alternative with more flexibility" },
+            ],
+            [
+              { ar: "EAP-MD5", en: "EAP-MD5" },
+              { ar: "تجزئة MD5 مكشوفة", en: "Exposed MD5 hash" },
+              { ar: "لا شيء تقريباً", en: "Almost none" },
+              { ar: "قديم وغير آمن — تجنبه", en: "Old and insecure — avoid it" },
+            ],
+          ],
+        },
         body: {
           ar: "EAP إطار عام، وطرقه (Methods) تحدد كيف يجري الدليل:\n\n- EAP-TLS: الطريق الذهبي — شهادات رقمية للطرفين (خادم ومستخدم/جهاز). الأقوى بلا كلمات مرور أصلاً لكنه يتطلب بنية PKI لإدارة الشهادات\n- PEAP (MSCHAPv2): الأوسع انتشاراً — الخادم فقط يقدم شهادة فتُبنى نفقاً TLS داخلية، وفيها تنتقل بيانات المستخدم التقليدية. يوازن الأمان وسهولة التشغيل\n- EAP-TTLS: مشابه ل PEAP بمرونة أكبر في بروتوكول التحقق الداخلي\n- EAP-MD5: قديم مكشوف — تجنبه\n\nشهادة الخادم في PEAP تفرض تحقق العميل منها (الاسم وسلسلة الثقة) — وإلا صار هجوم نقطة مزيفة (Evil Twin) في Wi-Fi سهلاً: نقطة تنتحل SSID وتخدع المستخدم بلا تحقق شهادة.\n\nوبعد نجاح EAP: RADIUS يعيد سمات السياسة (VLAN المصاحبة، عنوان ديناميكي، ACL) في Access-Accept — وهنا يلتقي درس AAA ب NAC.",
           en: "EAP is a general frame, and its methods define how proof proceeds:\n\n- EAP-TLS: the golden path — digital certificates for both parties (server and user/device). The strongest with no passwords at all, but requiring a PKI to manage certificates\n- PEAP (MSCHAPv2): the most widespread — only the server presents a certificate, building an inner TLS tunnel in which the user's traditional credentials travel. It balances security and operational ease\n- EAP-TTLS: similar to PEAP with more flexibility in the inner verification protocol\n- EAP-MD5: old and exposed — avoid it\n\nThe server certificate in PEAP obliges the client to verify it (name and trust chain) — otherwise a Wi-Fi evil twin attack becomes easy: an AP spoofing the SSID deceiving the user with no certificate check.\n\nAfter EAP succeeds: RADIUS returns policy attributes (dynamic VLAN, address, ACL) in the Access-Accept — where the AAA lesson meets NAC.",
@@ -821,6 +1138,35 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "التصنيف الثلاثي للهجمات", en: "The Three Attack Classes" },
+        table: {
+          caption: { ar: "فئات هجمات حجب الخدمة الثلاث والدفاع المخصص لكل منها", en: "The three DoS classes and the defense each demands" },
+          headers: [
+            { ar: "الفئة", en: "Class" },
+            { ar: "أمثلة", en: "Examples" },
+            { ar: "ما تستنزفه", en: "What it exhausts" },
+            { ar: "الدفاع الأساسي", en: "Primary defense" },
+          ],
+          rows: [
+            [
+              { ar: "حجمية Volumetric", en: "Volumetric" },
+              { ar: "UDP flood، تضخيم DNS/NTP/Memcached", en: "UDP flood, DNS/NTP/Memcached amplification" },
+              { ar: "عرض النطاق (Mbps/Gbps)", en: "Bandwidth (Mbps/Gbps)" },
+              { ar: "uRPF + مراكز التنقية + Anycast", en: "uRPF + scrubbing centers + anycast" },
+            ],
+            [
+              { ar: "بروتوكولية Protocol", en: "Protocol" },
+              { ar: "SYN Flood، هجمات التجزئة", en: "SYN flood, fragmentation attacks" },
+              { ar: "حالة الاتصالات وجداول الأجهزة", en: "Connection state and device tables" },
+              { ar: "SYN Cookies + TCP Intercept + CoPP", en: "SYN cookies + TCP intercept + CoPP" },
+            ],
+            [
+              { ar: "تطبيقية L7", en: "Application (L7)" },
+              { ar: "HTTP flood، Slowloris", en: "HTTP flood, Slowloris" },
+              { ar: "خيوط الخادم وموارده", en: "Server threads and resources" },
+              { ar: "WAF + حدود المعدل + تحديات البوت", en: "WAF + rate limits + bot challenges" },
+            ],
+          ],
+        },
         body: {
           ar: "الهجمات تصنف بطبقة الاستهداف:\n\n1) حجمية (Volumetric) — إغراق عرض النطاق بالجيجابت:\n\n- UDP flood مباشر من مصادر متعددة\n- التضخيم والانعكاس (Amplification/Reflection): المهاجم يزيف عنوان الضحية ويسأل خوادم عامة (DNS — بطلب edns0 حجمه كبير، NTP — monlist التاريخي، Memcached — بمعامل تضخيم مرعب ×10000!) فتغرق الضحية بأجوبة لم تطلبها\n- القياس بالمقارنة: Mbps أو Gbps أو pps\n\n2) بروتوكولية (Protocol) — استنزاف حالة الأجهزة:\n\n- SYN Flood: إرسال طوابير SYN بلا إكمال المصافحة فتمتلئ جداول نصف الاتصالات\n- هجمات التجزئة و ping of death التاريخي\n\n3) تطبيقية (Application Layer / L7) — الأذكى والأخف حجماً:\n\n- HTTP flood: آلاف الطلبات المشروعة الشكل لصفحات ثقيلة (بحث وبحث وبحث)\n- Slowloris: فتح مئات الاتصالات وإرسال ترويسات ببطء قطرة قطرة فتختنق خيوط الخادم بلا فيضان ظاهر\n\nالدفاع يختلف جذرياً حسب الفئة — لا يوجد حل واحد للثلاثة.",
           en: "Attacks are classified by the targeted layer:\n\n1) Volumetric — flooding bandwidth with gigabits:\n\n- Direct UDP floods from many sources\n- Amplification/reflection: the attacker spoofs the victim's address and queries public servers (DNS — with oversized EDNS0 requests, NTP — the historic monlist, Memcached — with a terrifying ×10000 amplification!) which drown the victim in answers it never requested\n- Measured in Mbps, Gbps, or pps\n\n2) Protocol — exhausting device state:\n\n- SYN flood: sending queues of SYNs without completing handshakes, filling half-open connection tables\n- Fragmentation attacks and the historic ping of death\n\n3) Application layer (L7) — the smartest and lightest:\n\n- HTTP flood: thousands of legitimate-looking requests for heavy pages (search, search, and more search)\n- Slowloris: opening hundreds of connections and sending headers drip-slow, suffocating server threads with no visible flood\n\nDefense differs radically per class — there is no single answer to all three.",
@@ -843,6 +1189,17 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الدفاع الموزع والهندسي", en: "Distributed and Engineering Defense" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "سلسلة الاستجابة المتكاملة للفيضان الموزع", en: "The integrated response chain against a distributed flood" },
+          items: [
+            { ar: "CDN/WAF في المقدمة يمتص الجزء الأكبر قبل وصوله", en: "CDN/WAF up front absorbs most of the flood before arrival" },
+            { ar: "المراقبة المستمرة تكتشف نمط الهجوم مبكراً", en: "Continuous monitoring detects the attack pattern early" },
+            { ar: "تجاوز العتبة ينشّط مركز التنقية عبر إعلانات BGP", en: "Crossing the threshold activates the scrubbing center via BGP announcements" },
+            { ar: "المركز ينقي الهجوم ويعيد المرور النظيف عبر GRE", en: "The center scrubs the attack and returns clean traffic via GRE" },
+            { ar: "عند الضرورة: التدخل لدى مزود الخدمة و RTBH للطوارئ", en: "When needed: upstream ISP action and RTBH for emergencies" },
+          ],
+        },
         body: {
           ar: "عندما يتجاوز الفيضان نطاقك الترددي (وسيحدث)، المعركة تنتقل إلى جهات فوقك:\n\n- RTBH (Remotely Triggered Black Hole): تعلن مسار الضحية إلى null0 عبر مجتمع BGP (community 666) — تسقط الضحية عن العالم كله لكنك تنقذ البقية. حلاً للتضحية بالطرف\n- مراكز التنقية (Scrubbing Centers): مزودو مثل Cloudflare و Akamai و regional ISPs يستقبلون مرورك (عبر إعلانات BGP تحويل المسار)، ينقون الهجوم، ويعيدون النظيف إليك عبر نفق GRE — الخدمة الشائعة اليوم\n- Anycast: عنوان واحد معلن من عشرات المواقع يمتص الفيضان موزعاً جغرافياً — بنية DNS الكبرى كلها تعمل هكذا\n- للطبقة السابعة: WAF وحدود معدل على مستوى الطلب واختبارات JS/CAPTCHA تفرق البوت عن البشر\n\nسلسلة الدفاع المتكاملة: CDN/WAF أولاً → مراقبة دائمة تكتشف النموذج → تنشيط التنقية عند العتبة → وصول ISP عند اللزوم.",
           en: "When the flood exceeds your bandwidth (and it will), the battle moves upstream:\n\n- RTBH (Remotely Triggered Black Hole): announcing the victim's route to null0 via a BGP community (666) — the victim drops off the world entirely, but you save everyone else. The sacrifice-one-play tactic\n- Scrubbing centers: providers like Cloudflare, Akamai, and regional ISPs receive your traffic (via rerouting BGP announcements), scrub the attack, and return the clean stream over a GRE tunnel — today's common service\n- Anycast: one address announced from dozens of locations absorbing the flood geographically spread — the entire big-DNS world works this way\n- For layer 7: WAFs, per-request rate limits, and JS/CAPTCHA challenges separating bots from humans\n\nThe complete chain: CDN/WAF first → continuous monitoring detecting the pattern → scrubbing activation at the threshold → upstream ISP when necessary.",
@@ -937,6 +1294,12 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "أنماط التقطيع الكلاسيكية", en: "Classic Segmentation Patterns" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "منازل الثقة الثلاث عبر الجدار: DMZ والداخلية والإدارة", en: "The three trust houses across the firewall: DMZ, inside, management" },
+          nodes: ["Internet", "FW-جدار", "DMZ-خوادم عامة", "INSIDE-مستخدمون", "MGMT-إدارة"],
+          edges: [[0, 1], [1, 2], [1, 3], [1, 4]],
+        },
         body: {
           ar: "البنية المعيارية القديمة المجربة — منازل الثقة الثلاثة:\n\n- DMZ (منطقة عزلة منزوعة السلاح): خوادم مواجهة للإنترنت (ويب، بريد عام) — منفذ إلى الخارج لكن مقيدة جداً نحو الداخل\n- الداخلية (Inside): المستخدمون ومراكز العمل\n- الإدارة: أقدس منطقة — وصول الأدوات الإدارية فقط (منفصل عن مرور المستخدمين)\n\nكل عبور بين مناطق يمر عبر جدار ناري يطبق سياسة مكتوبة — الحركة الجانبية عبر المناطق تخضع للفحص.\n\nأدوات التقطيع التقليدية في الطبقة الثانية:\n\n- VLANs + شبكات فرعية IP: الوحدة الأساسية للتقسيم\n- Private VLANs داخل VLAN الواحدة: isolated (الأعضاء يرون البوابة فقط) و community (مجموعات ترى بعضها) — مثالية لفصل خوادم DMZ عن بعضها مع بقاء الوصول للزبائن\n- ACLs على SVIs لتقييد مرور inter-VLAN دون جدر كاملة\n- VRF-Lite لعزل جداول التوجيه نفسها: شبكات زبائن/بيئات مستقلة منطقياً على نفس العتاد",
           en: "The proven standard architecture — the three houses of trust:\n\n- DMZ (demilitarized zone): servers facing the Internet (web, public mail) — an outlet outward, yet strictly limited inward\n- Inside: users and work areas\n- Management: the holiest zone — administrative tooling only (separate from user traffic)\n\nEvery inter-zone crossing passes a firewall enforcing a written policy — lateral movement across zones is inspected.\n\nTraditional layer-2 segmentation tools:\n\n- VLANs + IP subnets: the basic unit of division\n- Private VLANs inside one VLAN: isolated (members see only the gateway) and community (groups see each other) — ideal for separating DMZ servers from each other while client access remains\n- ACLs on SVIs restricting inter-VLAN traffic without full firewalls\n- VRF-Lite isolating the routing tables themselves: logically separate customer/environment networks on the same hardware",
@@ -1024,6 +1387,17 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المكونات المعمارية في نموذج NIST", en: "Architectural Components in the NIST Model" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "رحلة طلب وصول داخل نموذج الثقة الصفرية", en: "An access request's journey inside the zero-trust model" },
+          items: [
+            { ar: "المستخدم يطلب المورد عبر نقطة تنفيذ PEP", en: "The user requests the resource through a PEP" },
+            { ar: "محرك السياسة يجمع الإشارات: هوية، حالة الجهاز، سياق، حساسية", en: "The policy engine gathers signals: identity, device state, context, sensitivity" },
+            { ar: "القرار: منح أو رفض — لا موقع شبكي يمنح ثقة", en: "The decision: grant or deny — no network location grants trust" },
+            { ar: "مدير السياسة يفتح جلسة محدودة المدة والنطاق", en: "The policy administrator opens a time- and scope-limited session" },
+            { ar: "تقييم مستمر: سلوك شاذ يغلق الجلسة فوراً", en: "Continuous evaluation: abnormal behavior closes the session instantly" },
+          ],
+        },
         body: {
           ar: "SP 800-207 يصف مكونات منطقية واضحة:\n\n- محرك السياسة (Policy Engine): العقل — يقرر منح الوصول أو رفضه عبر جمع كل الإشارات: الهوية، حالة الجهاز (صلاحية؟ مصاب؟)، الموقع/الزمان، حساسية المورد، وسلوك الجلسة\n- مدير السياسة (Policy Administrator): اليد — ينفذ قرار المحرك بإنشاء/إنهاء الجلسات وإصدار بيانات الاعتماد\n- نقاط التنفيذ (PEP): الأبواب — بوابات أو وكلاء تفرض القرار قبل وصول أي مرور للمورد\n\nالقرار مستمر لا مرة واحدة: جلسة تتصرف شاذاً في منتصفها تُغلق فوراً (Continuous Evaluation) — عكس نموذج VPN الذي يمنح الثقة عند الدخول ثم ينسى.\n\nالركائز التي يستمد منها الإشارات:\n\n- الهوية: MFA، إدارة هوية مركزية (IdP)، SSO\n- الجهاز: مخزون أصول حي، إدارة، حالة أمنية\n- الشبكة: تقطيع دقيق ومراقبة شرق-غرب\n- التطبيقات والبيانات: تصنيف الحساسية وسياسات لكل مورد",
           en: "SP 800-207 describes clear logical components:\n\n- Policy Engine: the brain — granting or denying access by weighing every signal: identity, device state (compliant? infected?), location/time, resource sensitivity, and session behavior\n- Policy Administrator: the hand — executing the engine's decision by creating/terminating sessions and issuing credentials\n- Policy Enforcement Points (PEPs): the doors — gateways or agents enforcing the decision before any traffic reaches the resource\n\nThe decision is continuous, not one-time: a session behaving abnormally mid-stream is closed immediately (continuous evaluation) — unlike the VPN model that grants trust at entry then forgets.\n\nThe pillars feeding the signals:\n\n- Identity: MFA, a central identity provider (IdP), SSO\n- Device: a live asset inventory, management, security posture\n- Network: microsegmentation and east-west monitoring\n- Applications and data: sensitivity classification and per-resource policy",
@@ -1035,6 +1409,41 @@ export const m09_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "ZTNA مقابل VPN: نقلة فلسفية", en: "ZTNA vs VPN: A Philosophical Shift" },
+        table: {
+          caption: { ar: "VPN التقليدية مقابل ZTNA", en: "Traditional VPN vs ZTNA" },
+          headers: [
+            { ar: "الخاصية", en: "Property" },
+            { ar: "VPN التقليدية", en: "Traditional VPN" },
+            { ar: "ZTNA", en: "ZTNA" },
+          ],
+          rows: [
+            [
+              { ar: "نطاق الوصول", en: "Access scope" },
+              { ar: "عضوية الشبكة كاملة", en: "Full network membership" },
+              { ar: "التطبيق المحدد فقط", en: "Only the specific application" },
+            ],
+            [
+              { ar: "لحظة الثقة", en: "Trust moment" },
+              { ar: "مرة واحدة عند الدخول ثم تنسى", en: "Once at entry, then forgotten" },
+              { ar: "تحقق مستمر قبل وأثناء الجلسة", en: "Continuous verification before and during" },
+            ],
+            [
+              { ar: "إشارات القرار", en: "Decision signals" },
+              { ar: "بيانات الاعتماد غالباً", en: "Mostly credentials" },
+              { ar: "هوية + حالة جهاز + سياق + سلوك", en: "Identity + device posture + context + behavior" },
+            ],
+            [
+              { ar: "المسار", en: "Path" },
+              { ar: "كل المرور عبر بوابة المقر", en: "All traffic via the HQ gateway" },
+              { ar: "اتصال مباشر للتطبيق حيث أمكن", en: "Direct-to-app connection where possible" },
+            ],
+            [
+              { ar: "مثال محسوس", en: "Tangible example" },
+              { ar: "مفتاح المدينة كلها", en: "A key to the whole city" },
+              { ar: "مفتاح غرفة واحدة فقط", en: "A key to a single room" },
+            ],
+          ],
+        },
         body: {
           ar: "الفرق ليس تقنياً فحسب بل نموذجياً:\n\nVPN التقليدية:\n\n- تمنح عضوية شبكة كاملة: من يدخل يرى الشبكة الداخلية كلها (ما لم تقسم بجدارة)\n- الثقة تعطى مرة عند الدخول ثم تجدد بلا تحقق عميق\n-瓶颈 الأداء: كل المرور يُضغط عبر بوابة واحدة\n- تكلفة تشغيل بشرية عالية\n\nZTNA (Zero Trust Network Access):\n\n- وصول لكل تطبيق على حدة: النفق يقام بين المستخدم والتطبيق المحدد فقط — لا يرى بقية الشبكة أبداً\n- التحقق مستمر بكل إشارة (هوية + جهاز + سياق) قبل كل جلسة وأثناءها\n- الوكيل الذكي (Identity-Aware Proxy) يفصل المستخدم عن الشبكة: هوياته تمر وأحمال الشبكة الداخلية تبقى خلف الستار\n- أداء أفضل: اتصال مباشر للسحابة عند إمكانه بلا رحلة عبر مقر الشركة\n\nمثال محسوس: مهندس خارجي يحتاج تطبيق لوحة واحدة — VPN تفتح له مدينة كاملة، و ZTNA تعطيه مفتاح غرفة واحدة فقط.",
           en: "The difference is not merely technical but paradigm-level:\n\nTraditional VPN:\n\n- Grants full network membership: whoever enters sees the entire internal network (unless painstakingly partitioned)\n- Trust is granted once at entry and renewed without deep verification\n- Performance bottleneck: all traffic squeezed through one gateway\n- Heavy human operational cost\n\nZTNA (Zero Trust Network Access):\n\n- Per-application access: the tunnel is established between the user and that specific application only — the rest of the network is never visible\n- Continuous verification with every signal (identity + device + context) before and during each session\n- The identity-aware proxy separates the user from the network: identities pass while internal network loads stay behind the curtain\n- Better performance: direct cloud connections where possible, without detouring through headquarters\n\nA tangible example: an external engineer needs one dashboard app — the VPN opens an entire city for him; ZTNA hands him the key to a single room.",

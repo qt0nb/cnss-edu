@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 import { AnimatePresence, motion } from "framer-motion";
@@ -22,6 +22,10 @@ import {
   Zap,
   Network,
   X,
+  Swords,
+  Layers3,
+  Download,
+  WifiOff,
 } from "lucide-react";
 import { LangProvider, useLang } from "@/lib/i18n";
 import { useNav } from "@/lib/nav";
@@ -41,6 +45,8 @@ const ProjectsView = dynamic(() => import("@/components/platform/ProjectsView"))
 const PlaygroundView = dynamic(() => import("@/components/platform/PlaygroundView"));
 const AchievementsView = dynamic(() => import("@/components/platform/AchievementsView"));
 const SettingsView = dynamic(() => import("@/components/platform/SettingsView"));
+const ChallengesView = dynamic(() => import("@/components/platform/ChallengesView"));
+const IntegrationsView = dynamic(() => import("@/components/platform/IntegrationsView"));
 
 const NAV_ITEMS: { view: ViewId; icon: React.ElementType; key: string }[] = [
   { view: "dashboard", icon: LayoutDashboard, key: "home" },
@@ -50,6 +56,8 @@ const NAV_ITEMS: { view: ViewId; icon: React.ElementType; key: string }[] = [
   { view: "tools", icon: Wrench, key: "tools" },
   { view: "projects", icon: Rocket, key: "projects" },
   { view: "playground", icon: FlaskConical, key: "playground" },
+  { view: "challenges", icon: Swords, key: "challenges" },
+  { view: "integrations", icon: Layers3, key: "integrations" },
   { view: "achievements", icon: Trophy, key: "achievements" },
   { view: "settings", icon: Settings, key: "settings" },
 ];
@@ -278,7 +286,7 @@ function ProgressWatcher() {
     synced.current = false;
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => {
-      const { setHydrated, touchDay, completeLesson, recordQuiz, ensureCards, answerReview, toggleToolBookmark, toggleProjectBookmark, markPlaygroundUsed, resetAll, checkAchievements, ...snapshot } = store;
+      const { setHydrated, touchDay, completeLesson, recordQuiz, ensureCards, answerReview, toggleToolBookmark, toggleProjectBookmark, markPlaygroundUsed, recordChallenge, resetAll, checkAchievements, ...snapshot } = store;
       void snapshot;
       fetch("/api/progress", {
         method: "PUT",
@@ -306,6 +314,7 @@ function ProgressWatcher() {
     store.projectBookmarks,
     store.achievements,
     store.playgroundUsed,
+    store.challengesDone,
   ]);
 
   return null;
@@ -322,6 +331,8 @@ function ViewRouter() {
       tools: <ToolsView />,
       projects: <ProjectsView />,
       playground: <PlaygroundView />,
+      challenges: <ChallengesView />,
+      integrations: <IntegrationsView />,
       achievements: <AchievementsView />,
       settings: <SettingsView />,
     }),
@@ -357,9 +368,65 @@ function Footer() {
   );
 }
 
+function PwaButtons() {
+  const { t } = useLang();
+  const [prompt, setPrompt] = useState<{ prompt: () => void } | null>(null);
+  const [offlineReady, setOfflineReady] = useState(false);
+
+  useEffect(() => {
+    const onBip = (e: Event) => {
+      e.preventDefault();
+      setPrompt({ prompt: () => (e as unknown as { prompt: () => Promise<void> }).prompt().catch(() => {}) });
+    };
+    const onReady = () => setOfflineReady(true);
+    window.addEventListener("beforeinstallprompt", onBip);
+    window.addEventListener("sw-offline-ready", onReady as EventListener);
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) setOfflineReady(true);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBip);
+      window.removeEventListener("sw-offline-ready", onReady as EventListener);
+    };
+  }, []);
+
+  return (
+    <>
+      {offlineReady && !prompt && (
+        <span
+          className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400"
+          title={t("offlineReady")}
+        >
+          <WifiOff className="size-3" />
+        </span>
+      )}
+      {prompt && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5 rounded-lg text-[11px] font-bold"
+          onClick={() => {
+            prompt.prompt();
+            setPrompt(null);
+          }}
+        >
+          <Download className="size-3.5" />
+          <span className="hidden md:inline">{t("installApp")}</span>
+        </Button>
+      )}
+    </>
+  );
+}
+
 function AppShell() {
   const { t } = useLang();
   const view = useNav((s) => s.view);
+  const syncFromHash = useNav((s) => s.syncFromHash);
+
+  // Keep the store in sync with location.hash (deep links, back/forward).
+  // Runs before paint on the client to avoid a flash of the default view.
+  const useBeforePaint = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+  useBeforePaint(() => {
+    syncFromHash();
+  }, [syncFromHash]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -388,6 +455,7 @@ function AppShell() {
             <h1 className="hidden lg:block text-base font-extrabold truncate">{t(view === "dashboard" ? "appName" : NAV_ITEMS.find((n) => n.view === view)?.key ?? "appName")}</h1>
             <div className="ms-auto flex items-center gap-1.5">
               <StatPills />
+              <PwaButtons />
               <LangToggle />
               <ThemeToggle />
             </div>

@@ -15,6 +15,41 @@ export const m01_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "التعريف الأساسي", en: "Core Definition" },
+        table: {
+          caption: { ar: "عناصر الشبكة الخمسة ومهامها", en: "The five network elements and their roles" },
+          headers: [
+            { ar: "العنصر", en: "Element" },
+            { ar: "دوره", en: "Role" },
+            { ar: "أمثلة", en: "Examples" },
+          ],
+          rows: [
+            [
+              { ar: "المُرسِل Sender", en: "Sender" },
+              { ar: "ينشئ البيانات ويطلقها نحو الشبكة", en: "Creates data and launches it into the network" },
+              { ar: "حاسوب، هاتف، خادم", en: "Computer, phone, server" },
+            ],
+            [
+              { ar: "المستقبِل Receiver", en: "Receiver" },
+              { ar: "يستقبل البيانات ويعالجها", en: "Receives the data and processes it" },
+              { ar: "خادم ويب، طابعة شبكة", en: "Web server, network printer" },
+            ],
+            [
+              { ar: "الرسالة Message", en: "Message" },
+              { ar: "المحتوى المتبادل بين الطرفين", en: "The content exchanged between the two ends" },
+              { ar: "صفحة ويب، بريد، مكالمة", en: "Web page, email, call" },
+            ],
+            [
+              { ar: "الوسيط Medium", en: "Medium" },
+              { ar: "القناة الفيزيائية أو اللاسلكية الحاملة للإشارة", en: "The wired or wireless channel carrying the signal" },
+              { ar: "كابل UTP، ألياف، Wi-Fi", en: "UTP cable, fiber, Wi-Fi" },
+            ],
+            [
+              { ar: "البروتوكول Protocol", en: "Protocol" },
+              { ar: "قواعد الحوار والتغليف المتفق عليها", en: "The agreed conversation and encapsulation rules" },
+              { ar: "TCP، IP، HTTP", en: "TCP, IP, HTTP" },
+            ],
+          ],
+        },
         body: {
           ar: "شبكة الحاسوب (Computer Network) هي مجموعة من الأجهزة المتصلة ببعضها عبر وسائط نقل، تتبادل البيانات وفق بروتوكولات (Protocols) متفق عليها.\n\nيمكن تبسيط أي شبكة في الكون إلى عناصر خمسة: المُرسِل (Sender)، المستقبِل (Receiver)، الرسالة (Message)، وسيط النقل (Medium)، والبروتوكول (Protocol).\n\n- المرسل والمستقبل: حواسيب، هواتف، خوادم، طابعات، كاميرات\n- الوسيط: كابل نحاس، ألياف ضوئية، أو موجات لاسلكية\n- البروتوكول: قواعد الحوار مثل TCP و IP",
           en: "A computer network is a set of devices connected through transmission media that exchange data according to agreed-upon protocols.\n\nAny network in existence can be simplified into five elements: sender, receiver, message, medium, and protocol.\n\n- Sender & receiver: computers, phones, servers, printers, cameras\n- Medium: copper cable, fiber optics, or radio waves\n- Protocol: conversation rules such as TCP and IP",
@@ -22,6 +57,17 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "ماذا تمنحنا الشبكات؟", en: "What Networks Give Us" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "رحلة رسالة مبسطة عبر الشبكة", en: "A simplified message journey across the network" },
+          items: [
+            { ar: "المرسل ينشئ الرسالة", en: "The sender creates the message" },
+            { ar: "البروتوكول يغلّفها بترويسة تحمل وجهتها", en: "A protocol wraps it in a header carrying its destination" },
+            { ar: "الوسيط يحمل الإشارة إلى الطرف الآخر", en: "The medium carries the signal to the other end" },
+            { ar: "المستقبِل يفكّ التغليف ويعالج الرسالة", en: "The receiver unwraps and processes the message" },
+            { ar: "الرد يسلك الطريق نفسه بالاتجاه المعاكس", en: "The reply travels the same path in reverse" },
+          ],
+        },
         body: {
           ar: "الشبكات تتيح أربع قدرات أساسية غيّرت العالم:\n\n- مشاركة الموارد (Resource Sharing): طابعة واحدة لعشرين موظفاً\n- مشاركة المعلومات: قواعد بيانات ومستندات مركزية\n- الاتصال: بريد، مكالمات، مؤتمرات فيديو\n- الموثوقية والتوزّع: نسخ احتياطية وموازنة أحمال\n\nبدون الشبكات لكان كل جهاز جزيرة معزولة. الإنترنت نفسه هو أكبر شبكة على الإطلاق — شبكة الشبكات (Network of Networks).",
           en: "Networks provide four fundamental capabilities that changed the world:\n\n- Resource sharing: one printer for twenty employees\n- Information sharing: central databases and documents\n- Communication: email, calls, video conferencing\n- Reliability & distribution: backups and load balancing\n\nWithout networks, every device would be an isolated island. The Internet itself is the largest network ever built — a network of networks.",
@@ -107,6 +153,46 @@ export const m01_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "التصنيف حسب المدى", en: "Classification by Span" },
+        table: {
+          caption: { ar: "أنواع الشبكات حسب المدى الجغرافي", en: "Network types by geographic span" },
+          headers: [
+            { ar: "النوع", en: "Type" },
+            { ar: "التغطية", en: "Coverage" },
+            { ar: "السرعة النموذجية", en: "Typical speed" },
+            { ar: "الملكية", en: "Ownership" },
+            { ar: "مثال", en: "Example" },
+          ],
+          rows: [
+            [
+              { ar: "PAN", en: "PAN" },
+              { ar: "أمتار حول الشخص", en: "Meters around a person" },
+              { ar: "1-100 Mbps تقريباً بحسب الجيل", en: "Roughly 1-100 Mbps by generation" },
+              { ar: "فرد واحد", en: "An individual" },
+              { ar: "سماعة بلوتوث، نقطة اتصال الجيب", en: "Bluetooth headset, phone hotspot" },
+            ],
+            [
+              { ar: "LAN", en: "LAN" },
+              { ar: "مبنى أو حرم صغير", en: "Building or small campus" },
+              { ar: "1-100 Gbps", en: "1-100 Gbps" },
+              { ar: "منظمة واحدة", en: "A single organization" },
+              { ar: "شبكة المنزل أو المكتب", en: "Home or office network" },
+            ],
+            [
+              { ar: "MAN", en: "MAN" },
+              { ar: "مدينة كاملة", en: "A whole city" },
+              { ar: "حتى 10 Gbps على الألياف", en: "Up to 10 Gbps over fiber" },
+              { ar: "مشغّل أو اتحاد", en: "A carrier or consortium" },
+              { ar: "ربط فروع جامعة في مدينة", en: "University branches within one city" },
+            ],
+            [
+              { ar: "WAN", en: "WAN" },
+              { ar: "دولة أو قارة", en: "Country or continent" },
+              { ar: "يتفاوت حسب المشغّل والعقد", en: "Varies by provider and contract" },
+              { ar: "مشغّل اتصالات", en: "A telecom carrier" },
+              { ar: "الإنترنت، خط MPLS بين فرعين", en: "The Internet, an MPLS circuit between sites" },
+            ],
+          ],
+        },
         body: {
           ar: "أبسط طريقة لتصنيف الشبكات هي المدى الجغرافي الذي تغطيه:\n\n- PAN (Personal): أمتار قليلة — اتصال هاتفك بسماعة بلوتوث\n- LAN (Local): مبنى أو طابق واحد — شبكة المنزل أو المكتب\n- MAN (Metropolitan): مدينة كاملة — ربط فروع جامعة داخل مدينة\n- WAN (Wide): دولة أو قارة أو العالم — الإنترنت نفسه\n\nكلما اتسع المدى قلّت سرعتك غالباً وارتفعت التكلفة وزادت الحاجة لمزوّدي الخدمة (ISPs).",
           en: "The simplest classification is geographic span:\n\n- PAN (Personal): a few meters — your phone to a Bluetooth headset\n- LAN (Local): one building or floor — home or office network\n- MAN (Metropolitan): an entire city — university branches across a city\n- WAN (Wide): a country, continent, or the globe — the Internet itself\n\nThe wider the span, the slower your link usually is, the higher the cost, and the more you depend on ISPs.",
@@ -180,6 +266,12 @@ export const m01_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "النجمة Star — ملكة الحديث", en: "Star — Queen of Modern Networks" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "طوبولوجيا النجمة: كل الأجهزة عبر المبدّل", en: "Star topology: every device through the switch" },
+          nodes: ["SW1", "PC1", "PC2", "PC3", "AP1"],
+          edges: [[0, 1], [0, 2], [0, 3], [0, 4]],
+        },
         body: {
           ar: "كل جهاز يتصل بجهاز مركزي (مبدّل Switch اليوم) عبر وصلة خاصة.\n\n- الميزة الكبرى: فشل جهاز أو وصلة لا يعطل بقية الشبكة\n- سهولة التشخيص: المشكلة معزولة في وصلة واحدة\n- إضافة أجهزة سهلة: وصلة جديدة للمبدّل\n- العيب: المبدّل المركزي نقطة فشل وحيدة (SPOF)\n\nكل شبكات الإيثرنت الحديثة نجمة عملياً — وهذا ما ستبنيه في المحاكي.",
           en: "Every device connects to a central device (today a switch) with its own link.\n\n- Biggest advantage: a failed device or link does not disable the rest\n- Easy troubleshooting: the problem is isolated to one link\n- Adding devices is easy: a new link to the switch\n- Drawback: the central switch is a single point of failure (SPOF)\n\nAll modern Ethernet networks are effectively stars — this is what you will build in the simulator.",
@@ -194,6 +286,41 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الشبكية Mesh والهجينة", en: "Mesh & Hybrid" },
+        table: {
+          caption: { ar: "مقارنة الطوبولوجيات الأربع", en: "Comparing the four topologies" },
+          headers: [
+            { ar: "الطوبولوجيا", en: "Topology" },
+            { ar: "تحمل الأعطال", en: "Fault tolerance" },
+            { ar: "الكلفة", en: "Cost" },
+            { ar: "ملاحظة مفتاحية", en: "Key note" },
+          ],
+          rows: [
+            [
+              { ar: "النجمة Star", en: "Star" },
+              { ar: "عالية: عطل جهاز لا يوقف البقية", en: "High: one failed device stops nobody else" },
+              { ar: "متوسطة", en: "Moderate" },
+              { ar: "المبدّل المركزي نقطة فشل وحيدة", en: "The central switch is a single point of failure" },
+            ],
+            [
+              { ar: "الناقل Bus", en: "Bus" },
+              { ar: "منخفضة: قطع الكابل يعطّل الجميع", en: "Low: one cable break disables everyone" },
+              { ar: "منخفضة", en: "Low" },
+              { ar: "تصادمات كثيرة على الوسط المشترك", en: "Heavy collisions on the shared medium" },
+            ],
+            [
+              { ar: "الحلقة Ring", en: "Ring" },
+              { ar: "متوسطة، تتحسن بالحلقة المزدوجة", en: "Medium, better with a dual ring" },
+              { ar: "متوسطة", en: "Moderate" },
+              { ar: "الإطار يمر جهازاً بعد جهاز", en: "The frame hops device to device" },
+            ],
+            [
+              { ar: "الشبكية الكاملة Mesh", en: "Full mesh" },
+              { ar: "قصوى: مسارات بديلة دائماً", en: "Maximum: alternate paths always exist" },
+              { ar: "عالية: n(n-1)/2 وصلة", en: "High: n(n-1)/2 links" },
+              { ar: "للنوى وشبكات WAN الحساسة", en: "For cores and critical WANs" },
+            ],
+          ],
+        },
         body: {
           ar: "الشبكية الكاملة (Full Mesh) تربط كل جهاز بكل جهاز آخر: عدد الوصلات = n(n-1)/2.\n\n- لـ 6 أجهزة تحتاج 15 وصلة! مكلفة لكن موثوقيتها قصوى\n- تستخدم في النوى (Core) وشبكات WAN الحساسة ومراكز البيانات\n\nالشبكية الجزئية (Partial Mesh) تربط المهم فقط بالمهم.\n\nالهجينة (Hybrid) تجمع أشكالاً: نجمة في كل طابق + شبكية بين المبدلات الرئيسية — وهذا تصميم الشبكات المؤسسية الواقعي.",
           en: "A full mesh connects every device to every other: links = n(n-1)/2.\n\n- For 6 devices you need 15 links! Expensive but maximum reliability\n- Used in cores, critical WANs and datacenters\n\nA partial mesh links only the important-to-important nodes.\n\nHybrid combines shapes: a star per floor + mesh between core switches — the realistic enterprise design.",
@@ -266,6 +393,36 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الهجين والمقارنة", en: "Hybrid & Comparison" },
+        table: {
+          caption: { ar: "العميل-الخادم مقابل الند-للند", en: "Client-server vs peer-to-peer" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "العميل-الخادم", en: "Client-Server" },
+            { ar: "الند-للند", en: "P2P" },
+          ],
+          rows: [
+            [
+              { ar: "الإدارة والضبط", en: "Management" },
+              { ar: "مركزية وسهلة فرض السياسات", en: "Centralized, easy policy enforcement" },
+              { ar: "موزعة ويصعب حكمها", en: "Distributed, hard to govern" },
+            ],
+            [
+              { ar: "قابلية التوسع", en: "Scalability" },
+              { ar: "مرتبطة بقدرة الخوادم", en: "Bound by server capacity" },
+              { ar: "كل ند جديد يضيف موارد", en: "Every peer adds resources" },
+            ],
+            [
+              { ar: "الأمان", en: "Security" },
+              { ar: "نقطة تحقق واحدة تُدار مركزياً", en: "One centrally managed checkpoint" },
+              { ar: "كل ند مسؤول عن حماية نفسه", en: "Each peer fends for itself" },
+            ],
+            [
+              { ar: "أمثلة", en: "Examples" },
+              { ar: "الويب، البريد، قواعد البيانات", en: "The web, email, databases" },
+              { ar: "بت تورنت، مكالمات الند المباشرة", en: "BitTorrent, direct peer calls" },
+            ],
+          ],
+        },
         body: {
           ar: "الواقع دائماً هجين:\n\n- Skype القديم: تسجيل دخول عبر خادم ثم مكالمات P2P\n- YouTube: خوادم مركزية ضخمة + شبكات CDN موزعة\n- التطبيقات الحديثة: مزيج ذكي حسب الحاجة\n\nقاعدة الاختيار: تحتاج تحكماً وأماناً → مركزية. تحتاج توزيعاً ومقاومة للإسقاط → P2P.",
           en: "Reality is always hybrid:\n\n- Old Skype: login through a server, then P2P calls\n- YouTube: huge central servers + distributed CDN networks\n- Modern apps: a smart mix per need\n\nSelection rule: need control & security → centralized. Need distribution & takedown resistance → P2P.",
@@ -313,6 +470,41 @@ export const m01_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "النطاق والإنتاجية", en: "Bandwidth & Throughput" },
+        table: {
+          caption: { ar: "مقاييس أداء الشبكة الأربعة", en: "The four network performance metrics" },
+          headers: [
+            { ar: "المقياس", en: "Metric" },
+            { ar: "الوحدة", en: "Unit" },
+            { ar: "ماذا يقيس", en: "What it measures" },
+            { ar: "أداة عملية", en: "Practical tool" },
+          ],
+          rows: [
+            [
+              { ar: "عرض النطاق Bandwidth", en: "Bandwidth" },
+              { ar: "bps / Mbps / Gbps", en: "bps / Mbps / Gbps" },
+              { ar: "السعة النظرية القصوى للوصلة", en: "The theoretical maximum capacity of the link" },
+              { ar: "مواصفات المشغّل أو الجهاز", en: "Provider or device spec sheet" },
+            ],
+            [
+              { ar: "الإنتاجية Throughput", en: "Throughput" },
+              { ar: "Mbps", en: "Mbps" },
+              { ar: "ما يُنقل فعلاً بعد الحِمل والأخطاء", en: "What actually transfers after overhead and errors" },
+              { ar: "iperf3", en: "iperf3" },
+            ],
+            [
+              { ar: "زمن الوصول Latency", en: "Latency" },
+              { ar: "ms", en: "ms" },
+              { ar: "زمن رحلة الحزمة ذهاباً وعودة (RTT)", en: "Round-trip time of a packet (RTT)" },
+              { ar: "ping", en: "ping" },
+            ],
+            [
+              { ar: "التذبذب Jitter", en: "Jitter" },
+              { ar: "ms", en: "ms" },
+              { ar: "تفاوت زمن الوصول بين الحزم المتتالية", en: "Variation of latency between consecutive packets" },
+              { ar: "ping مع تتبع الفروقات", en: "ping while watching the spread" },
+            ],
+          ],
+        },
         body: {
           ar: "النطاق (Bandwidth) هو السعة النظرية القصوى للوصلة، أما الإنتاجية (Throughput) فهي ما تنقله فعلاً.\n\n- اشتركت بـ 100 ميجابت/ث (Mbps) وحمّلت بـ 8 — النطاق 100 والإنتاجية 8\n- الأسباب: ازدحام، حِمل البروتوكولات (~5-10%)، أخطاء وإعادة إرسال، قيود الخادم\n\nالإنتاجية الصافية (Goodput) تطرح رؤوس الحزم من الحساب.\n\nالوحدات بت (b) صغير للشبكات وبايت (B) كبير للملفات: 100Mbps ≈ 12.5MB/s تحميل أقصى نظري.",
           en: "Bandwidth is the theoretical maximum capacity of a link, while throughput is what actually moves.\n\n- You subscribe at 100 Mbps and download at 8 — bandwidth 100, throughput 8\n- Causes: congestion, protocol overhead (~5-10%), errors & retransmissions, server limits\n\nGoodput excludes packet headers from the measurement.\n\nUnits: small b for bits (networks), capital B for bytes (files): 100Mbps ≈ 12.5MB/s maximum theoretical download.",
@@ -320,6 +512,10 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "زمن الوصول والتذبذب", en: "Latency & Jitter" },
+        tip: {
+          ar: "شغّل ping نحو خادم قريب وآخر بعيد وقارن القيم: إذا كانت الفروق بين القيم نفسها كبيرة فقد يفسّر تقطيع المكالمات رغم سرعة تنزيل ممتازة.",
+          en: "Ping a near server and a far one and compare: if the values themselves fluctuate widely, that explains choppy calls despite excellent download speed.",
+        },
         body: {
           ar: "زمن الوصول (Latency) هو الوقت الكامل لرحلة الحزمة ذهاباً — أو ذهاباً وعوداً (RTT).\n\n- مركباته: زمن الانتشار (Propagation = مسافة/سرعة الضوء) + زمن الإرسال (Transmission = حجم الحزمة/النطاق) + زمن المعالجة + زمن الانتظار في الطوابير\n- أرقام واقعية: 1-10ms داخل بلدك، 50-150ms عبور قارة، 500ms+ عبر قمر صناعي\n\nالتذبذب (Jitter) هو تفاوت زمن الوصول بين الحزم — قاتل المكالمات والبث المباشر، بينما الـ Latency الثابت العالي يمكن التأقلم معه.",
           en: "Latency is the total one-way — or round-trip (RTT) — trip time of a packet.\n\n- Components: propagation (distance/speed of light) + transmission (packet size/bandwidth) + processing + queuing delay\n- Real numbers: 1-10ms within your country, 50-150ms across a continent, 500ms+ via satellite\n\nJitter is the variance of latency between packets — the killer of calls and live streams, while constant high latency can be adapted to.",
@@ -394,6 +590,10 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الراوتر Router — حارس الحدود", en: "Router — The Border Guard" },
+        tip: {
+          ar: "جهاز المنزل الذي تسميه «راوتر» هو في الحقيقة راوتر + مبدّل 4 منافذ + نقطة وصول لاسلكية + خادم DHCP + جدار NAT في علبة واحدة.",
+          en: "The home box you call a \"router\" is really a router + 4-port switch + wireless AP + DHCP server + NAT firewall in one case.",
+        },
         body: {
           ar: "الراوتر يعمل في الطبقة الثالثة (Network) ويسلّم الحزم (Packets) حسب عنوان IP وجدول التوجيه.\n\n- يفصل بين الشبكات (Broadcast Domains) — كل واجهة شبكة مختلفة\n- يختار أفضل مسار عبر بروتوكولات OSPF/BGP\n- المنزلي = راوتر + مبدّل + AP + NAT + DHCP في جهاز واحد\n- المؤسسي: أجهزة مخصصة بآلاف الواجهات وملايين المسارات\n\nالجدار الناري (Firewall) راوتر متشدد: يوجّه ويفحص ويسمح/يمنع حسب سياسات.",
           en: "The router works at Layer 3 (Network) and forwards packets based on IP address and the routing table.\n\n- Separates networks (broadcast domains) — each interface is a different network\n- Chooses best paths via OSPF/BGP\n- The home box = router + switch + AP + NAT + DHCP in one\n- Enterprise: dedicated chassis with thousands of interfaces and millions of routes\n\nA firewall is a strict router: forwards, inspects, and allows/denies per policy.",
@@ -401,6 +601,41 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "بقية العائلة", en: "The Rest of the Family" },
+        table: {
+          caption: { ar: "أجهزة الشبكة وطبقاتها ووظائفها", en: "Network devices, their layers, and roles" },
+          headers: [
+            { ar: "الجهاز", en: "Device" },
+            { ar: "طبيقته في OSI", en: "OSI layer" },
+            { ar: "وظيفته الأساسية", en: "Core function" },
+          ],
+          rows: [
+            [
+              { ar: "المبدّل Switch", en: "Switch" },
+              { ar: "L2", en: "L2" },
+              { ar: "يمرر الإطارات حسب عنوان MAC", en: "Forwards frames by MAC address" },
+            ],
+            [
+              { ar: "الراوتر Router", en: "Router" },
+              { ar: "L3", en: "L3" },
+              { ar: "يوجّه الحزم بين الشبكات حسب IP", en: "Routes packets between networks by IP" },
+            ],
+            [
+              { ar: "نقطة الوصول AP", en: "Access point" },
+              { ar: "L2", en: "L2" },
+              { ar: "تربط العملاء اللاسلكيين بالشبكة السلكية", en: "Bridges wireless clients onto the wired network" },
+            ],
+            [
+              { ar: "الجدار الناري Firewall", en: "Firewall" },
+              { ar: "L3-L7", en: "L3-L7" },
+              { ar: "يفلتر التدففق وفق قواعد وسياسات", en: "Filters traffic per rules and policy" },
+            ],
+            [
+              { ar: "موازن الأحمال LB", en: "Load balancer" },
+              { ar: "L4-L7", en: "L4-L7" },
+              { ar: "يوزع الطلبات على خوادم متعددة", en: "Spreads requests across servers" },
+            ],
+          ],
+        },
         body: {
           ar: "- المودم (Modem): يحوّل الإشارة بين وسيطين — الكابل/ADSL/الألياف\n- الـ NIC: بطاقة الشبكة في جهازك بعنوان MAC ثابت\n- الـ Load Balancer: يوزع الطلبات على خوادم متعددة\n- أجهزة IPS/IDS: تراقب الحركة وتكشف/تمنع الهجمات\n- خادم DHCP و DNS: خدمات «البنية التحتية» التي تعمل خلف الكواليس\n\nفي المحاكي التفاعلي بالمنصة ستجد كل هذه الأجهزة جاهزة للسحب والربط!",
           en: "- Modem: converts signals between media — cable/ADSL/fiber\n- NIC: your device's network card with a permanent MAC address\n- Load balancer: spreads requests across servers\n- IDS/IPS appliances: watch traffic and detect/block attacks\n- DHCP & DNS servers: backstage infrastructure services\n\nIn the platform's interactive simulator you will find all these devices ready to drag and connect!",
@@ -474,6 +709,35 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "اللاسلكي Wireless", en: "Wireless" },
+        table: {
+          caption: { ar: "وسائط النقل الثلاثة مقارنة", en: "The three transmission media compared" },
+          headers: [
+            { ar: "الوسيط", en: "Medium" },
+            { ar: "السرعات الشائعة", en: "Common speeds" },
+            { ar: "المسافة النموذجية", en: "Typical distance" },
+            { ar: "مناعة التداخل الكهرومغناطيسي", en: "EMI immunity" },
+          ],
+          rows: [
+            [
+              { ar: "نحاس UTP", en: "Copper UTP" },
+              { ar: "1-10 Gbps", en: "1-10 Gbps" },
+              { ar: "100 m", en: "100 m" },
+              { ar: "منخفضة", en: "Low" },
+            ],
+            [
+              { ar: "الألياف الضوئية", en: "Fiber optics" },
+              { ar: "10-400 Gbps", en: "10-400 Gbps" },
+              { ar: "40 km+ للأحادية النمط", en: "40 km+ for single-mode" },
+              { ar: "ممتازة — لا تتأثر كهربائياً", en: "Excellent — electrically inert" },
+            ],
+            [
+              { ar: "اللاسلكي Wi-Fi", en: "Wireless Wi-Fi" },
+              { ar: "100 Mbps-9.6 Gbps نظرياً", en: "100 Mbps-9.6 Gbps theoretical" },
+              { ar: "~50 m داخلياً", en: "~50 m indoors" },
+              { ar: "لا شيء — يشارك الهواء مع الجميع", en: "None — shares the air with everyone" },
+            ],
+          ],
+        },
         body: {
           ar: "موجات راديو: حرية حركة بلا كابلات مقابل مشاكل حصرية.\n\n- 2.4GHz: مدى أطول وتداخل أكثر (مايكروويف، بلوتوث)\n- 5GHz: أسرع ومدى أقصر وقنوات أكثر\n- 6GHz (Wi-Fi 6E/7): طيف نظيف شبه فارغ اليوم\n\nاللاسلكي وسيط مشترك (Shared Medium) كسابق الناقل: كل من في الخلية يتنافس على الهواء — لذا السرعة الفعلية تنخفض مع كثرة المستخدمين.",
           en: "Radio waves: cable-free mobility in exchange for unique problems.\n\n- 2.4GHz: longer range, more interference (microwaves, Bluetooth)\n- 5GHz: faster, shorter range, more channels\n- 6GHz (Wi-Fi 6E/7): nearly clean, empty spectrum today\n\nWireless is a shared medium like the old bus: everyone in the cell contends for air — so real speed drops as users multiply.",
@@ -528,6 +792,49 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "النموذجان جنباً إلى جنب", en: "The Two Models Side by Side" },
+        diagram: {
+          kind: "layers",
+          title: { ar: "نموذج OSI بطبقاته السبع (من الأعلى إلى الأسفل)", en: "The OSI model's seven layers (top to bottom)" },
+          items: [
+            { ar: "L7 التطبيقات: HTTP و DNS و SMTP", en: "L7 Application: HTTP, DNS, SMTP" },
+            { ar: "L6 العرض: الترميز والضغط والتشفير", en: "L6 Presentation: encoding, compression, encryption" },
+            { ar: "L5 الجلسة: فتح الحوارات وإدارتها", en: "L5 Session: opening and managing dialogs" },
+            { ar: "L4 النقل: TCP و UDP والمنافذ", en: "L4 Transport: TCP, UDP, and ports" },
+            { ar: "L3 الشبكة: IP والتوجيه المنطقي", en: "L3 Network: IP and logical routing" },
+            { ar: "L2 الوصل: الإيثرنت وعناوين MAC", en: "L2 Data link: Ethernet and MAC" },
+            { ar: "L1 الفيزيائية: الإشارات والبتات", en: "L1 Physical: signals and bits" },
+          ],
+        },
+        table: {
+          caption: { ar: "مطابقة طبقات OSI بطبقات TCP/IP", en: "Mapping OSI layers onto TCP/IP" },
+          headers: [
+            { ar: "طبقات OSI", en: "OSI layers" },
+            { ar: "طبقة TCP/IP", en: "TCP/IP layer" },
+            { ar: "وحدة البيانات PDU", en: "PDU" },
+          ],
+          rows: [
+            [
+              { ar: "7-5 (تطبيقات، عرض، جلسة)", en: "7-5 (App, Presentation, Session)" },
+              { ar: "التطبيقات Application", en: "Application" },
+              { ar: "بيانات Data", en: "Data" },
+            ],
+            [
+              { ar: "4 (النقل)", en: "4 (Transport)" },
+              { ar: "النقل Transport", en: "Transport" },
+              { ar: "مقطع Segment", en: "Segment" },
+            ],
+            [
+              { ar: "3 (الشبكة)", en: "3 (Network)" },
+              { ar: "الإنترنت Internet", en: "Internet" },
+              { ar: "حزمة Packet", en: "Packet" },
+            ],
+            [
+              { ar: "2-1 (وصل، فيزيائية)", en: "2-1 (Data link, Physical)" },
+              { ar: "الوصلة Network Access", en: "Network Access" },
+              { ar: "إطار Frame ثم بتات Bits", en: "Frame then bits" },
+            ],
+          ],
+        },
         body: {
           ar: "OSI: 7 طبقات (Physical, Data Link, Network, Transport, Session, Presentation, Application).\nTCP/IP: 4 طبقات (Link, Internet, Transport, Application).\n\nالمقابلة:\n- OSI 1-2 ≈ طبقة Link في TCP/IP\n- OSI 3 ≝ Internet\n- OSI 4 ≝ Transport\n- OSI 5-7 ≝ Application\n\nالمهندسون يستعملون OSI للفهم والتشخيص والمناقشة، بينما الحزم الحقيقية تسافر بعقلية TCP/IP.",
           en: "OSI: 7 layers (Physical, Data Link, Network, Transport, Session, Presentation, Application).\nTCP/IP: 4 layers (Link, Internet, Transport, Application).\n\nMapping:\n- OSI 1-2 ≈ TCP/IP Link\n- OSI 3 ≝ Internet\n- OSI 4 ≝ Transport\n- OSI 5-7 ≝ Application\n\nEngineers use OSI for understanding, troubleshooting and discussion, while real packets travel with a TCP/IP mindset.",
@@ -589,6 +896,31 @@ export const m01_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "هرم مقدمي الخدمة", en: "The ISP Hierarchy" },
+        table: {
+          caption: { ar: "فئات مقدمي الخدمة", en: "ISP tiers" },
+          headers: [
+            { ar: "الفئة", en: "Tier" },
+            { ar: "دورها", en: "Role" },
+            { ar: "أمثلة", en: "Examples" },
+          ],
+          rows: [
+            [
+              { ar: "Tier 1", en: "Tier 1" },
+              { ar: "يملك شبكة عالمية ويتناظر مع نظرائه دون شراء عبور", en: "Owns a global backbone and peers without buying transit" },
+              { ar: "AT&T، Lumen، NTT", en: "AT&T, Lumen, NTT" },
+            ],
+            [
+              { ar: "Tier 2", en: "Tier 2" },
+              { ar: "يتناظر مع بعض الأطراف ويشتري عبوراً من Tier 1", en: "Peers with some parties and buys transit from Tier 1s" },
+              { ar: "المشغلون الإقليميون", en: "Regional carriers" },
+            ],
+            [
+              { ar: "Tier 3", en: "Tier 3" },
+              { ar: "يبيع الإنترنت للمستخدم النهائي عبر الألياف أو DSL", en: "Sells access to end users via fiber or DSL" },
+              { ar: "مزودك المحلي", en: "Your local provider" },
+            ],
+          ],
+        },
         body: {
           ar: "الإنترنت هرم غير مركزي فعلياً لكنه منتظم تجارياً:\n\n- Tier 3: مزوّدك المحلي الصغير يشتري من الأكبر\n- Tier 2: إقليمي يغطي دولة أو عدة دول ويشتري جزئياً\n- Tier 1: عمالقة يملكون العمود الفقري العالمي ويتصلون ببعضهم مجاناً (Peering) — مثل AT&T و Lumen و NTT\n\nلا أحد «يملك» الإنترنت؛ بل يتفق هؤلاء على الترابط عبر معايير مشتركة.",
           en: "The Internet is practically a decentralized yet commercially ordered pyramid:\n\n- Tier 3: your small local ISP buying from a bigger one\n- Tier 2: regional covering a country or a few, partially buying transit\n- Tier 1: giants owning the global backbone peering freely with each other — e.g. AT&T, Lumen, NTT\n\nNobody owns the Internet; these players interconnect through shared standards.",
@@ -603,6 +935,12 @@ export const m01_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الرحلة الكاملة خطوة بخطوة", en: "The Complete Journey" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "مسار بياناتك من المنزل حتى خادم العالم", en: "Your data's path from home to a world server" },
+          nodes: ["PC1", "HomeGW", "ISP", "IXP", "Tier1-A", "Tier1-B", "WebSrv"],
+          edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]],
+        },
         body: {
           ar: "عند كتابة www.example.com:\n\n- DNS يحل الاسم إلى IP عبر شجرة عالمية موزعة\n- جهازك يرسل الحزم إلى بوابتك (الراوتر المنزلي)\n- NAT يستبدل عنوانك الخاص بالعام ثم لمزوّدك\n- راوترات ISP ترفعها عبر BGP نحو الشبكة المستهدفة\n- تصل POP الخادم أو أقرب CDN — كابل بحري أو IXP في الطريق حسب الموقع\n- تعود الاستجابة بالطريق نفسه أو طريق أسرع\n\nكل ذلك في ميلي ثوانٍ! استخدم traceroute الآن لترى القفزات بنفسك.",
           en: "When you type www.example.com:\n\n- DNS resolves the name to an IP via a globally distributed tree\n- Your device sends packets to your gateway (home router)\n- NAT swaps your private address for the public one, then to your ISP\n- ISP routers lift them via BGP toward the target network\n- They reach the server's POP or the nearest CDN — a submarine cable or IXP may be en route\n- The response returns the same or a faster path\n\nAll within milliseconds! Run traceroute now to see the hops yourself.",
@@ -651,6 +989,17 @@ export const m01_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "التخطيط والمخطط", en: "Planning & Diagram" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "خطوات بناء شبكتك المنزلية بترتيب صحيح", en: "Building your home network in the right order" },
+          items: [
+            { ar: "حدد احتياجك: عدد الأجهزة والتغطية والاستخدامات", en: "Define needs: device count, coverage, use cases" },
+            { ar: "ارسم مخططاً بسيطاً قبل شراء أي قطعة", en: "Sketch a simple diagram before buying anything" },
+            { ar: "اختر جهازاً موحداً أو مكونات منفصلة حسب الحجم", en: "Pick one all-in-one box or separate components" },
+            { ar: "اضبط: SSID وكلمة مرور قوية وWPA3 وتحديث البرمجيات", en: "Configure: SSID, strong password, WPA3, firmware update" },
+            { ar: "اختبر التغطية والسرعة ثم ثبّت التحسينات", en: "Test coverage and speed, then lock in fixes" },
+          ],
+        },
         body: {
           ar: "قبل شراء أي جهاز، ارسم المخطط — مهارة المهندس الأولى:\n\n- اجرد الاحتياجات: كم جهازاً سلكياً؟ لاسلكياً؟ مساحة التغطية؟\n- المخطط النموذجي: المودم → راوتر/مبدّل/AP متعدد الاستخدام\n- خطط العناوين مسبقاً: 192.168.1.0/24 يكفي 254 جهازاً منزلياً\n- حدد مواقع الأجهزة: الراوتر في مركز المنزل لانتشار Wi-Fi أفضل\n\nضع تصوراً لمنافذ المستقبل: شبكة كاميرا؟ جهاز ذكي؟ قسوها الآن لا لاحقاً.",
           en: "Before buying anything, draw the diagram — the engineer's first skill:\n\n- Inventory needs: how many wired devices? wireless? coverage area?\n- Typical layout: modem → all-in-one router/switch/AP\n- Plan addressing upfront: 192.168.1.0/24 fits 254 home devices\n- Place devices centrally: the router mid-home for better Wi-Fi spread\n\nPlan future ports: cameras? smart devices? Rough them in now, not later.",

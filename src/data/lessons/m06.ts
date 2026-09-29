@@ -18,6 +18,17 @@ export const m06_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "ماذا يحدث عند وصول حزمة؟", en: "What Happens When a Packet Arrives?" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "قرار الموجّه لكل حزمة واردة", en: "The router's decision for every arriving packet" },
+          items: [
+            { ar: "الحزمة تصل إلى واجهة الدخول", en: "The packet hits the ingress interface" },
+            { ar: "اقرأ عنوان IP الوجهة", en: "Read the destination IP address" },
+            { ar: "ابحث عن أطول بادئة مطابقة في الجدول", en: "Search for the longest matching prefix" },
+            { ar: "وُجد المسار؟ انقص TTL وأعد كتابة MAC وأرسل", en: "Route found? Decrement TTL, rewrite MACs, send" },
+            { ar: "لا مسار؟ أرسل ICMP Destination Unreachable", en: "No route? Send ICMP Destination Unreachable" },
+          ],
+        },
         body: {
           ar: "عند وصول حزمة إلى واجهة موجّه، تبدأ رحلة قرار دقيقة في أجزاء من الميكروثانية: استخراج عنوان الوجهة، ثم البحث في جدول التوجيه عن أطول بادئة تطابقه، ثم إرسال الحزمة عبر الواجهة الفائزة.\n\nجدول التوجيه (Routing Table) ليس خريطة الإنترنت — إنه قائمة المسارات التي يعرفها هذا الموجّه بالذات: شبكاته المباشرة، ومسارات ثابتة أضفتها، ومسارات تعلمها من بروتوكولات التوجيه الديناميكية.\n\n- كل سطر في الجدول = مسار واحد (Route) نحو شبكة وجهة\n- الجدول يجمع مصادر متعددة ويرتبها بذكاء\n- الهدف النهائي لكل سطر: إلى أين أرسل الحزمة تالياً؟",
           en: "When a packet arrives on a router interface, a decision journey starts in microseconds: extract the destination address, search the routing table for the longest matching prefix, then forward the packet out the winning interface.\n\nThe routing table is not a map of the Internet — it is the list of routes this particular router knows: its directly connected networks, static routes you added, and routes learned from dynamic routing protocols.\n\n- Each table line = one route toward a destination network\n- The table blends multiple sources and ranks them intelligently\n- Every line's final question: where do I send the packet next?",
@@ -40,6 +51,47 @@ export const m06_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المسافة الإدارية: من الأصدق؟", en: "Administrative Distance: Who Is More Trusted?" },
+        table: {
+          caption: { ar: "قيم المسافة الإدارية الافتراضية في Cisco", en: "Default administrative distances on Cisco" },
+          headers: [
+            { ar: "مصدر المسار", en: "Route source" },
+            { ar: "AD الافتراضية", en: "Default AD" },
+          ],
+          rows: [
+            [
+              { ar: "مباشر Connected", en: "Connected" },
+              { ar: "0", en: "0" },
+            ],
+            [
+              { ar: "ثابت Static", en: "Static" },
+              { ar: "1", en: "1" },
+            ],
+            [
+              { ar: "eBGP", en: "eBGP" },
+              { ar: "20", en: "20" },
+            ],
+            [
+              { ar: "EIGRP داخلي", en: "EIGRP internal" },
+              { ar: "90", en: "90" },
+            ],
+            [
+              { ar: "OSPF", en: "OSPF" },
+              { ar: "110", en: "110" },
+            ],
+            [
+              { ar: "RIP", en: "RIP" },
+              { ar: "120", en: "120" },
+            ],
+            [
+              { ar: "EIGRP خارجي", en: "EIGRP external" },
+              { ar: "170", en: "170" },
+            ],
+            [
+              { ar: "iBGP", en: "iBGP" },
+              { ar: "200", en: "200" },
+            ],
+          ],
+        },
         body: {
           ar: "المسافة الإدارية (Administrative Distance - AD) قيمة من 0 إلى 255 تحدد مدى ثقة الموجّه بالمصدر نفسه — لا بالمسار:\n\n- 0: شبكة موصولة مباشرة (لا شيء يهزمها)\n- 1: مسار ثابت (يدك أنت)\n- 90: EIGRP الداخلي\n- 110: OSPF\n- 120: RIP\n- 170: EIGRP الخارجي\n- 20: eBGP و 200: iBGP\n- 255: غير معروف — يُتجاهل تماماً\n\nالسيناريو الحاسم: OSPF و RIP يعلنان المسار نفسه 10.2.0.0/16. OSPF له AD 110 مقابل 120 لـ RIP — فيثبت مسار OSPF ويرفض الموجّه مسار RIP حتى لو كان أفضل جودة فعلياً!\n\nالقاعدة الذهبية: AD تُقارن بين المصادر فقط عندما تتعلم المسار نفسه من أكثر من مصدر — وهي أول مرشّح بعد تطابق البادئة، قبل المقارنة بالأرقام داخل البروتوكول الواحد.",
           en: "Administrative Distance (AD) is a 0-255 value rating how much the router trusts the source itself — not the path:\n\n- 0: directly connected (nothing beats it)\n- 1: static route (your own hand)\n- 90: internal EIGRP\n- 110: OSPF\n- 120: RIP\n- 170: external EIGRP\n- 20: eBGP and 200: iBGP\n- 255: unknown — completely ignored\n\nThe decisive scenario: OSPF and RIP both announce the same 10.2.0.0/16 route. OSPF holds AD 110 versus RIP's 120 — OSPF's route installs and RIP's is rejected even if it were factually better!\n\nGolden rule: AD is compared across sources only when the same route arrives from more than one source — it is the first tiebreaker after prefix match, before any in-protocol metric comparison.",
@@ -123,6 +175,41 @@ export const m06_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "بنية الأمر وصيغه الثلاث", en: "The Command Syntax and Its Three Forms" },
+        table: {
+          caption: { ar: "صيغ المسارات الثابتة واستخدام كل منها", en: "Static route forms and when to use each" },
+          headers: [
+            { ar: "النوع", en: "Type" },
+            { ar: "مثال الأمر", en: "Command example" },
+            { ar: "الاستخدام", en: "Use" },
+          ],
+          rows: [
+            [
+              { ar: "مباشر — الواجهة", en: "Directly attached" },
+              { ar: "ip route 10.0.2.0 255.255.255.0 g0/1", en: "ip route 10.0.2.0 255.255.255.0 g0/1" },
+              { ar: "شبكة موصولة عبر واجهة نقطة-نقطة", en: "A network reached over a point-to-point interface" },
+            ],
+            [
+              { ar: "قياسي — القفزة التالية", en: "Standard — next hop" },
+              { ar: "ip route 10.0.2.0 255.255.255.0 10.0.12.2", en: "ip route 10.0.2.0 255.255.255.0 10.0.12.2" },
+              { ar: "الشكل العام الأكثر أماناً", en: "The safest general form" },
+            ],
+            [
+              { ar: "مختلط — واجهة + قفزة", en: "Fully specified" },
+              { ar: "ip route 10.0.2.0 255.255.255.0 g0/1 10.0.12.2", en: "ip route 10.0.2.0 255.255.255.0 g0/1 10.0.12.2" },
+              { ar: "يمنع البحث التكراري وغموض الواجهات", en: "Prevents recursive lookup ambiguity" },
+            ],
+            [
+              { ar: "افتراضي Default", en: "Default" },
+              { ar: "ip route 0.0.0.0 0.0.0.0 203.0.113.1", en: "ip route 0.0.0.0 0.0.0.0 203.0.113.1" },
+              { ar: "مخرج كل المجهول — بوابة الإنترنت", en: "The exit for all unknowns — the internet gateway" },
+            ],
+            [
+              { ar: "عائم Floating", en: "Floating" },
+              { ar: "نفس المسار ب AD أعلى — مثل 130", en: "Same route with higher AD — say 130" },
+              { ar: "نسخة احتياطية تصعد عند فشل الأساسية", en: "A backup copy rising when the primary dies" },
+            ],
+          ],
+        },
         body: {
           ar: "الأمر الجامع للمسارات اليدوية:\n\nip route <شبكة الوجهة> <قناع> <القفزة التالية أو الواجهة أو كلاهما>\n\nالصيغة الأولى — القفزة التالية (Next Hop): ip route 10.2.0.0 255.255.0.0 10.1.1.2 — تقول: كل ما يذهب إلى 10.2.0.0 سلّمه للموجّه ذي العنوان 10.1.1.2.\n\nالصيغة الثانية — واجهة الخروج (Exit Interface): ip route 10.2.0.0 255.255.0.0 s0/0/0 — تقول: أخرجها من الواجهة التسلسلية مباشرة. ممتازة للروابط النقطية (Point-to-Point) حيث لا لبس في الجهة الأخرى.\n\nالصيغة الثالثة — الكاملة المحددة (Fully Specified): ip route 10.2.0.0 255.255.0.0 s0/0/0 10.1.1.2 — الواجهة والقفزة معاً: أدق الصيغ وأكثرها أماناً في الشبكات المعقدة.\n\n- القفزة التالية يجب أن تكون قابلة للوصول (موجودة في الجدول) وإلا رفض الموجّه المسار\n- الواجهة وحدها على إيثرنت تنشئ مشكلة سنعرفها الآن",
           en: "The master command for manual routes:\n\nip route <destination network> <mask> <next hop, interface, or both>\n\nForm one — Next Hop: ip route 10.2.0.0 255.255.0.0 10.1.1.2 — saying: everything bound for 10.2.0.0, hand to the router at 10.1.1.2.\n\nForm two — Exit Interface: ip route 10.2.0.0 255.255.0.0 s0/0/0 — saying: send it out the serial interface directly. Excellent for point-to-point links where the far side is unambiguous.\n\nForm three — Fully Specified: ip route 10.2.0.0 255.255.0.0 s0/0/0 10.1.1.2 — interface and hop together: the most precise and safest form in complex networks.\n\n- The next hop must itself be resolvable (present in the table) or the router rejects the route\n- Interface-only on Ethernet creates a problem we meet right now",
@@ -232,6 +319,10 @@ export const m06_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "القاعدة الحاكمة: البادئة الأطول تفوز", en: "The Governing Rule: Longest Prefix Wins" },
+        tip: {
+          ar: "أسرع طريقة لاختبار البادئة الأطول على لينكس: ip route get 10.1.1.5 — النواة تخبرك بالمسار الفائز فوراً.",
+          en: "Fastest longest-prefix test on Linux: ip route get 10.1.1.5 — the kernel names the winning route instantly.",
+        },
         body: {
           ar: "عند بحث الموجّه عن وجهة، لا يسأل: أي مسار أفضل؟ بل يسأل: أي مسار أطول بادئة يطابق العنوان؟\n\nكل بت إضافي في البادئة يعني مطابقة أدق — قناع /32 يطابق عنواناً واحداً بالضبط، و /0 يطابق العالم كله. البادئة الأطول تفوز حتى لو كان مصدرها أضعف ثقة أو مقياسها أردأ.\n\nمثال عملي: وصلت حزمة وجهتها 10.1.1.5، وفي الجدول:\n\n- 10.0.0.0/8 عبر OSPF — بادئة 8 بتات\n- 10.1.0.0/16 عبر EIGRP — بادئة 16 بتاً\n- 10.1.1.0/24 ثابت — بادئة 24 بتاً\n- 10.1.1.5/32 محلي لواجهة Loopback — بادئة 32 بتاً كاملة\n\nالفائز: /32 — البادئة الأدق دائماً. حتى المسار الثابت /24 الذي هزم بروتوكولين بمقعده الإداري (1) لا يقف أمام /32.\n\nالخلاصة الصارمة: ترتيب الحكم (1) أطول بادئة مطابقة، (2) عند التساوي في البادئة: المسافة الإدارية، (3) عند التساوي فيهما: المقياس — عندها فقط موازنة الأحمال.",
           en: "When the router looks up a destination, it never asks which route is best — it asks which longest-prefix route matches the address.\n\nEvery extra prefix bit means a more precise match — a /32 matches exactly one address, a /0 matches the world. The longest prefix wins even from a less-trusted source with a worse metric.\n\nPractical example: a packet arrives for 10.1.1.5, and the table holds:\n\n- 10.0.0.0/8 via OSPF — 8-bit prefix\n- 10.1.0.0/16 via EIGRP — 16-bit prefix\n- 10.1.1.0/24 static — 24-bit prefix\n- 10.1.1.5/32 local to a loopback — full 32-bit prefix\n\nThe winner: /32 — always the most precise. Even the static /24 that outranked two protocols with its AD of 1 stands no chance against a /32.\n\nThe strict verdict order: (1) longest matching prefix, (2) equal prefix → administrative distance, (3) equal both → metric — and only then, load balancing.",
@@ -333,6 +424,41 @@ export const m06_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "المشكلة التي تحلها البروتوكولات الديناميكية", en: "The Problem Dynamic Protocols Solve" },
+        table: {
+          caption: { ar: "التوجيه الثابت مقابل الديناميكي", en: "Static vs dynamic routing" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "ثابت Static", en: "Static" },
+            { ar: "ديناميكي Dynamic", en: "Dynamic" },
+          ],
+          rows: [
+            [
+              { ar: "التهيئة", en: "Setup" },
+              { ar: "يدوية — سطر لكل مسار", en: "Manual — one line per route" },
+              { ar: "تبني ذاتياً بالتخاطب", en: "Self-built via protocol chatter" },
+            ],
+            [
+              { ar: "التكيف مع الأعطال", en: "Failure adaptation" },
+              { ar: "جامد حتى تعدله بنفسك", en: "Frozen until you edit it" },
+              { ar: "إعادة حساب تلقائية خلال ثوانٍ", en: "Automatic recompute within seconds" },
+            ],
+            [
+              { ar: "موارد الجهاز", en: "Device resources" },
+              { ar: "صفر تقريباً", en: "Nearly zero" },
+              { ar: "CPU وذاكرة وتخاطب دوري", en: "CPU, memory, and periodic chatter" },
+            ],
+            [
+              { ar: "قابلية التوسع", en: "Scalability" },
+              { ar: "شبكات صغيرة ومخارج ثابتة", en: "Small networks and fixed exits" },
+              { ar: "ضرورة للمتوسطة والكبيرة", en: "A necessity for medium and large" },
+            ],
+            [
+              { ar: "التحكم الدقيق", en: "Precise control" },
+              { ar: "كامل — كل مسار بيدك", en: "Full — every route by hand" },
+              { ar: "يوزع بالسياسات والمعايير", en: "Shaped by policy and metrics" },
+            ],
+          ],
+        },
         body: {
           ar: "المسارات الثابتة تعمل حتى تكبر الشبكة — عندها تتفجر مشكلاتها:\n\n- 20 موجّهاً تتطلب مئات المسارات اليدوية، وكل إضافة شبكة = تعديل على الجميع\n- فشل رابط لا يراه أحد: الحزم تستمر في السقوط في الفجوة حتى تتدخل يدوياً\n- استكشاف الأخطاء كابوس: من أخطأ في الكتابة؟ أين؟ متى؟\n\nالبروتوكول الديناميكي بروتوكول يتكلم به الموجّهات فيما بينها: تتبادل معرفتها بطوبولوجيا الشبكة، وتحسب المسارات بنفسها، وتحس بالتغييرات وتتكيَّف خلال ثوانٍ.\n\n- التكلفة: قليل من عرض النطاق وذاكرة ومعالجة\n- المقابل: تكيف ذاتي واكتشاف أعطال ومقياس ذكي يراعي سرعة الروابط\n- القاعدة: كلما كبرت الشبكة زادت جدارة الديناميكي",
           en: "Static routes work — until the network grows, and then their problems explode:\n\n- 20 routers require hundreds of manual routes, and every new network = edits on all of them\n- A failed link that nobody sees: packets keep dropping into the gap until you intervene\n- Troubleshooting nightmare: who mistyped, where, when?\n\nA dynamic protocol is the language routers speak among themselves: they exchange knowledge of the topology, compute paths themselves, sense changes, and adapt within seconds.\n\n- The cost: a little bandwidth, memory, and CPU\n- The return: self-adaptation, failure detection, and a smart metric that respects link speeds\n- The rule: the larger the network, the more dynamic earns its keep",
@@ -358,6 +484,41 @@ export const m06_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المقاييس: كيف يقيس كل بروتوكول الجودة؟", en: "Metrics: How Each Protocol Measures Quality" },
+        table: {
+          caption: { ar: "بروتوكولات التوجيه الداخلي الرئيسية", en: "The major routing protocols" },
+          headers: [
+            { ar: "البروتوكول", en: "Protocol" },
+            { ar: "النوع", en: "Type" },
+            { ar: "المقياس", en: "Metric" },
+            { ar: "المجال الأمثل", en: "Best scope" },
+          ],
+          rows: [
+            [
+              { ar: "RIPv2", en: "RIPv2" },
+              { ar: "متجه مسافة", en: "Distance vector" },
+              { ar: "عدد القفزات (حد 15)", en: "Hop count (max 15)" },
+              { ar: "شبكات صغيرة بسيطة", en: "Small simple networks" },
+            ],
+            [
+              { ar: "OSPF", en: "OSPF" },
+              { ar: "حالة الوصلة", en: "Link state" },
+              { ar: "الكلفة المبنية على عرض النطاق", en: "Cost based on bandwidth" },
+              { ar: "شبكات المؤسسات", en: "Enterprise networks" },
+            ],
+            [
+              { ar: "EIGRP", en: "EIGRP" },
+              { ar: "متجه مسافة متقدم", en: "Advanced distance vector" },
+              { ar: "مركب: عرض نطاق + تأخير", en: "Composite: bandwidth + delay" },
+              { ar: "بيئات Cisco تاريخياً", en: "Historically Cisco estates" },
+            ],
+            [
+              { ar: "BGP", en: "BGP" },
+              { ar: "متجه المسار", en: "Path vector" },
+              { ar: "المسار والسياسات", en: "Path and policy attributes" },
+              { ar: "الإنترنت بين الأنظمة المستقلة", en: "The Internet between autonomous systems" },
+            ],
+          ],
+        },
         body: {
           ar: "المقياس (Metric) قيمة رقمية يفضل عندها البروتوكول المسار الأدنى — وكل بروتوكول رأيه:\n\n- RIP — عدد القفزات (Hop Count): قفزات فقط، حد أقصى 15 (16 = لا يمكن الوصول). عملي: رابط 64 كيلوبت ورابط 10 جيجابت قفزة واحدة كلاهما!\n- OSPF — الكلفة (Cost): 10^8 ÷ عرض نطاق الرابط. 10 ميغابت = كلفة 10، و 100 ميغابت = 1. النسب تراعي السرعة فعلياً (المرجع قابل للتعديل في الشبكات الحديثة)\n- EIGRP — مقياس مركب: عرض النطاق الأدنى عبر المسار + مجموع التأخير (بمعاملات K1..K5، الافتراض K1=K3=1 فقط)\n- IS-IS — كلفة (Cost) افتراضية 10 لكل واجهة بغض النظر عن السرعة (قابلة للتهيئة)\n- BGP — لا مقياساً رقمياً بسيطاً: سلسلة سمات (AS_PATH أقصرها، LOCAL_PREF الأعلى، MED الأقل...) حسب سياسات\n\nدرس تاريخي مضحك: RIP في الثمانينيات جعل الشبكات ترسل عبر روابط بطيئة لأن كل الطرق قفزة واحدة — لهذا سُرعان ما استُبدل.",
           en: "The metric is a numeric value where the protocol prefers the lowest — and every protocol has an opinion:\n\n- RIP — hop count: hops only, max 15 (16 = unreachable). Practical: a 64 kbps link and a 10 Gbps link are one hop each!\n- OSPF — cost: 10^8 ÷ link bandwidth. 10 Mbps = cost 10, 100 Mbps = 1. Ratios genuinely respect speed (the reference is tunable in modern networks)\n- EIGRP — composite metric: minimum bandwidth along the path + summed delay (K1..K5 weights; default K1=K3=1 only)\n- IS-IS — a cost defaulting to 10 per interface regardless of speed (configurable)\n- BGP — no simple numeric metric: a chain of attributes (shortest AS_PATH, highest LOCAL_PREF, lowest MED...) by policy\n\nA comic historical lesson: RIP in the eighties had networks sending traffic over slow links because all paths were one hop — hence its rapid replacement.",
@@ -462,6 +623,36 @@ export const m06_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "RIPv2: ما أصلحه الإصدار الثاني", en: "RIPv2: What Version 2 Fixed" },
+        table: {
+          caption: { ar: "RIPv1 مقابل RIPv2", en: "RIPv1 vs RIPv2" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "RIPv1", en: "RIPv1" },
+            { ar: "RIPv2", en: "RIPv2" },
+          ],
+          rows: [
+            [
+              { ar: "دعم VLSM/CIDR", en: "VLSM/CIDR support" },
+              { ar: "لا — أقنعة طبقية فقط", en: "No — classful masks only" },
+              { ar: "مدعوم بالقناع مع كل مسار", en: "Yes — mask carried with each route" },
+            ],
+            [
+              { ar: "نوع التحديثات", en: "Update delivery" },
+              { ar: "بث 255.255.255.255", en: "Broadcast to 255.255.255.255" },
+              { ar: "بث متعدد 224.0.0.9", en: "Multicast to 224.0.0.9" },
+            ],
+            [
+              { ar: "المصادقة", en: "Authentication" },
+              { ar: "لا شيء", en: "None" },
+              { ar: "نص عادي أو MD5", en: "Plain text or MD5" },
+            ],
+            [
+              { ar: "الحد الأقصى للقفزات", en: "Hop limit" },
+              { ar: "15 (16 = لا يمكن الوصول)", en: "15 (16 = unreachable)" },
+              { ar: "15 نفس الحد", en: "15, the same limit" },
+            ],
+          ],
+        },
         body: {
           ar: "الإصدار 1 (1988) كان طبقياً (Classful): يرسل الشبكة بلا قناع، فيخمّن القناع من فئته — يكسر VLSM و CIDR تماماً.\n\nالإصدار 2 (1993-1998) أصلح كل شيء تقريباً:\n\n- يحمل قناع الشبكة مع كل مسار → لا طبقي يدعم VLSM و CIDR بالكامل\n- يرسل للبث المتعدد 224.0.0.9 بدل البث العام — لا يزعج كل بطاقة على القسم\n- يدعم المصادقة (نصية MD5) — حماية من إعلانات مسار مزيفة\n- يضيف حقل خطوة تالية اختيارياً لتحسين التوجيه\n\nظل RIP v2 في الشبكات الصغيرة والكتب الدراسية لعقود — اليوم حضوره مقاومة هامشية، لكنه أفضل معلم لمبادئ متجه المسافة على الإطلاق.",
           en: "Version 1 (1988) was classful: it sent the network with no mask, guessing it from the class — breaking VLSM and CIDR entirely.\n\nVersion 2 (1993-1998) fixed nearly everything:\n\n- Carries the network mask with every route → classless, fully VLSM and CIDR capable\n- Sends to multicast 224.0.0.9 instead of broadcast — no longer nagging every NIC on the segment\n- Supports authentication (plaintext and MD5) — protection against forged route announcements\n- Adds an optional next-hop field to improve forwarding\n\nRIPv2 lingered in small networks and textbooks for decades — today it survives marginally, yet remains the finest teacher of distance-vector principles ever.",
@@ -549,6 +740,12 @@ export const m06_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المناطق وهرمية OSPF", en: "Areas & the OSPF Hierarchy" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "OSPF: منطقة العمود الفقري 0 وملحقاتها", en: "OSPF: backbone area 0 and its attachments" },
+          nodes: ["R1-A0", "R2-A0", "R3-A0", "ABR1", "R4-A1", "LAN-A1"],
+          edges: [[0, 1], [0, 2], [1, 2], [1, 3], [3, 4], [4, 5]],
+        },
         body: {
           ar: "شبكة OSPF واحدة كبيرة تعني LSDB ضخماً وحساب SPF ثقيلاً عند كل تغيير — الحل الهندسي: تقسيم إلى مناطق (Areas) هرمية ثنائية المستوى.\n\n- المنطقة 0 (Backbone Area): العمود الفقري الإلزامي — كل منطقة أخرى يجب أن تتصل بها (فيزيائياً أو عبر نفق وهمي)\n- المناطق العادية (مثل 1 و 2): تحتوي موجّهات داخلية (Internal) وموجّهات حدود (ABR — Area Border Router) تجلس بين منطقتين\n- ASBR (AS Boundary Router): موجّه يحقن مسارات خارجية (من BGP أو مسارات ثابتة) داخل OSPF\n\nفوائد المناطق بأرقام: بدل فيض كل LSA للشبكة كلها، تبقى تفاصيل المنطقة داخلها، و ABR يلخصها إلى المنطقة 0 عبر LSA نوع 3 (Summary) — جدول أصغر وحساب أخف وعزل أعطال.\n\nأنواع LSA التي تصادفها أولاً (سنمارسها في درس التكوين):\n\n- نوع 1 (Router LSA): روابط كل موجّه داخل منطقته — البنة الأساسية\n- نوع 2 (Network LSA): الشبكات متعددة الوصول يولّدها DR\n- نوع 3 (Summary LSA): مسارات ملخصة بين المناطق يولّدها ABR\n- نوع 4 و 5: وصف موقع ASBR و المسارات الخارجية التي يحقنها",
           en: "One large OSPF domain means a giant LSDB and heavy SPF runs on every change — the engineering answer: division into a two-level area hierarchy.\n\n- Area 0 (the backbone): the mandatory spine — every other area must attach to it (physically or via a virtual link)\n- Regular areas (like 1 and 2): contain internal routers and ABRs (Area Border Routers) sitting between two areas\n- ASBR (AS Boundary Router): a router injecting external routes (from BGP or statics) into OSPF\n\nThe area gains in numbers: instead of every LSA flooding the whole domain, area detail stays local, and the ABR summarizes it into Area 0 via Type 3 (Summary) LSAs — smaller tables, lighter computation, fault isolation.\n\nThe LSA types you meet first (we practice them in the configuration lesson):\n\n- Type 1 (Router LSA): each router's links within its area — the fundamental brick\n- Type 2 (Network LSA): multi-access networks, generated by the DR\n- Type 3 (Summary LSA): inter-area summarized routes generated by the ABR\n- Types 4 and 5: describing the ASBR's location and the external routes it injects",
@@ -560,6 +757,39 @@ export const m06_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "رسائل Hello وبناء الجوار: المراحل الثماني", en: "Hello Messages & Adjacency: The Eight States" },
+        table: {
+          caption: { ar: "حالات جوار OSPF الرئيسية", en: "The key OSPF neighbor states" },
+          headers: [
+            { ar: "الحالة", en: "State" },
+            { ar: "ما يحدث فيها", en: "What happens" },
+          ],
+          rows: [
+            [
+              { ar: "Down", en: "Down" },
+              { ar: "لا اتصال بعد — نقطة البداية", en: "No contact yet — the starting point" },
+            ],
+            [
+              { ar: "Init", en: "Init" },
+              { ar: "وصل Hello لكن الطرف الآخر لم يرني بعد", en: "A Hello arrived, but the peer has not seen me yet" },
+            ],
+            [
+              { ar: "2-Way", en: "2-Way" },
+              { ar: "كلا الطرفين يرى الآخر — الجوار قائم", en: "Both sides see each other — neighbors established" },
+            ],
+            [
+              { ar: "ExStart/Exchange", en: "ExStart/Exchange" },
+              { ar: "تفاوض الأدوار وتبادل ملخصات قاعدة البيانات", en: "Role negotiation and database summary exchange" },
+            ],
+            [
+              { ar: "Loading", en: "Loading" },
+              { ar: "طلب وتحميل الإعلانات الناقصة LSA", en: "Requesting and loading the missing LSAs" },
+            ],
+            [
+              { ar: "Full", en: "Full" },
+              { ar: "قاعدتا البيانات متطابقتان — جوار كامل يوجه", en: "Databases identical — fully adjacent and routing" },
+            ],
+          ],
+        },
         body: {
           ar: "موجّها OSPF لا يصيران جارين اعتباطاً — علاقة رسمية تمر بمراحل مذكورة بدقة (ستقرؤها في show ip ospf neighbor):\n\n- Down: لا اتصال بعد — نقطة البداية\n- Init: وصلني Hello منك (رأيت معرفي فيه) لكن لم أرَك بعد في جداولك\n- 2-Way: رأيت نفسي في Hello المتبادل — جيرة متبادلة مؤكدة (هنا يُنتخب DR/BDR على شبكات البث)\n- ExStart: التفاوض على من يبدأ تبادل قاعدة البيانات (الموجّه ذو المعرف الأعلى يبدأ)\n- Exchange: تبادل وصف قواعد البيانات (DBDs) — فهرس لا الكتب\n- Loading: طلب LSAs الناقصة فعلياً عبر رسائل LSR و LSU\n- Full: قاعدتا البيانات متطابقتان تماماً — الجوار (Adjacency) الكامل المؤهل لحساب المسارات\n\nشروط Hello ليصلا إلى 2-Way أصلاً: منطقة متطابقة، معرف مصادقة متطابق، مؤقتات Hello/Dead متطابقة (10/40 ثانية على الإيثرنت)، و شبكة IP نفسها وقناعها.\n\nأي خلاف في واحد منها = جار عالق في Init أو لا يظهر أصلاً — أول ما تفحصه عند شكوى OSPF لا يعمل.",
           en: "Two OSPF routers do not become neighbors casually — a formal relationship marches through precisely named states (you will read them in show ip ospf neighbor):\n\n- Down: no contact yet — the starting point\n- Init: I received your Hello (my ID was inside it) but you have not seen me in your tables\n- 2-Way: we saw each other in mutual Hellos — confirmed two-way communication (DR/BDR election happens here on broadcast networks)\n- ExStart: negotiating who starts the database exchange (the higher router ID begins)\n- Exchange: trading database descriptors (DBDs) — the index, not the books\n- Loading: requesting the actually missing LSAs via LSR and LSU messages\n- Full: the two databases are completely identical — the full adjacency qualified for path computation\n\nHello requirements just to reach 2-Way: matching area, matching authentication, matching Hello/Dead timers (10/40 seconds on Ethernet), and the same IP network and mask.\n\nAny single mismatch = a neighbor stuck in Init or never appearing — the first thing you check when OSPF refuses to work.",
@@ -745,6 +975,41 @@ export const m06_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "ما الذي يجعله متجه مسافة متقدماً؟", en: "What Makes It an Advanced Distance Vector?" },
+        table: {
+          caption: { ar: "EIGRP مقابل OSPF", en: "EIGRP vs OSPF" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "EIGRP", en: "EIGRP" },
+            { ar: "OSPF", en: "OSPF" },
+          ],
+          rows: [
+            [
+              { ar: "الخوارزمية", en: "Algorithm" },
+              { ar: "DUAL", en: "DUAL" },
+              { ar: "SPF (Dijkstra)", en: "SPF (Dijkstra)" },
+            ],
+            [
+              { ar: "قاعدة المعرفة", en: "Knowledge base" },
+              { ar: "ثلاثة جداول: جيران، طوبولوجيا، مسارات", en: "Three tables: neighbors, topology, routes" },
+              { ar: "قاعدة LSDB واحدة مشتركة", en: "One shared LSDB" },
+            ],
+            [
+              { ar: "التقارب عند الفشل", en: "Failure convergence" },
+              { ar: "فوري مع خلف مؤهل جاهز", en: "Instant with a precomputed feasible successor" },
+              { ar: "إعادة تشغيل SPF كاملة", en: "A full SPF rerun" },
+            ],
+            [
+              { ar: "البنية", en: "Structure" },
+              { ar: "مسطحة — لا مناطق", en: "Flat — no areas" },
+              { ar: "هرمية بالمناطق", en: "Hierarchical with areas" },
+            ],
+            [
+              { ar: "الانفتاح", en: "Openness" },
+              { ar: "أصله Cisco — معياري معلوماتي RFC 7868", en: "Cisco-born — informational RFC 7868" },
+              { ar: "معيار IETF مفتوح", en: "An open IETF standard" },
+            ],
+          ],
+        },
         body: {
           ar: "EIGRP (Enhanced Interior Gateway Routing Protocol) ملكية Cisco — يبدو متجه مسافة: لا يملك خريطة كاملة كـ OSPF، بل يتعلم من جيرانه. لكن آلية الداخل تنقله طبقات فوق RIP:\n\n- يتحدث مباشرة فوق IP بالبروتوكول رقم 88 (بلا TCP ولا UDP)، وبث متعدد 224.0.0.10\n- تحديثات جزئية ومطلقة: يرسل التغيرات فقط عند حدوثها — لا جداول كاملة دورية\n- بروتوكول نقل موثوق داخلي (RTP) يضمن وصول التحديثات مع إشعار استلام\n- اكتشاف الجيران بـ Hello صغير (كل 5 ثوانٍ، و Hold ثلاثة أضعافها 15)\n- الخوارزمية الحاكمة: DUAL (Diffusing Update Algorithm) — التي تحسب بلا حلقات من حيث المبدأ\n\nالنتيجة العملية: تقارب في أجزاء من الثانية بمسار احتياطي جاهز سلفاً — دون كلفة ذاكرة خرائط OSPF.",
           en: "EIGRP (Enhanced Interior Gateway Routing Protocol) is Cisco proprietary — it looks distance-vector: no complete map like OSPF, learning from neighbors. But its inner machinery lifts it layers above RIP:\n\n- Speaks directly over IP protocol 88 (no TCP, no UDP), multicast 224.0.0.10\n- Partial, bounded updates: sends only changes when they happen — no periodic full tables\n- A built-in reliable transport (RTP) guaranteeing update delivery with acknowledgments\n- Neighbor discovery with small Hellos (every 5 seconds, Hold threefold at 15)\n- The governing algorithm: DUAL (Diffusing Update Algorithm) — provably loop-free\n\nThe practical result: convergence in fractions of a second with a backup pre-computed in memory — without OSPF's map-memory cost.",
@@ -846,6 +1111,12 @@ export const m06_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "النظام المستقل: مواطن الإنترنت", en: "The Autonomous System: Citizen of the Internet" },
+        diagram: {
+          kind: "topology",
+          title: { ar: "eBGP يربط أنظمة مستقلة عبر نقطة تبادل", en: "eBGP tying autonomous systems through an exchange" },
+          nodes: ["AS100-R1", "AS200-R2", "AS300-R3", "IXP-RS"],
+          edges: [[0, 3], [1, 3], [2, 3], [0, 1]],
+        },
         body: {
           ar: "الإنترنت ليس شبكة واحدة — إنه اتحاد فضفاض من ~75 ألف شبكة مستقلة إدارياً وتجارياً تسمى الأنظمة المستقلة (AS - Autonomous Systems)، لكل منها رقم تعريف (ASN).\n\n- ASN تقليدي 16 بت: 1 حتى 65,535 — النطاق الخاص للتدريب: 64,512 حتى 65,534\n- ASN موسع 32 بت (منذ 2007): حتى 4,294,967,295 — النطاق الخاص فيه يبدأ من 4,200,000,000 فما فوق\n- توزع الأرقام السلطات الإقليمية (RIPE و ARIN و APNIC...) لمزودي الخدمة والمنظمات الكبرى\n\nداخل AS يعمل IGP (OSPF عادة) ليعرف الموجّهات شبكاته الداخلية، و AS يحادث جيرانه من الأنظمة الأخرى عبر BGP — إنهما عالمان منفصلان بالكامل في التصميم الواقعي.",
           en: "The Internet is not one network — it is a loose federation of ~75,000 administratively and commercially independent networks called Autonomous Systems (AS), each with an identifier (ASN).\n\n- Traditional 16-bit ASN: 1 through 65,535 — the private training range: 64,512 to 65,534\n- Extended 32-bit ASN (since 2007): up to 4,294,967,295 — its private range starts at 4,200,000,000\n- Numbers are assigned by the regional registries (RIPE, ARIN, APNIC...) to providers and large organizations\n\nInside an AS runs an IGP (usually OSPF) so routers know their internal networks; the AS converses with neighboring systems via BGP — two fully separate worlds in real-world design.",
@@ -864,6 +1135,41 @@ export const m06_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "eBGP و iBGP وعلاقات السوق", en: "eBGP, iBGP, & Market Relations" },
+        table: {
+          caption: { ar: "eBGP مقابل iBGP", en: "eBGP vs iBGP" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "eBGP", en: "eBGP" },
+            { ar: "iBGP", en: "iBGP" },
+          ],
+          rows: [
+            [
+              { ar: "التشغيل بين", en: "Runs between" },
+              { ar: "أنظمة مستقلة مختلفة", en: "Different autonomous systems" },
+              { ar: "الموجّهات داخل النظام نفسه", en: "Routers within the same AS" },
+            ],
+            [
+              { ar: "المسافة الإدارية", en: "Administrative distance" },
+              { ar: "20", en: "20" },
+              { ar: "200", en: "200" },
+            ],
+            [
+              { ar: "القفزة التالية", en: "Next-hop handling" },
+              { ar: "تُحدّث عادة عند العبور", en: "Usually rewritten on crossing" },
+              { ar: "تبقى — تحتاج IGP أو next-hop-self", en: "Unchanged — needs the IGP or next-hop-self" },
+            ],
+            [
+              { ar: "إعادة الإعلان", en: "Re-advertisement" },
+              { ar: "يعلن ما تعلمه بحرية", en: "Freely re-advertises learned routes" },
+              { ar: "لا يعلن لثالث إلا بشبكة كاملة أو Route Reflector", en: "Won't pass to a third party without full mesh or route reflectors" },
+            ],
+            [
+              { ar: "مثال الاستخدام", en: "Example use" },
+              { ar: "الربط مع المزودين والنظراء", en: "Linking to providers and peers" },
+              { ar: "نشر مسارات الخروج عبر العمود الداخلي", en: "Carrying exit routes across the internal backbone" },
+            ],
+          ],
+        },
         body: {
           ar: "BGP نوعان بحسب موقع الجارين:\n\n- eBGP (خارجي): بين موجّهين في نظامين مختلفين — مباشر عادة على رابط فيزيائي مشترك. AD = 20 (يخسر فقط للموصول مباشرة)\n- iBGP (داخلي): بين موجّهات النظام الواحد — يجري فوق نفق IGP الداخلي. AD = 200\n\nقاعدة iBGP الذهبية: ما تعلمته من iBGP لا تعاده لـ iBGP آخر — منع حلقات داخلي يفرض الشبكة الكاملة (Full Mesh) بين موجّهات iBGP، أو استخدام Route Reflectors لتخفيفها\n\nعلاقات الأنظمة الثلاث الكبرى — قلب اقتصاد الإنترنت:\n\n- Transit (العبور): تدفع ليصل حركك عبري نحو الإنترنت كله — علاقة زبون-مزود\n- Peering (التشارك): اتفاق تبادل حركة متبادلة مباشرة بلا أموال غالباً (مثل علاقة مزودين متكافئين)\n- IXP (نقطة التبادل): مبانٍ تلتقي فيها مئات الأنظمة بملقاط واحد لتبادل peering جماعي\n\nالمبدأ الجامع: كل نظام يعلن مساراته، ومن يقبل — يقبل — والإنترنت شبكة ثقة ضمن حدود عقود.",
           en: "BGP comes in two flavors by neighbor location:\n\n- eBGP (external): between routers of two different systems — usually direct over a shared physical link. AD = 20 (losing only to directly connected)\n- iBGP (internal): among one system's own routers — riding the internal IGP. AD = 200\n\nThe golden iBGP rule: what you learned from iBGP you never re-advertise to another iBGP peer — an internal loop guard forcing a full mesh among iBGP routers, or Route Reflectors to relax it\n\nThe three great system relations — the heart of Internet economics:\n\n- Transit: you pay so your traffic crosses me toward the whole Internet — a customer-provider relation\n- Peering: an agreement exchanging mutual traffic directly, usually moneyless (two equal providers, say)\n- IXP (Internet Exchange Point): buildings where hundreds of systems meet on one switch fabric for collective peering\n\nThe unifying principle: every system announces its routes, and whoever accepts — accepts; the Internet is a trust network bounded by contracts.",
@@ -961,6 +1267,36 @@ export const m06_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "OSPFv3: التهيئة عبر الواجهات مباشرة", en: "OSPFv3: Configuration Straight on Interfaces" },
+        table: {
+          caption: { ar: "OSPFv2 مقابل OSPFv3", en: "OSPFv2 vs OSPFv3" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "OSPFv2", en: "OSPFv2" },
+            { ar: "OSPFv3", en: "OSPFv3" },
+          ],
+          rows: [
+            [
+              { ar: "العنونة", en: "Addressing" },
+              { ar: "IPv4 فقط", en: "IPv4 only" },
+              { ar: "IPv6 — وIPv4 عبر عناوين العائلات", en: "IPv6 — plus IPv4 via address families" },
+            ],
+            [
+              { ar: "عنوان التخاطب", en: "Protocol traffic" },
+              { ar: "224.0.0.5 و 224.0.0.6", en: "224.0.0.5 and 224.0.0.6" },
+              { ar: "FF02::5 و FF02::6", en: "FF02::5 and FF02::6" },
+            ],
+            [
+              { ar: "المصادقة", en: "Authentication" },
+              { ar: "مدمجة في ترويسة OSPF", en: "Built into the OSPF header" },
+              { ar: "تعتمد على IPsec AH/ESP", en: "Relies on IPsec AH/ESP" },
+            ],
+            [
+              { ar: "مكان التهيئة", en: "Configuration locus" },
+              { ar: "أمر network بالأقنعة العكسية", en: "The network command with wildcards" },
+              { ar: "على الواجهات مباشرة — ipv6 ospf 1 area 0", en: "Directly on interfaces — ipv6 ospf 1 area 0" },
+            ],
+          ],
+        },
         body: {
           ar: "OSPFv3 (RFC 5340) نظير IPv6 لـ OSPFv2 — الخوارزمية نفسها والمناطق نفسها و DR/BDR نفسها — لكن فلسفة التهيئة انقلبت:\n\nفي OSPFv2: أعلن شبكات عبر network داخل العملية. في OSPFv3: فعّل البروتوكول على الواجهة نفسها:\n\n- ipv6 router ospf 1 (أو router ospfv3 1 في الأنظمة الأحدث) ثم اذهب للواجهة\n- على الواجهة: ipv6 ospf 1 area 0 — كل واجهة تنتمي لمنطقتها مباشرة\n\nلماذا الانقلاب؟ لأن واجهة IPv6 تحمل عناوين متعددة (ربط محلي + عام + مؤقت...) — إعلانها كوحدة واحدة أدق من شبكات IPv4 الواحدة. الاتصالات كلها تجري عبر ربط محلي وعناوين البث المتعدد ff02::5 و ff02::6.\n\nميزة عملية رائعة: IPv6 مسار ومنطقة IPv4 مسار آخر على نفس الواجهة بلا تداخل — يدعم تشغيل v2 و v3 معاً في التكديس المزدوج بجيران مستقلين.",
           en: "OSPFv3 (RFC 5340) is OSPFv2's IPv6 twin — same algorithm, same areas, same DR/BDR — but the configuration philosophy flipped:\n\nIn OSPFv2: announce networks via network inside the process. In OSPFv3: activate the protocol on the interface itself:\n\n- ipv6 router ospf 1 (or router ospfv3 1 on newer systems), then go to the interface\n- On the interface: ipv6 ospf 1 area 0 — each interface joins its area directly\n\nWhy the flip? Because an IPv6 interface bears multiple addresses (link-local + global + temporary...) — announcing it as one unit is cleaner than IPv4's single networks. All communication runs over link-local with multicast ff02::5 and ff02::6.\n\nA wonderful practical bonus: the IPv6 process and the IPv4 process run on the same interface without overlap — supporting v2 and v3 together in dual stack with independent neighbors.",

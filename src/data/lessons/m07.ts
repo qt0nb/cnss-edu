@@ -34,6 +34,35 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "فصل تعدد الإرسال (Demultiplexing)", en: "Demultiplexing: Delivering to the Right App" },
+        table: {
+          caption: { ar: "ثلاث جلسات متزامنة نحو المنفذ 443 نفسه", en: "Three concurrent sessions toward the same port 443" },
+          headers: [
+            { ar: "البروتوكول", en: "Proto" },
+            { ar: "منفذ المصدر", en: "Source port" },
+            { ar: "IP المصدر", en: "Source IP" },
+            { ar: "الوجهة", en: "Destination" },
+          ],
+          rows: [
+            [
+              { ar: "TCP", en: "TCP" },
+              { ar: "52344", en: "52344" },
+              { ar: "192.168.1.10", en: "192.168.1.10" },
+              { ar: "142.250.74.100:443", en: "142.250.74.100:443" },
+            ],
+            [
+              { ar: "TCP", en: "TCP" },
+              { ar: "52345", en: "52345" },
+              { ar: "192.168.1.22", en: "192.168.1.22" },
+              { ar: "142.250.74.100:443", en: "142.250.74.100:443" },
+            ],
+            [
+              { ar: "TCP", en: "TCP" },
+              { ar: "61200", en: "61200" },
+              { ar: "10.0.0.5", en: "10.0.0.5" },
+              { ar: "142.250.74.100:443", en: "142.250.74.100:443" },
+            ],
+          ],
+        },
         body: {
           ar: "عند وصول الحزمة إلى وجهتها، يقرأ نظام التشغيل حقلي المنافذ من ترويسة النقل ويقرر: أي عمليةٍ تستلم هذه البيانات؟ هذه العملية تسمى فصل تعدد الإرسال (Demultiplexing).\n\nمفتاح القرار ليس المنفذ وحده، بل التركيبة الكاملة: بروتوكول النقل (TCP أو UDP)، منفذ الوجهة، عنوان IP للمصدر، ومنفذ المصدر — ما يُعرف بالصف الرباعي (4-tuple).\n\n- خادم ويب واحد على المنفذ 443 يخدم آلاف العملاء المتزامنين\n- كل عميل يملك تركيبة فريدة (IP مختلف أو منفذ مصدر مختلف)\n- لذلك لا تتضارب المقاطع أبداً داخل الخادم\n\nهذا أيضاً ما يسمح لخادم واحد بخدمة مئات آلاف الاتصالات المتزامنة نظرياً — الحد العملي هو ذاكرة النواة لا رقم المنفذ. انظر بنفسك كيف يفرّق الجدول بين ثلاثة اتصالات نحو المنفذ نفسه:",
           en: "When a packet arrives at its destination, the OS reads the port fields from the transport header and decides which process gets the data. That decision process is demultiplexing.\n\nThe key is not the port alone but the full combination: transport protocol (TCP or UDP), destination port, source IP address, and source port — known as the 4-tuple.\n\n- One web server on port 443 serves thousands of concurrent clients\n- Each client has a unique combination (different IP or different source port)\n- So segments never collide inside the server\n\nThis is also what lets a single server theoretically serve hundreds of thousands of concurrent connections — the practical limit is kernel memory, not the port number. See for yourself how the table separates three connections toward the same port:",
@@ -49,6 +78,10 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "تشريح رقم المنفذ", en: "Port Number Anatomy" },
+        tip: {
+          ar: "عند قراءة أي اتصال اقرأ الرباعية كاملة: بروتوكول + منفذ مصدر + منفذ وجهة + عناوين — الاتصالان قد يتشابهان في منفذ الوجهة ويختلفان في كل شيء آخر.",
+          en: "When reading any connection, read the full 4-tuple: protocol + source port + destination port + addresses — two sessions may share a destination port yet differ in everything else.",
+        },
         body: {
           ar: "المنفذ رقم بطول 16 بت، أي 65,536 قيمة ممكنة تمتد من 0 إلى 65,535. ترويسة النقل تحمل منفذين دائماً: المصدر والوجهة، ولكلٍّ دور مختلف تماماً.\n\n- منفذ الوجهة يحدد الخدمة المطلوبة (443 = HTTPS مثلاً، و53 = DNS)\n- منفذ المصدر يحدد «باب الرد» في جهازك — منفذ مؤقت عشوائي يختاره النظام\n\nحين يرد الخادم، يعكس الحقلين فيصبح منفذك المؤقت هو وجهته — وهكذا يجد الرد طريقه إلى تطبيقك بالضبط وليس إلى جارك في التبويب الآخر.\n\nجرّب الآن مراقبة الجدول الحي للمنافذ على جهازك:",
           en: "A port is a 16-bit number, giving 65,536 possible values from 0 to 65,535. The transport header always carries two ports: source and destination, each playing a completely different role.\n\n- The destination port identifies the service you want (443 = HTTPS, 53 = DNS, for example)\n- The source port is the \"reply door\" on your device — a random ephemeral port picked by the OS\n\nWhen the server replies, it swaps the two fields, making your ephemeral port its destination — so the reply finds exactly your app, not your neighbor in the other browser tab.\n\nTry watching the live table of open ports on your machine right now:",
@@ -60,6 +93,46 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "فلسفتان لنقل البيانات", en: "Two Philosophies of Delivery" },
+        table: {
+          caption: { ar: "TCP مقابل UDP: المقارنة الحاسمة", en: "TCP vs UDP: the decisive comparison" },
+          headers: [
+            { ar: "المعيار", en: "Criterion" },
+            { ar: "TCP", en: "TCP" },
+            { ar: "UDP", en: "UDP" },
+          ],
+          rows: [
+            [
+              { ar: "الاتصال", en: "Connection" },
+              { ar: "مصافحة قبل الإرسال", en: "Handshake before sending" },
+              { ar: "لا شيء — أرسل فوراً", en: "None — fire away" },
+            ],
+            [
+              { ar: "الموثوقية", en: "Reliability" },
+              { ar: "إقرارات وإعادة إرسال للفاقد", en: "ACKs and retransmission of losses" },
+              { ar: "أفضل جهد بلا ضمانات", en: "Best effort, no guarantees" },
+            ],
+            [
+              { ar: "الترتيب", en: "Ordering" },
+              { ar: "مضمون بأرقام التسلسل", en: "Guaranteed via sequence numbers" },
+              { ar: "قد يصل بلا ترتيب", en: "May arrive out of order" },
+            ],
+            [
+              { ar: "حجم الترويسة", en: "Header size" },
+              { ar: "20-60 بايتاً", en: "20-60 bytes" },
+              { ar: "8 بايتات فقط", en: "Just 8 bytes" },
+            ],
+            [
+              { ar: "ضبط التدفق والازدحام", en: "Flow & congestion control" },
+              { ar: "نافذة انزلاقية وبدء بطيء وAIMD", en: "Sliding window, slow start, AIMD" },
+              { ar: "لا شيء — التطبيق مسؤول", en: "None — the application decides" },
+            ],
+            [
+              { ar: "أبرز الاستخدامات", en: "Classic uses" },
+              { ar: "الويب والبريد ونقل الملفات", en: "Web, email, file transfer" },
+              { ar: "DNS و VoIP والألعاب والبث الحي", en: "DNS, VoIP, gaming, live streams" },
+            ],
+          ],
+        },
         body: {
           ar: "توفر طبقة النقل بروتوكولين مختلفين في المزاج تماماً: TCP و UDP، واختيار أحدهما قرار هندسي صريح لا ذوق شخصي.\n\n- TCP: موثوق، مرتب، مؤكد الاستلام، متحكم في التدفق والازدحام — مقابل كلفة زمن وذاكرة\n- UDP: بسيط، سريع، بلا ضمانات — مقابل حرية كاملة وأدنى زمن ممكن\n\nمتصفحك يستخدم TCP (أو QUIC فوق UDP) لأن صفحة HTML ناقصة نصفها لا قيمة لها، بينما مكالمة VoIP تفضل UDP لأن وصول الصوت متأخراً بثانية أسوأ من فقدان جزء منه نهائياً.\n\nسنفصّل كل بروتوكول في الدروس القادمة، لكن القاعدة الذهبية ابقَ معك: الموثوقية كلفة، والسرعة تضحية — اختر ما يستحق تطبيقك دفعه.",
           en: "The transport layer offers two protocols with completely different temperaments: TCP and UDP, and picking one is an explicit engineering decision, not personal taste.\n\n- TCP: reliable, ordered, acknowledged, with flow and congestion control — at the cost of latency and memory\n- UDP: simple, fast, no guarantees — in exchange for total freedom and the lowest possible latency\n\nYour browser uses TCP (or QUIC over UDP) because an HTML page missing half its bytes is worthless, while a VoIP call prefers UDP because audio arriving a second late is worse than losing a piece of it forever.\n\nWe will dissect each protocol in the coming lessons, but keep the golden rule: reliability is a cost, speed is a trade-off — choose what your application is actually willing to pay for.",
@@ -158,6 +231,46 @@ export const m07_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "بنية الترويسة: 20 بايت كحد أدنى", en: "Header Structure: 20 Bytes Minimum" },
+        table: {
+          caption: { ar: "أهم حقول ترويسة TCP", en: "Key TCP header fields" },
+          headers: [
+            { ar: "الحقل", en: "Field" },
+            { ar: "الحجم", en: "Size" },
+            { ar: "وظيفته", en: "Purpose" },
+          ],
+          rows: [
+            [
+              { ar: "Source / Destination Port", en: "Source / Destination Port" },
+              { ar: "2+2 bytes", en: "2+2 bytes" },
+              { ar: "تمييز التطبيقين المتخاطبين", en: "Identify the two talking applications" },
+            ],
+            [
+              { ar: "Sequence Number", en: "Sequence Number" },
+              { ar: "4 bytes", en: "4 bytes" },
+              { ar: "ترتيب البايتات المرسلة في التيار", en: "Ordering of sent bytes in the stream" },
+            ],
+            [
+              { ar: "Acknowledgment Number", en: "Acknowledgment Number" },
+              { ar: "4 bytes", en: "4 bytes" },
+              { ar: "أول بايت متوقع تالياً", en: "The next byte expected" },
+            ],
+            [
+              { ar: "Flags (SYN/ACK/FIN/RST...)", en: "Flags (SYN/ACK/FIN/RST...)" },
+              { ar: "9 بتات", en: "9 bits" },
+              { ar: "التحكم بمراحل دورة حياة الاتصال", en: "Control the connection lifecycle stages" },
+            ],
+            [
+              { ar: "Window", en: "Window" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "نافذة الاستقبال المعلنة للمرسل", en: "The advertised receive window" },
+            ],
+            [
+              { ar: "Checksum", en: "Checksum" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "فحص سلامة الترويسة والبيانات معاً", en: "Integrity of header and payload together" },
+            ],
+          ],
+        },
         body: {
           ar: "تحتل ترويسة TCP عشرين بايت في حالتها المجردة، وتمتد حتى ستين بايت عند إضافة الخيارات. اقرأها كمصفوفة حقول متتابعة، كل حقل يحمل جزءاً من «عقد الاتفاق» الذي يحكم الاتصال:\n\n- منفذا المصدر والوجهة (4 بايت): هوية التطبيقين\n- رقم التسلسل (4 بايت): موقع هذا المقطع في تيار البايتات\n- رقم الإقرار (4 بايت): تأكيد ما وصل حتى الآن\n- الأعلام (12 بت شاملة المحجوز): لغة إشارات دورة الحياة\n- النافذة (2 بايت): إعلان سعة المخزن\n- المجموع الاختباري والمؤشر العاجل (4 بايت)\n- الخيارات (0-40 بايت): التفاوض على قدرات إضافية\n\nهذه الخريطة مرجعك مدى الحياة — ارسمها مرة واحدة بيدك وستقرأ أي التقاط حزم بعدها بارتياح:",
           en: "The TCP header occupies 20 bytes in its bare form and stretches to 60 bytes when options are added. Read it as an array of consecutive fields, each carrying part of the \"contract\" governing the connection:\n\n- Source and destination ports (4 bytes): the two applications' identity\n- Sequence number (4 bytes): this segment's position in the byte stream\n- Acknowledgment number (4 bytes): confirmation of what has arrived so far\n- Flags (12 bits including reserved): the lifecycle signal language\n- Window (2 bytes): receive-buffer capacity advertisement\n- Checksum and urgent pointer (4 bytes)\n- Options (0-40 bytes): extra capability negotiation\n\nThis map is your lifelong reference — draw it once by hand and you will read any packet capture with confidence afterward:",
@@ -296,6 +409,36 @@ export const m07_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "ترويسة من 8 بايت فقط", en: "An 8-Byte Header" },
+        table: {
+          caption: { ar: "حقول ترويسة UDP الأربعة", en: "The four UDP header fields" },
+          headers: [
+            { ar: "الحقل", en: "Field" },
+            { ar: "الحجم", en: "Size" },
+            { ar: "وظيفته", en: "Purpose" },
+          ],
+          rows: [
+            [
+              { ar: "Source Port", en: "Source Port" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "منفذ المرسل — يمكن أن يكون صفراً نظرياً", en: "The sender's port — theoretically may be zero" },
+            ],
+            [
+              { ar: "Destination Port", en: "Destination Port" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "منفذ التطبيق المستهدف", en: "The target application's port" },
+            ],
+            [
+              { ar: "Length", en: "Length" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "طول الترويسة والبيانات معاً", en: "Total length of header plus payload" },
+            ],
+            [
+              { ar: "Checksum", en: "Checksum" },
+              { ar: "2 bytes", en: "2 bytes" },
+              { ar: "فحش اختياري في IPv4 — إلزامي في IPv6", en: "Optional in IPv4 — mandatory in IPv6" },
+            ],
+          ],
+        },
         body: {
           ar: "بينما تفتح ترويسة TCP بـ 20 بايت على الأقل، تكتفي ترويسة UDP بثمانية بايتات وأربعة حقول — لا أعلام، لا أرقام تسلسل، لا نافذة، لا خيارات:\n\n- منفذ المصدر (2 بايت): باب الرد عند الحاجة\n- منفذ الوجهة (2 بايت): الخدمة المطلوبة\n- الطول (2 بايت): طول الترويسة والبيانات معاً بالبايت\n- المجموع الاختباري (2 بايت): اختياري في IPv4، إجباري في IPv6\n\nبعد هذه البايتات الثمانية تأتي البيانات مباشرة. هذه البساطة ليست كسلاً — بل فلسفة صريحة: يفعل البروتوكول أقل ما يمكن ويترك كل الذكاء للتطبيق فوقه.",
           en: "While the TCP header opens with at least 20 bytes, UDP's header needs just eight bytes and four fields — no flags, no sequence numbers, no window, no options:\n\n- Source port (2 bytes): the reply door if needed\n- Destination port (2 bytes): the service requested\n- Length (2 bytes): header plus data in bytes\n- Checksum (2 bytes): optional in IPv4, mandatory in IPv6\n\nData follows immediately after those eight bytes. This simplicity is not laziness — it is an explicit philosophy: the protocol does the bare minimum and leaves all intelligence to the application above it.",
@@ -430,6 +573,20 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الخطوات الثلاث", en: "The Three Steps" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "مصافحة TCP الثلاثية: فتح الاتصال", en: "The TCP three-way handshake: opening the connection" },
+          items: [
+            { ar: "SYN من العميل: أريد اتصالاً ورقم تسلسلي x", en: "Client SYN: let us connect, my sequence number is x" },
+            { ar: "SYN-ACK من الخادم: قبلت ورقمي y", en: "Server SYN-ACK: accepted, my sequence is y" },
+            { ar: "ACK من العميل: التأكيد الأخير", en: "Client ACK: the final confirmation" },
+            { ar: "ESTABLISHED: قناة مزدوجة الاتجاه جاهزة للبيانات", en: "ESTABLISHED: a two-way channel ready for data" },
+          ],
+        },
+        tip: {
+          ar: "شغّل curl -v ثم راقب بأداة التقاط الحزم: أول ثلاث حزم في كل اتصال جديد هي SYN وSYN-ACK وACK — أسرع طريقة لترسيخ المصافحة في ذهنك.",
+          en: "Run curl -v while capturing packets: the first three packets of any new connection are SYN, SYN-ACK, and ACK — the fastest way to burn the handshake into memory.",
+        },
         body: {
           ar: "اتبع الأرقام في المخطط: العميل يفتح بالـ SYN حاملاً رقم تسلسله الابتدائي x، والخادم يرد بالـ SYN-ACK معترفاً برقم العميل (ack = x+1) ومعلناً رقمه الخاص y، وأخيراً العميل يؤكد (ack = y+1) — فيتحول الطرفان معاً إلى الحالة ESTABLISHED.\n\n- SYN: العميل يدخل SYN_SENT وينتظر\n- SYN-ACK: الخادم يدخل SYN_RCVD — نصف الطريق مكتمل\n- ACK: الطرفان ESTABLISHED — القناة مفتوحة للبيانات\n\nلاحظ دقة الإقرارات: كل اعتراف = الرقم المعلن + 1، لأن SYN نفسه يُحسب «بايتاً وهمياً» واحداً في عدّ التسلسل. المخطط التالي يعرض تتبعاً حقيقياً من tcpdump بعد المخطط النظري:",
           en: "Follow the numbers in the diagram: the client opens with a SYN carrying its initial sequence number x, the server replies with SYN-ACK acknowledging the client's number (ack = x+1) while announcing its own y, and finally the client confirms (ack = y+1) — both sides simultaneously become ESTABLISHED.\n\n- SYN: the client enters SYN_SENT and waits\n- SYN-ACK: the server enters SYN_RCVD — halfway done\n- ACK: both sides ESTABLISHED — the channel is open for data\n\nNote the precision of the acks: each acknowledgment = announced number + 1, because the SYN itself is counted as one \"phantom byte\" in sequence accounting. The diagram below shows a real tcpdump trace after the theoretical one:",
@@ -448,6 +605,16 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الإغلاق: وداع FIN الرباعي", en: "Teardown: The FIN Four-Way Goodbye" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "إغلاق اتصال TCP بأدب", en: "Closing a TCP connection politely" },
+          items: [
+            { ar: "FIN من الطرف الأول: انتهيت من الإرسال", en: "First side FIN: I am done sending" },
+            { ar: "ACK من الثاني: وصلني وسأنهي أنا أيضاً", en: "Second side ACK: received, and I will finish too" },
+            { ar: "FIN من الطرف الثاني: انتهيت بدوري", en: "Second side FIN: I am done in turn" },
+            { ar: "ACK أخير ثم TIME_WAIT قبل الإغلاق الكامل", en: "Final ACK, then TIME_WAIT before full close" },
+          ],
+        },
         body: {
           ar: "الفتح ثلاث حزم، لكن الإغلاق أربع — لأن TCP اتصال مزدوج كامل التناظر: كل اتجاه يُغلق باستقلال. الطرف البادئ يرسل FIN بمعنى «انتهت بياناتي»، ويظل قادراً على الاستقبال حتى يُغلق الاتجاه المقابل.\n\n- FIN من العميل: يدخل FIN_WAIT_1 ثم FIN_WAIT_2 بعد الرد\n- الخادم يتلقى FIN: يدخل CLOSE_WAIT — وتظل بياناته تتدفق إن شاء\n- FIN من الخادم: يدخل LAST_ACK بعد إعلان انتهاء بياناته\n- ACK ختامي من العميل: الخادم يغلق فوراً، والعميل يدخل TIME_WAIT\n\nهذا «الإغلاق النصف» (half-close) ميزة تصميمية: عميل ينهي طلبه ويظل يستمع لرد الخادم — سلوك طبيعي في بروتوكولات كثيرة مثل الأوامر التفاعلية.",
           en: "Opening takes three packets, but closing takes four — because TCP is fully symmetric duplex: each direction closes independently. The initiating side sends FIN meaning \"my data is done\", yet keeps receiving until the opposite direction closes too.\n\n- FIN from the client: it enters FIN_WAIT_1, then FIN_WAIT_2 after the reply\n- The server receives FIN: it enters CLOSE_WAIT — its own data may keep flowing\n- FIN from the server: it enters LAST_ACK after declaring its data done\n- Final ACK from the client: the server closes immediately, the client enters TIME_WAIT\n\nThis \"half-close\" is a design feature: a client finishing its request while still listening for the server's reply — natural behavior in many protocols like interactive commands.",
@@ -564,6 +731,36 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "المثال المحلول", en: "The Worked Example" },
+        table: {
+          caption: { ar: "تتبع أرقام التسلسل والإقرار بايتاً بايت", en: "Tracking sequence and ack numbers, byte by byte" },
+          headers: [
+            { ar: "الخطوة", en: "Step" },
+            { ar: "الإرسال", en: "Sender sends" },
+            { ar: "الإقرار العائد", en: "Returned ACK" },
+          ],
+          rows: [
+            [
+              { ar: "1", en: "1" },
+              { ar: "100 بايت تبدأ من seq=1000", en: "100 bytes starting at seq=1000" },
+              { ar: "ACK 1100", en: "ACK 1100" },
+            ],
+            [
+              { ar: "2", en: "2" },
+              { ar: "200 بايت تبدأ من seq=1100", en: "200 bytes starting at seq=1100" },
+              { ar: "ACK 1300", en: "ACK 1300" },
+            ],
+            [
+              { ar: "3", en: "3" },
+              { ar: "المقطع الثاني فُقد في الطريق!", en: "The second segment is lost in transit!" },
+              { ar: "إقرار مكرر ACK 1300 (dup)", en: "Duplicate ACK 1300 (dup)" },
+            ],
+            [
+              { ar: "4", en: "4" },
+              { ar: "إعادة إرسال الـ 200 بايت", en: "Retransmission of the 200 bytes" },
+              { ar: "ACK 1500", en: "ACK 1500" },
+            ],
+          ],
+        },
         body: {
           ar: "لنحل مثالاً كاملاً: عميل يطلب ملفاً من خادم ويب، حجم الملف 3,320 بايت، وقيمة MSS المتفقة 1460 بايت. سنتتبع حرفياً كل رقم يظهر في كل مقطع، من أول الترويسة إلى آخرها.\n\nالقاعدتان الحاسبتان للمثال كله:\n\n- القاعدة الأولى: التسلسل التالي = التسلسل الحالي + طول البيانات المُرسلة\n- القاعدة الثانية: قيمة الإقرار = تسلسل الطرف الآخر + طول بياناته (أي أول بايت يتوقعه مني)\n\nابدأ من السطر الأول وتحقق بنفسك من كل رقم قبل قراءة السطر التالي — هكذا وحده تترسخ العضلة الحسابية:",
           en: "Let us solve a complete example: a client fetches a file from a web server, the file is 3,320 bytes, and the negotiated MSS is 1460 bytes. We will literally track every number appearing in every segment.\n\nThe two calculating rules for the whole example:\n\n- Rule one: next sequence = current sequence + length of data sent\n- Rule two: ACK value = the other side's sequence + its data length (the first byte it expects from me)\n\nStart at the first line and verify each number yourself before reading the next — that is the only way the counting muscle truly forms:",
@@ -698,6 +895,17 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "كيف تنزلق النافذة؟", en: "How the Window Slides" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "انزلاق نافذة المستقبِل خطوة خطوة", en: "The receiver window sliding, step by step" },
+          items: [
+            { ar: "المستقبِل يعلن نافذة 4000 بايت", en: "The receiver advertises a 4000-byte window" },
+            { ar: "المرسل يرسل ضمن النافذة فقط", en: "The sender transmits within the window only" },
+            { ar: "الإقرارات تدفع حافة النافذة للأمام", en: "ACKs push the window's edge forward" },
+            { ar: "ازدحام عند المستقبِل يقلّص النافذة المعلنة", en: "Receiver congestion shrinks the advertised window" },
+            { ar: "نافذة صفر: المرسل ينتظر مسبارات النافذة", en: "Zero window: the sender waits for window probes" },
+          ],
+        },
         body: {
           ar: "تخيل النافذة إطاراً ينزلق فوق تيار البايتات: حافته اليسرى تتقدم مع كل إقرار (البايتات نالت اعترافها وتخرج من الحساب)، وحدّه الأيمن = اليسرى + حجم النافذة المعلن.\n\n- البايتات يسار الإطار: مُسلَّمة ومؤكدة — انتهى دورها\n- البايتات داخل الإطار: مُرسلة أو قابلة للإرسال فوراً دون انتظار\n- البايتات يمين الإطار: محجوزة للمستقبل — لا تُرسل بعد\n\nحركة النافذة إيقاعها ثنائي: الإقرارات تدفعها أماماً، وتقلص إعلانات المستقبِل يحدّها خلفاً. اتصال صحي تراه يتقدم بانسياب، واتصال متعثر تراه يتوقف ويقفز — القراءة البصرية للانزلاق أول مهارات تحليل الأداء:",
           en: "Picture the window as a frame sliding over the byte stream: its left edge advances with every acknowledgment (bytes confirmed and retired from the count), and its right edge = left edge + the advertised window size.\n\n- Bytes left of the frame: delivered and acknowledged — done\n- Bytes inside the frame: sent or immediately sendable without waiting\n- Bytes right of the frame: reserved for the future — not yet sendable\n\nThe window moves to a two-part rhythm: ACKs push it forward, shrinking receiver advertisements pull it back. A healthy connection glides forward smoothly; a struggling one stalls and jumps — visually reading the slide is the first skill of performance analysis:",
@@ -825,6 +1033,17 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "البدء البطيء: نمو أُسّي حذر", en: "Slow Start: Careful Exponential Growth" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "رحلة cwnd عبر مراحل ضبط الازدحام", en: "cwnd's journey through the congestion-control phases" },
+          items: [
+            { ar: "البدء البطيء: cwnd يتضاعف كل RTT", en: "Slow start: cwnd doubles each RTT" },
+            { ar: "بلوغ ssthresh: تحول إلى نمو خطي (+1 MSS)", en: "Reaching ssthresh: switch to linear growth (+1 MSS)" },
+            { ar: "تجنب الازدحام AIMD: زيادة حذرة وانخفاض حاد عند الفقد", en: "AIMD avoidance: careful increase, sharp cut on loss" },
+            { ar: "3 إقرارات مكررة: إرسال سريع واسترداد سريع", en: "3 duplicate ACKs: fast retransmit and fast recovery" },
+            { ar: "انتهاء مهلة RTO: عودة كاملة للبدء البطيء", en: "RTO timeout: a full return to slow start" },
+          ],
+        },
         body: {
           ar: "لماذا «البدء البطيء» بكل هذا البطء؟ لأن المرسِل لا يعلم شيئاً عن سعة الشبكة أمامه: أنبوب لاسلكي رفيع أم رابط مركزي 100Gbps؟ التخمين الجريء يُغرق الشبكة فوراً، والتخمين الجبان يهدر السعة.\n\nالاستراتيجية: ابدأ صغيراً ثم ضاعف:\n\n- RTT الأولى: أرسل نحو 10 مقاطع (القيمة الابتدائية الحديثة RFC 6928)\n- كل إقرار يصل يرفع cwnd بمقطع واحد → عملياً تتضاعف النافذة كل جولة\n- 10 → 20 → 40 → 80 → ... نمو أُسّي مبهر لكنه محسوب\n\nيتوقف النمو الأُسّي عند أول عتبة: ssthresh (عتبة البدء البطيء). بعدها يتحول TCP إلى النمو الخطي الحذر. ومن هنا اكتشاف سوء التسمية التاريخية: طور «البدء البطيء» هو أسرع أطوار TCP نمواً على الإطلاق — بطؤه الوحيد في بداياته المتواضعة.",
           en: "Why is \"slow start\" so slow? Because the sender knows nothing about the network's capacity ahead: a thin wireless pipe or a 100Gbps datacenter link? A bold guess floods the network instantly; a timid guess wastes the capacity.\n\nThe strategy: start small, then double:\n\n- First RTT: send about 10 segments (the modern initial window, RFC 6928)\n- Every arriving ACK raises cwnd by one segment → in practice the window doubles each round\n- 10 → 20 → 40 → 80 → ... dazzling yet disciplined exponential growth\n\nThe exponential phase stops at the first threshold: ssthresh (slow-start threshold). Beyond it, TCP shifts to careful linear growth. This is where you discover the historical misnomer: the \"slow start\" phase is the fastest-growing phase in all of TCP — its only slowness is its humble beginning.",
@@ -836,6 +1055,41 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "تجنب الازدحام و AIMD", en: "Congestion Avoidance & AIMD" },
+        table: {
+          caption: { ar: "مراحل ضبط الازدحام ومحفزاتها", en: "Congestion-control phases and their triggers" },
+          headers: [
+            { ar: "المرحلة", en: "Phase" },
+            { ar: "المحفّز", en: "Trigger" },
+            { ar: "سلوك cwnd", en: "cwnd behavior" },
+          ],
+          rows: [
+            [
+              { ar: "البدء البطيء", en: "Slow start" },
+              { ar: "بداية الاتصال أو بعد RTO", en: "Connection start or after an RTO" },
+              { ar: "تتضاعف كل RTT", en: "Doubles each RTT" },
+            ],
+            [
+              { ar: "تجنب الازدحام", en: "Congestion avoidance" },
+              { ar: "بلوغ ssthresh", en: "Reaching ssthresh" },
+              { ar: "+1 MSS لكل RTT — نمو خطي", en: "+1 MSS per RTT — linear growth" },
+            ],
+            [
+              { ar: "الإرسال السريع", en: "Fast retransmit" },
+              { ar: "3 إقرارات مكررة", en: "3 duplicate ACKs" },
+              { ar: "إعادة إرسال فورية للمقطع الفاقد", en: "Immediate retransmission of the lost segment" },
+            ],
+            [
+              { ar: "الاسترداد السريع", en: "Fast recovery" },
+              { ar: "بعد الإرسال السريع", en: "After fast retransmit" },
+              { ar: "ssthresh = النصف ثم استمرار خطي", en: "ssthresh halved, then linear growth" },
+            ],
+            [
+              { ar: "BBR الحديثة", en: "Modern BBR" },
+              { ar: "نمذجة عرض النطاق و RTT بدل الفقد", en: "Modeling bandwidth and RTT instead of loss" },
+              { ar: "يوازن معدل الإرسال بلا انتظار الفقدان", en: "Paces the send rate without waiting for loss" },
+            ],
+          ],
+        },
         body: {
           ar: "بعد تجاوز ssthresh يبدأ طور تجنب الازدحام: نمو خطي حذر بمعدل +1 MSS فقط لكل RTT. الفلسفة: نحن الآن في منطقة «آمنة تقريباً»، نستكشف حافة السعة بهدوء بيتا بيت.\n\nعند أول فقدان (ثلاثة إقرارات مكررة) يطبق TCP «التنصيف الضربي»: ssthresh الجديد = نصف cwnd الحالية، وتعود cwnd إلى القيمة الجديدة مباشرة عبر الاسترداد السريع (في Reno). هذا هو AIMD الشهير:\n\n- Additive Increase: زيادة خطية بطيئة — استكشاف لطيف للسعة\n- Multiplicative Decrease: خفض إلى النصف — احترام فوري للأزمة\n\nAIMD مستقر رياضياً وعادل نسبياً بين التدفقات المتنافسة على الرابط الواحد. لكنه متحفظ بطبعه: الشبكات الحديثة تفقد حزمة هنا أو هناك لأسباب لا علاقة لها بالازدحام (واي فاي مضطرب مثلاً) فيعاقب TCP نفسه بلا مذنب حقيقي.",
           en: "After crossing ssthresh begins the congestion-avoidance phase: careful linear growth at just +1 MSS per RTT. The philosophy: we are now in a \"roughly safe\" zone, probing the capacity's edge one step at a time.\n\nAt the first loss (three duplicate ACKs) TCP applies \"multiplicative decrease\": the new ssthresh = half the current cwnd, and cwnd jumps straight to that new value via fast recovery (in Reno). This is the famous AIMD:\n\n- Additive Increase: slow linear growth — gentle capacity probing\n- Multiplicative Decrease: halving — immediate respect for the crisis\n\nAIMD is mathematically stable and roughly fair among competing flows on one link. But it is conservative by nature: modern networks lose a packet here or there for reasons unrelated to congestion (a jittery Wi-Fi, for example), and TCP punishes itself with no true culprit.",
@@ -952,6 +1206,35 @@ export const m07_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "المناطق الثلاث لفضاء المنافذ", en: "The Three Zones of Port Space" },
+        table: {
+          caption: { ar: "مناطق المنافذ الـ 65,536", en: "The three zones of the 65,536 ports" },
+          headers: [
+            { ar: "المدى", en: "Range" },
+            { ar: "التصنيف", en: "Classification" },
+            { ar: "أمثلة", en: "Examples" },
+          ],
+          rows: [
+            [
+              { ar: "0 - 1023", en: "0 - 1023" },
+              { ar: "معروفة Well-Known — خدمات النظام", en: "Well-known — system services" },
+              { ar: "SSH 22، DNS 53، HTTPS 443", en: "SSH 22, DNS 53, HTTPS 443" },
+            ],
+            [
+              { ar: "1024 - 49151", en: "1024 - 49151" },
+              { ar: "مسجلة Registered — تطبيقات الشركات", en: "Registered — vendor applications" },
+              { ar: "MySQL 3306، PostgreSQL 5432", en: "MySQL 3306, PostgreSQL 5432" },
+            ],
+            [
+              { ar: "49152 - 65535", en: "49152 - 65535" },
+              { ar: "ديناميكية/مؤقتة Ephemeral — منافذ مصدر العملاء", en: "Dynamic/ephemeral — client source ports" },
+              { ar: "منفذ متصفحك العشوائي 52344", en: "Your browser's random 52344" },
+            ],
+          ],
+        },
+        tip: {
+          ar: "لينكس يستخدم عملياً 32768-60999 مدىً مؤقتاً افتراضياً — أوسع من توصية IANA — تحقق بنفسك بـ sysctl net.ipv4.ip_local_port_range.",
+          en: "Linux practically uses 32768-60999 as its default ephemeral range — wider than IANA's recommendation — verify it yourself with sysctl net.ipv4.ip_local_port_range.",
+        },
         body: {
           ar: "المنافذ الـ 65,536 لا تُدار فوضى، بل ثلاث مناطق تعاقبية دستورتها IANA بوضوح:\n\n- المنافذ المعروفة (Well-Known): 0-1023 — خدمات النظام الكلاسيكية (SSH 22، DNS 53، HTTPS 443). في لينكس ويونكس لا يُسمح إلا للجذر بالاستماع عليها (منافذ مميزة privileged)\n- المنافذ المسجلة (Registered): 1024-49151 — تطبيقات شركات معروفة (MySQL 3306، PostgreSQL 5432، Redis 6379)\n- المنافذ الديناميكية/المؤقتة (Dynamic/Ephemeral): 49152-65535 — منافذ مصدر العملاء العشوائية\n\nلينكس عملياً يستخدم 32768-60999 مدىً مؤقتاً افتراضياً — أوسع من توصية IANA — انظره بنفسك في الأمر التالي. هذه المناطق ليست قانوناً ملزماً تقنياً: تستطيع تشغيل خدمتك على أي منفذ، لكن الالتزام بها يجعل الإنترنت قابلاً للتشغيل البيني.",
           en: "The 65,536 ports are not managed as chaos but as three sequential zones constitutionally defined by IANA:\n\n- Well-Known ports: 0-1023 — classic system services (SSH 22, DNS 53, HTTPS 443). On Linux/Unix only root may listen on them (privileged ports)\n- Registered ports: 1024-49151 — known vendor applications (MySQL 3306, PostgreSQL 5432, Redis 6379)\n- Dynamic/Ephemeral ports: 49152-65535 — random client source ports\n\nLinux practically uses 32768-60999 as its default ephemeral range — wider than IANA's recommendation — see for yourself in the command below. These zones are not technically enforceable law: you can run your service on any port, but honoring them keeps the Internet interoperable.",
@@ -963,6 +1246,76 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "الجدول الذهبي للمنافذ الشائعة", en: "The Golden Table of Common Ports" },
+        table: {
+          caption: { ar: "المنافذ التي تقابلها كل يوم في العمل والامتحانات", en: "The ports you meet daily at work and in exams" },
+          headers: [
+            { ar: "المنفذ", en: "Port" },
+            { ar: "البروتوكول", en: "Protocol" },
+            { ar: "الخدمة", en: "Service" },
+          ],
+          rows: [
+            [
+              { ar: "20 / 21", en: "20 / 21" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "FTP — البيانات والتحكم", en: "FTP — data and control" },
+            ],
+            [
+              { ar: "22", en: "22" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "SSH — إدارة مشفرة", en: "SSH — encrypted management" },
+            ],
+            [
+              { ar: "23", en: "23" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "Telnet — قديم غير مشفر", en: "Telnet — legacy, unencrypted" },
+            ],
+            [
+              { ar: "25", en: "25" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "SMTP — إرسال البريد", en: "SMTP — sending mail" },
+            ],
+            [
+              { ar: "53", en: "53" },
+              { ar: "UDP / TCP", en: "UDP / TCP" },
+              { ar: "DNS — حل الأسماء", en: "DNS — name resolution" },
+            ],
+            [
+              { ar: "67 / 68", en: "67 / 68" },
+              { ar: "UDP", en: "UDP" },
+              { ar: "DHCP — الخادم والعميل", en: "DHCP — server and client" },
+            ],
+            [
+              { ar: "80", en: "80" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "HTTP — الويب غير المشفر", en: "HTTP — plain web" },
+            ],
+            [
+              { ar: "110", en: "110" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "POP3 — تنزيل البريد", en: "POP3 — mail download" },
+            ],
+            [
+              { ar: "143", en: "143" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "IMAP — مزامنة البريد", en: "IMAP — mail sync" },
+            ],
+            [
+              { ar: "161", en: "161" },
+              { ar: "UDP", en: "UDP" },
+              { ar: "SNMP — مراقبة المعدات", en: "SNMP — device monitoring" },
+            ],
+            [
+              { ar: "443", en: "443" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "HTTPS — الويب المشفر", en: "HTTPS — encrypted web" },
+            ],
+            [
+              { ar: "993", en: "993" },
+              { ar: "TCP", en: "TCP" },
+              { ar: "IMAPS — بريد مشفر", en: "IMAPS — encrypted mail" },
+            ],
+          ],
+        },
         body: {
           ar: "هذه المنافذ تحفظ كما تحفظ أرقام الطوارئ — ستقرأها يومياً في الشبكات وجدران الحماية ونتائج الفحص:\n\n- المنفذ يقرأ دائماً مع بروتوكوله: 53 UDP ≠ 53 TCP في الوظيفة الغالبة\n- بعض الخدمات تركت TCP للتاريخ: Telnet 23 محرم استخدامه، و SSH 22 بديله الآمن\n- المنفذ 443 اليوم بات مزدوج البروتوكول: HTTPS فوق TCP، و HTTP/3 (QUIC) فوق UDP\n\nاربط كل منفذ بذاكرة عمل لا بحفظ أعمى: مررت بجدار حماية يسمح به؟ أو خادم يستمع عليه؟ أو هجوم استهدفه؟ الحكاية تجعل الرقم يثبت.",
           en: "Memorize these ports the way you memorize emergency numbers — you will read them daily in networks, firewalls, and scan results:\n\n- A port is always read with its protocol: UDP 53 ≠ TCP 53 in dominant function\n- Some services left TCP for history: Telnet 23 is forbidden practice, SSH 22 its secure replacement\n- Port 443 today is dual-protocol: HTTPS over TCP, and HTTP/3 (QUIC) over UDP\n\nTie each port to a working memory, not blind memorization: a firewall rule allowing it? a server listening on it? an attack targeting it? The story makes the number stick.",
@@ -1090,6 +1443,39 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "دورة حياة حالات المقبس", en: "The Socket State Lifecycle" },
+        table: {
+          caption: { ar: "أهم حالات اتصال TCP ومعانيها", en: "Key TCP connection states and their meaning" },
+          headers: [
+            { ar: "الحالة", en: "State" },
+            { ar: "معناها", en: "Meaning" },
+          ],
+          rows: [
+            [
+              { ar: "LISTEN", en: "LISTEN" },
+              { ar: "الخادم يستقبل اتصالات جديدة", en: "A server accepting new connections" },
+            ],
+            [
+              { ar: "SYN_SENT", en: "SYN_SENT" },
+              { ar: "العميل أرسل SYN وينتظر الرد", en: "A client sent SYN and awaits the reply" },
+            ],
+            [
+              { ar: "SYN_RCVD", en: "SYN_RCVD" },
+              { ar: "الخادم رد بـ SYN-ACK وينتظر التأكيد", en: "The server replied SYN-ACK, awaiting confirmation" },
+            ],
+            [
+              { ar: "ESTABLISHED", en: "ESTABLISHED" },
+              { ar: "الاتصال مفتوح بالكامل وينقل البيانات", en: "Fully open and transferring data" },
+            ],
+            [
+              { ar: "CLOSE_WAIT", en: "CLOSE_WAIT" },
+              { ar: "الطرف المقابل أغلق — التطبيق لم يغلق بعد", en: "The peer closed — the local app has not yet" },
+            ],
+            [
+              { ar: "TIME_WAIT", en: "TIME_WAIT" },
+              { ar: "انتظار 2×MSL قبل الإغلاق النهائي", en: "Waiting 2×MSL before final close" },
+            ],
+          ],
+        },
         body: {
           ar: "لكل مقبس TCP حالة في آلة حالات محكمة — معرفتها تختصر ساعات تشخيص. المخطط يقرأ من الأعلى (الولادة) إلى الأسفل (الاندثار):\n\n- LISTEN و SYN-SENT و SYN-RCVD: لحظات التأسيس الثلاث\n- ESTABLISHED: الاتصال الحي العامل — كل الأحلام تتحقق هنا\n- FIN_WAIT_1 و FIN_WAIT_2 و CLOSING و TIME_WAIT: مراحل وداع الطرف الفاعل\n- CLOSE_WAIT و LAST_ACK: مراحل وداع الطرف المتلقي\n\nاحفظ الثنائية المتقابلة للأبد: FIN_WAIT للبادئ و CLOSE_WAIT للمتلقي. تراكم الأولى سليم ومنظف ذاتياً، وتراكم الثانية مرض تطبيقي — هذا التمييز وحده يجعلك تشخص المشكلة في الصف الأول من التحقيق.",
           en: "Every TCP socket holds a state in a disciplined state machine — knowing it saves hours of diagnosis. The map reads from top (birth) to bottom (demise):\n\n- LISTEN, SYN-SENT, SYN-RCVD: the three founding moments\n- ESTABLISHED: the live working connection — where all the dreams come true\n- FIN_WAIT_1, FIN_WAIT_2, CLOSING, TIME_WAIT: the initiator's farewell stages\n- CLOSE_WAIT and LAST_ACK: the receiver's farewell stages\n\nMemorize the paired opposites forever: FIN_WAIT for the initiator, CLOSE_WAIT for the receiver. Piles of the first are healthy and self-cleaning; piles of the second are an application disease — this distinction alone puts you one row ahead in any investigation.",
@@ -1221,6 +1607,36 @@ export const m07_LESSONS: Lesson[] = [
     sections: [
       {
         heading: { ar: "علم RST: أسبابه وصيغه", en: "The RST Flag: Causes & Patterns" },
+        table: {
+          caption: { ar: "قراءة سريعة لأسباب RST", en: "A quick read of RST causes" },
+          headers: [
+            { ar: "العرَض", en: "Symptom" },
+            { ar: "السبب المحتمل", en: "Likely cause" },
+            { ar: "الأداة", en: "Tool" },
+          ],
+          rows: [
+            [
+              { ar: "RST فوري بعد SYN", en: "Immediate RST after SYN" },
+              { ar: "المنفذ مقفل أو الجدار يرفض الاتصال", en: "Closed port or a rejecting firewall" },
+              { ar: "curl -v، nmap", en: "curl -v, nmap" },
+            ],
+            [
+              { ar: "إعادة إرسال متكررة ثم انقطاع", en: "Repeated retransmissions then a cut" },
+              { ar: "ازدحام حقيقي أو وصلة رديئة", en: "Real congestion or a bad link" },
+              { ar: "ss -ti، Wireshark", en: "ss -ti, Wireshark" },
+            ],
+            [
+              { ar: "انتهاء مهلات بلا رد", en: "Timeouts with no answer" },
+              { ar: "مسار مفقود أو MTU أسود أو فلترة صامتة", en: "Missing route, MTU black hole, or silent filtering" },
+              { ar: "ping، traceroute", en: "ping, traceroute" },
+            ],
+            [
+              { ar: "اتصالات تتجمد بعد فترة خمول", en: "Connections stall after idle" },
+              { ar: "جدار يقتل الجلسات الخاملة", en: "A firewall killing idle sessions" },
+              { ar: "ضبط keepalive", en: "Keepalive tuning" },
+            ],
+          ],
+        },
         body: {
           ar: "علم RST هو «طلقة الرحمة» في TCP: المقطع الحامل له يقتل الاتصال فوراً — بلا وداع، بلا TIME_WAIT، بلا تفاوض. أسبابه الأشهر بالترتيب العملي:\n\n- لا شيء يستمع على المنفذ المطلوب: الرد فوري [R.] ويرى العميل «Connection refused»\n- جدار حماية بسياسة REJECT: يرد RST نيابة عن الهدف أو من نفسه — رفض صريح وسريع\n- انهيار التطبيق أو إقفاله القسري: إغلاق المقابس مع SO_LINGER=0 يولّد RST بدلاً من FIN\n- اتصال نصف مفتوح: نظيرك اختفى (إعادة تشغيل) ثم عاد — باكاته القديمة تصطدم بحالة لا يعرفها فيرد RST\n- وسيط منتهي الصبر: بعض الأجهزة ترسل RST للاتصالات الخاملة لتوفير جداولها\n\nالفرق التشخيصي الذهبي الذي يقسم المشاكل نصفين من السطر الأول: فشل فوري = RST (منفذ مغلق أو رفض صريح)؛ بينما تعليق ثم مهلة = حزم مُسقطة صمتاً (DROP) أو مسار ميت. جرّب بنفسك:",
           en: "The RST flag is TCP's \"mercy shot\": the segment carrying it kills the connection instantly — no farewell, no TIME_WAIT, no negotiation. Its most common causes in practical order:\n\n- Nothing listens on the requested port: instant [R.] reply and the client sees \"Connection refused\"\n- A firewall with a REJECT policy: replies RST on the target's behalf or from itself — explicit and fast rejection\n- Application crash or forceful abort: closing sockets with SO_LINGER=0 generates RST instead of FIN\n- A half-open connection: your peer vanished (rebooted) then returned — its old packets hit a state it no longer knows and it answers RST\n- An impatient middlebox: some devices send RST for idle connections to save table space\n\nThe golden diagnostic split that halves the problem space from line one: instant failure = RST (closed port or explicit reject); versus a hang then timeout = silently dropped packets (DROP) or a dead path. Try it yourself:",
@@ -1258,6 +1674,17 @@ export const m07_LESSONS: Lesson[] = [
       },
       {
         heading: { ar: "سير عمل تشخيص منهجي", en: "A Systematic Diagnostic Workflow" },
+        diagram: {
+          kind: "flow",
+          title: { ar: "تشخيص مشكلات TCP خطوة خطوة", en: "Diagnosing TCP troubles, step by step" },
+          items: [
+            { ar: "هل المنفذ مفتوح أصلاً؟ — ss -tlnp على الخادم", en: "Is the port open at all? — ss -tlnp on the server" },
+            { ar: "هل يصل SYN؟ — التقاط حزم على الطرفين", en: "Does the SYN arrive? — capture on both ends" },
+            { ar: "هل يأتي RST أم صمت تام؟", en: "Is it an RST or total silence?" },
+            { ar: "راجع الجدران ومسارات الشبكة في المسار", en: "Inspect firewalls and paths along the way" },
+            { ar: "قارن عدادات إعادة الإرسال قبل وبعد", en: "Compare retransmission counters before and after" },
+          ],
+        },
         body: {
           ar: "عند شكوى «الاتصال بطيء أو يتقطع» — خطة من خمس خطوات تقصي الاحتمالات تباعاً، من الأرخص إلى الأغلى:\n\n- الخطوة 1: نبض النظام العام — هل المشكلة فردية أم عامة؟\n- الخطوة 2: هل الاتصال قائم أصلاً؟ أم يرفض فوراً (RST) أو يعلق (DROP)؟\n- الخطوة 3: صحة الاتصال — rtt و retrans و النافذة تكشف الجودة\n- الخطوة 4: التقاط حقيقي محفوظ — الدليل الجنائي الذي لا يقبل الجدل\n- الخطوة 5: طبقات أدنى — هل المشكلة فقداناً (واي فاي/كابل) أم تأخيراً (ازدحام)؟\n\nغالباً ينتهي التشخيص عند الخطوة 3: RST؟ إعدادات وجدران. إعادة إرسال؟ جودة المسار. نافذة صفرية؟ تطبيق بطيء. التقاط صغير مُصفّى بخيار واحد أبلغ من ألف تخمين — ووثّق دائماً بملف pcap ليعود إليه من لم يشهدها:",
           en: "When the complaint is \"slow or intermittent connections\" — a five-step plan eliminates possibilities in order, cheapest first:\n\n- Step 1: the system's general pulse — is the problem isolated or global?\n- Step 2: does the connection even exist? Instantly refused (RST) or hanging (DROP)?\n- Step 3: connection health — rtt, retrans, and the window reveal quality\n- Step 4: a saved real capture — the forensic evidence no argument beats\n- Step 5: lower layers — is the problem loss (Wi-Fi/cable) or delay (congestion)?\n\nDiagnosis usually ends at step 3: RST? configuration and firewalls. Retransmissions? path quality. Zero window? a slow application. A small filtered capture beats a thousand guesses — and always document with a pcap file so those absent can revisit it:",

@@ -15,7 +15,16 @@ export type DeviceKind =
   | "ap"
   | "wirelessRouter"
   | "hub"
-  | "cloud";
+  | "cloud"
+  // ── v3: peripherals, IoT & smart-home end devices + modem bridge ──
+  | "printer"
+  | "ipPhone"
+  | "nas"
+  | "camera"
+  | "tv"
+  | "thermostat"
+  | "iotSensor"
+  | "modem";
 
 export type LinkKind = "copper" | "crossover" | "serial" | "fiber" | "console" | "wireless";
 
@@ -224,7 +233,7 @@ export interface DeviceSpec {
   kind: DeviceKind;
   nameBi: Bi;
   descBi: Bi;
-  category: "end" | "network" | "wireless" | "wan" | "security";
+  category: "end" | "network" | "wireless" | "wan" | "security" | "iot";
 }
 
 export const DEVICE_SPECS: DeviceSpec[] = [
@@ -312,13 +321,62 @@ export const DEVICE_SPECS: DeviceSpec[] = [
     nameBi: { ar: "سحابة الإنترنت", en: "Internet Cloud" },
     descBi: { ar: "تمثل شبكة المزوّد/الإنترنت بين المواقع", en: "ISP/Internet between sites" },
   },
+  // ── v3: peripherals & IoT (host behavior) + modem (L2 bridge) ──
+  {
+    kind: "printer",
+    category: "iot",
+    nameBi: { ar: "طابعة شبكية", en: "Network Printer" },
+    descBi: { ar: "طابعة مكتبية موصولة بالإيثرنت — جهاز طرفي مثل الحاسوب", en: "Ethernet office printer — end device like a PC" },
+  },
+  {
+    kind: "ipPhone",
+    category: "iot",
+    nameBi: { ar: "هاتف IP", en: "IP Phone" },
+    descBi: { ar: "هاتف VoIP يعمل بالبروتوكولات الشبكية — طرفية بإيثرنت", en: "VoIP desk phone — ethernet end device" },
+  },
+  {
+    kind: "nas",
+    category: "iot",
+    nameBi: { ar: "خزنة تخزين NAS", en: "NAS Storage" },
+    descBi: { ar: "وحدة تخزين شبكية مركزية تشارك الملفات", en: "Central network-attached storage box" },
+  },
+  {
+    kind: "camera",
+    category: "iot",
+    nameBi: { ar: "كاميرا مراقبة IP", en: "IP Camera" },
+    descBi: { ar: "كاميرا CCTV ترسل الفيديو عبر الشبكة", en: "CCTV camera streaming over the network" },
+  },
+  {
+    kind: "tv",
+    category: "iot",
+    nameBi: { ar: "تلفاز ذكي", en: "Smart TV" },
+    descBi: { ar: "تلفاز ببثّ الإنترنت — إيثرنت وواي فاي معاً", en: "Streaming TV — ethernet + Wi-Fi" },
+  },
+  {
+    kind: "thermostat",
+    category: "iot",
+    nameBi: { ar: "منظّم حرارة ذكي", en: "Smart Thermostat" },
+    descBi: { ar: "يتصل لاسلكياً فقط — جهاز منزل ذكي", en: "Wireless-only smart-home device" },
+  },
+  {
+    kind: "iotSensor",
+    category: "iot",
+    nameBi: { ar: "مستشعر IoT", en: "IoT Sensor" },
+    descBi: { ar: "مستشعر بيئي بواجهتين: لاسلكي وإيثرنت اختياري", en: "Environmental sensor — wireless + optional ethernet" },
+  },
+  {
+    kind: "modem",
+    category: "network",
+    nameBi: { ar: "مودم DSL", en: "DSL Modem" },
+    descBi: { ar: "جسر L2 بين خط الإنترنت والشبكة المحلية — بدون توجيه", en: "L2 bridge between the DSL line and the LAN — no routing" },
+  },
 ];
 
 export const LINK_SPECS: { kind: LinkKind; nameBi: Bi; descBi: Bi }[] = [
   { kind: "copper", nameBi: { ar: "نحاس مستقيم", en: "Copper Straight-Through" }, descBi: { ar: "PC/راوتر ↔ مبدّل", en: "PC/Router ↔ Switch" } },
   { kind: "crossover", nameBi: { ar: "نحاس متقاطع", en: "Copper Cross-Over" }, descBi: { ar: "أجهزة متشابهة مباشرة", en: "Similar devices direct" } },
   { kind: "serial", nameBi: { ar: "تسلسلي DCE", en: "Serial DCE" }, descBi: { ar: "WAN تسلسلي بين راوترات", en: "Serial WAN between routers" } },
-  { kind: "fiber", nameBi: { ar: "ألياف ضوئية", en: "Fiber" }, descBi: { ar: "ربط طويل المدى عالي السرعة", en: "Long-reach high-speed" } },
-  { kind: "console", nameBi: { ar: "كابل تحكم", en: "Console" }, descBi: { ar: "إعداد مباشر من الحاسوب", en: "Direct management from PC" } },
+  { kind: "fiber", nameBi: { ar: "ألياف ضوئية", en: "Fiber" }, descBi: { ar: "ربط طويل المدى عالي السرعة — محاكاة مبسطة كإيثرنت", en: "Long-reach high-speed — simulated like ethernet" } },
+  { kind: "console", nameBi: { ar: "كابل تحكم", en: "Console" }, descBi: { ar: "كابل إدارة — للمحاكاة يتصرف كوصلة عادية", en: "Management cable — simulated as a regular link" } },
   { kind: "wireless", nameBi: { ar: "اتصال لاسلكي", en: "Wireless" }, descBi: { ar: "واي فاي عبر SSID مطابق", en: "Wi-Fi over matching SSID" } },
 ];
