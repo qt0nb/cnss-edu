@@ -257,3 +257,75 @@ Work Log:
 Stage Summary:
 - Platform feature-complete and browser-verified: 100 bilingual lessons, 500 real tools, 200 monetizable projects, working Packet-Tracer-style simulator with 6 functioning labs (LAN ping, dual-router WAN, DHCP+DNS+HTTP, VLAN isolation, wireless NAT, 3-router static routes)
 - All quality gates green: tsc 0 errors, lint 0/0, HTTP 200
+
+---
+Task ID: 2-d
+Agent: general-purpose (tools part9)
+Task: Write 100 real tools t801–t900 (extensions of scan/sniff/monitor/wireless/pentest/utility/speed/simulate)
+
+Work Log:
+- Read worklog.md tail + src/lib/types.ts Tool contract; reviewed part5.ts formatting conventions
+- Extracted all 500 existing tool names from parts 1–5 to a working list to guarantee zero name collisions
+- Wrote src/data/tools/part9.ts in one Write call: t801–t815 scan (ZMap, ZGrab2, Subfinder, Assetfinder, Httpx, DNSx, Recon-ng, theHarvester, SpiderFoot, Maltego, enum4linux, onesixtyone, snmpwalk, showmount, fscan), t816–t825 sniff (Suricata, Arkime, bettercap, Packetbeat, Argus, pmacct, yaf, softflowd, capinfos, editcap), t826–t840 monitor (htop, Glances, btop, Uptime Kuma, Gatus, Pingdom, Centreon, Sensu Go, VictoriaMetrics, Thanos, Grafana Mimir, Telegraf, InfluxDB, node_exporter, blackbox_exporter), t841–t855 wireless (wpa_supplicant, hostapd, iwlist, Reaver, Bully, mdk4, Fluxion, eaphammer, WiFi-Pumpkin3, hcxdumptool, Pwnagotchi, Hak5 WiFi Pineapple, bluetoothctl, hcitool, Airtool), t856–t865 pentest (NetExec, Impacket, BloodHound, Mimikatz, Evil-WinRM, mitm6, Yersinia, Ncrack, Sliver, Mythic), t866–t875 utility (iwconfig, lsof, sysctl, dmesg, dhclient, dhcpcd, resolvectl, brctl, tc, Resolve-DnsName), t876–t885 speed (sockperf, httping, h2load, oha, k6, bombardier, slowhttptest, Ethr, perfSONAR, jperf), t886–t900 simulate (Kathara, containernet, Mininet-WiFi, MaxiNet, INET Framework, Shadow, TETCOS NetSim, QualNet, ns-2, ONOS, Ryu, Floodlight, POX, QEMU, KVM)
+- All entries bilingual (MSA Arabic + English), real URLs (official sites/GitHub), platform/license enums valid, section comments per category, cmd+cmdDesc for CLI tools (omitted for pure GUI/SaaS/hardware: Maltego, Pingdom, Centreon, Pwnagotchi, WiFi Pineapple, Airtool, TETCOS NetSim, QualNet)
+- Verification: rg -c 'id: "t' part9.ts = exactly 100; category counts 15/10/15/15/10/10/10/15 as specified; ids sequential t801–t900; bunx tsc --noEmit filtered for part9 = clean (0 errors)
+- Duplicate check: extracted names via cut -d'"' -f2; part9 ∩ parts1–5 = EMPTY; part9 internal dups = EMPTY; catalog now 581 distinct names. Note: the literal command in the brief (cut -d: -f2) is broken — rg prefixes 'filename:' so field 2 is always the constant 'name', which is why it prints 'name'; the corrected extraction shows 18 pre-existing duplicate names all located between parts 1–5 (e.g. Ncat part1+part3, Scapy part1+part5, ipconfig part2+part5) — none from part9
+- Did not touch index.ts / toolCategories.ts or any other file (main-agent scope)
+
+Stage Summary:
+- Tools part9 complete: t801–t900, 100 real tools, 0 new duplicate names, tsc clean, category extension quotas exactly met (scan 15, sniff 10, monitor 15, wireless 15, pentest 10, utility 10, speed 10, simulate 15)
+---
+Task ID: 2-b
+Agent: general-purpose (tools part7)
+Task: Write 100 real tools t601–t700 (loadbalance/storage/iot/telecom)
+
+Work Log:
+- Read worklog.md tail, src/lib/types.ts (Tool contract), tools/index.ts, part5.ts style reference; toolCategories.ts confirms loadbalance/storage/iot/telecom ids exist
+- Audited all 500 existing tool names (parts 1–5): Envoy, Traefik, Squid, Wireshark, Netdata, MetalLB, Calico etc. already used → excluded; also avoided Kamailio/FreeSWITCH (voip, part6 scope)
+- Live-verified ~110 candidate URLs via parallel curl (200/403 = kept; 404/dead = replaced): Openfiler.com and Snapt dead → replaced with XigmaNAS + BFE; kannel.org 302 redirect loop → dropped for daloRADIUS; Pen/siag.nu dead → replaced with Balance (inlab.de); targetcli repo 404 → Debian package page; Ceph → ceph.io/en/; Windows iSCSI → MS PowerShell iSCSI module docs; lustre.org/Dell/NetApp/F5/gull 403 = bot-blocked-but-real (kept)
+- Wrote src/data/tools/part7.ts in a single Write call: TOOLS_PART7: Tool[] with t601–t700; section comments per category; every entry has id/name/url/category/platform/license/difficulty/desc{ar,en}/tags(4); 93/100 include cmd + bilingual cmdDesc (7 GUI/web-only tools omit per contract)
+- Categories: loadbalance t601–t625 (HAProxy, NGINX, Keepalived, Seesaw, Katran, Pound, Varnish, Caddy, OpenResty, ipvsadm, Balance, gobetween, Fabio, Vulcand, Zevenet, BFE, Citrix ADC, F5 BIG-IP, AWS ELB, Azure LB, Kemp, Ingress-NGINX, Octavia, Contour, Pingora); storage t626–t650 (TrueNAS, XigmaNAS, Ceph, GlusterFS, BeeGFS, Lustre, MooseFS, OpenZFS, DRBD, targetcli, Open-iSCSI, Windows iSCSI Initiator, NFS-Ganesha, nvme-cli, MinIO, mc, SeaweedFS, JuiceFS, OpenStack Swift, Rook, Longhorn, NetApp ONTAP, Dell PowerStore, vSAN, Amazon S3); iot t651–t675 (Mosquitto, EMQX, VerneMQ, NanoMQ, HiveMQ, Node-RED, ThingsBoard, Hono, Kura, Kapua, Paho, MQTT Explorer, MQTTX, libcoap, aiocoap, Leshan, Home Assistant, openHAB, ESPHome, Tasmota, Zigbee2MQTT, ChirpStack, TTN, Magistrala, ThingSpeak); telecom t676–t700 (Open5GS, free5GC, Magma, OpenAirInterface, srsRAN 4G, srsRAN Project, UERANSIM, OsmocomBB, OsmoBTS, OsmoMSC, OsmoSTP, OpenGGSN, OpenBTS, gr-gsm, kalibrate-rtl, pycrate, Seagull, freeDiameter, FreeRADIUS, daloRADIUS, GenieACS, lksctp-tools, OpenCelliD, CellMapper, Network Cell Info Lite)
+- Fixed 2 Arabic typos post-write (5F→5G in CellMapper, الأجهاد→الأجهزة in Kapua)
+- Verified: rg -c 'id: "t' part7.ts = exactly 100; bunx tsc --noEmit → zero errors referencing part7; bun import validation → ids sequential t601–t700, category counts 25/25/25/25, all platform/license enums valid, difficulty 1–5 (mix 2×14/3×32/4×43/5×11), 100 unique names, license mix opensource 82/freemium 8/paid 5/free 5, no structural errors
+- Duplicate name check across all parts: part7 introduces ZERO duplicates; the raw command output `name` is an rg-format artifact (path:match, so cut -f2 = literal "name"); corrected extraction shows only 18 pre-existing name collisions between parts 1–5 (Get-NetAdapter, Scapy, netsh etc.) written by earlier agents — none involve part7
+
+Stage Summary:
+- File written: src/data/tools/part7.ts — 100 real tools t601–t700 (loadbalance 25, storage 25, iot 25, telecom 25) with real verified URLs and bilingual descriptions
+- All quality gates green: 100 ids, tsc clean for part7, no new duplicate names (pre-existing part1–5 dupes remain for main agent to reconcile)
+- index.ts intentionally untouched (main agent wires TOOLS_PART7); parts 6/8 still being written by parallel agents
+
+---
+Task ID: 2-a (retry #2)
+Agent: general-purpose (tools part6)
+Task: Write 100 real tools t501–t600 (sdn/voip/container/mesh)
+
+Work Log:
+- Read worklog.md tail + src/lib/types.ts Tool contract; extracted all existing tool names from parts 1,2,3,4,5,7,9,11 to avoid collisions — key takeaways: part9 already took ONOS/Ryu/POX/Floodlight, part11 took Tungsten Fabric/Stratum/NOX/Trema/SONiC/Multus/Antrea/netshoot/Submariner/Innernet/Tinc/Yggdrasil/rtpproxy/baresip/Twinkle/Yate, part5 took OpenDaylight/Calico/Cilium/Flannel/Kube-router, part4 took Tailscale/ZeroTier/Netbird/Netmaker/Headscale
+- Live-verified ~110 candidate URLs via 4 parallel curl batches (kept 200/202/403-bot-blocked=real; replaced dead): faucetnz.github.io 404→faucetsdn/faucet; freelan.org dead→freelan-developers/freelan; vicidial.org dead→VICIdial/VICIdial GitHub; apstra.com dead→juniper.net product page; opensips.org TLS-blocked→OpenSIPS/opensips repo; Beacon repo 404→FlowVisor (OPENNETWORKINGLAB/flowvisor); open-switch/opx 404→Lagopus (lagopus/lagopus); nvidia Cumulus URL 404→cumulusnetworks.com; sflow-rt.com (no www) verified
+- Wrote src/data/tools/part6.ts in one Write call: TOOLS_PART6: Tool[] with bilingual section comments; every entry has id/name/url/category/platform/license/difficulty/desc{ar,en}/tags(4+); 88/100 include cmd+bilingual cmdDesc (12 omit for pure web/GUI/library tools per contract: Apstra, ACI, NSX, SAI, Issabel, VICIdial, Jambonz, Zoiper, Ekiga, 3CX, Radmin VPN, qTox, libp2p — SAI/libp2p libraries)
+- Categories: sdn t501–t525 (Faucet, Open vSwitch, OVN, Snabb, FD.io VPP, P4 bmv2, p4c, FRRouting, SAI, Cumulus Linux, Pica8 PicOS, NoviWare, Juniper Apstra, Cisco ACI, VMware NSX, ONIE, Indigo, FlowVisor, LoxiGen, Lagopus, Atrium, BESS, sFlow-RT, Frenetic, VOLTHA); voip t526–t550 (Asterisk, FreeSWITCH, Kamailio, OpenSIPS, SIPp, PJSIP, reSIProcate, Sofia-SIP, RTPengine, HOMER SIPcapture, SIPVicious, FreePBX, Kazoo, Wazo, Issabel, VICIdial, Jambonz, RouTR, Zoiper, Linphone, Jami, Mumble, TeamSpeak, Ekiga, 3CX); container t551–t575 (Docker Engine, Docker Compose, Podman, containerd, CRI-O, nerdctl, CNI, CNI Plugins, CNI-Genie, Kuryr, OVN-Kubernetes, Terway, Amazon VPC CNI, Azure CNI, SR-IOV CNI, ovs-cni, Meshnet CNI, Weave Net, Weave Scope, Hubble, Cilium CLI, K3s, Kind, Portainer, Skydive); mesh t576–t600 (Nebula, n2n, Freelan, Firezone, OpenZiti, VpnCloud, VTun, MeshCentral, LogMeIn Hamachi, Radmin VPN, VDE, PeerVPN, miredo, I2P, Freenet, Tor, Lokinet, GNUnet, qTox, Bitmessage, RetroShare, libp2p, OpenDHT, IPFS, Syncthing)
+- Fixed 1 post-write bug: FreeSWITCH category "sdn"→"voip"
+- DPDK collision: parallel agent's part8 (t777 dev) took DPDK → swapped my t504 entry to Snabb (snabbco/snabb, verified 200) to keep catalog duplicate-free
+- Verification: rg -c 'id: "t' part6.ts = exactly 100; ids sequential t501–t600; bunx tsc --noEmit filtered for part6 = 0 errors; bun runtime import → categories sdn/voip/container/mesh = 25/25/25/25, 0 contract violations (platform/license enums, difficulty 1–5, bilingual desc+cmdDesc, tags≥3); part6∩parts{1,2,3,4,5,7,8,9,10,11} name overlap = EMPTY (pre-existing part1–5 dupes untouched)
+- Did not touch index.ts / toolCategories.ts or any other file (main-agent scope)
+
+Stage Summary:
+- Tools part6 complete: t501–t600, 100 real verified-URL tools (sdn 25, voip 25, container 25, mesh 25), 0 new duplicate names, tsc clean, contract fully validated; catalog now includes part6 alongside parts 1–5,7,8,9,11
+
+---
+Task ID: 2-c (retry #2)
+Agent: general-purpose (tools part8)
+Task: Write 100 real tools t701–t800 (incident/osint/mobile/dev)
+
+Work Log:
+- Read worklog.md tail + src/lib/types.ts Tool contract; extracted all 600+ existing tool names (parts 1–5, 7, 9, 11 + part9 scan/sniff names) to guarantee zero name collisions; noted RITA/Suricata/Arkime/bettercap/Argus/pmacct/theHarvester/SpiderFoot/Maltego/Shodan/Censys/Amass/Fing/Termius/NetSpot/WiGLE already taken
+- Live-verified ~110 candidate URLs in 4 parallel curl batches (200/403 = kept; 404/000 = replaced). Dropped/replaced: JuiceSSH (site down + Play package 404), tPacketCapture/Packet Capture/HTTPCanary/WiFi Overview 360/Network Signal Info/Cisco PT Mobile/Meteor (Play 404 or dead site), cSploit (dead site) → replaced with verified NetGuard, G-NetTrack Lite, NetCut, Jump Desktop, Screens 5, GlassWire, Microsoft Remote Desktop, nPerf, SpeedSmart; Sleuth Kit & lwIP switched to GitHub URLs; crt.sh (502/000, famously flaky but real), bgp.he.net/bgpview.io (unreachable from sandbox but real) kept
+- Wrote src/data/tools/part8.ts in one Write call: t701–t725 incident (TheHive, Cortex, MISP, Yeti, Brim, CyberChef, GRR Rapid Response, Osquery, Velociraptor, YARA, Volatility 3, Timesketch, Plaso, Autopsy, The Sleuth Kit, SIFT Workstation, REMnux, NST, CrowdSec, OSSEC, AIDE, rkhunter, chkrootkit, KAPE, Hayabusa); t726–t750 osint (SecurityTrails, ZoomEye, FOFA, Hunter.io, Intelligence X, crt.sh, DNSDumpster, ViewDNS.info, Netcraft, BinaryEdge, GreyNoise, Recorded Future, VirusTotal, URLhaus, AbuseIPDB, PhishTank, AlienVault OTX, Have I Been Pwned, OSINT Framework, PeeringDB, HE BGP Toolkit, BGPview, Wappalyzer, BuiltWith, urlscan.io); t751–t775 mobile (Network Analyzer, PingTools, HE.NET Network Tools, Termux, ConnectBot, Blink Shell, Prompt 3, Secure ShellFish, a-Shell, PCAPdroid, AndFTP, AirPort Utility, WiFiman, OpenSignal, nPerf, SpeedSmart, zANTI, DroidSheep, NetGuard, G-NetTrack Lite, NetCut, Jump Desktop, Screens 5, GlassWire, Microsoft Remote Desktop); t776–t800 dev (libpcap, DPDK, PF_RING, netmap, VPP, libbpf, GoPacket, dpkt, PcapPlusPlus, libtins, Pcap4J, Netty, Asio, POCO, libevent, libuv, ZeroMQ, gRPC, Apache Thrift, Twisted, c-ares, quiche, MsQuic, libwebsockets, lwIP)
+- Post-write QC: fixed ~38 Arabic typos via MultiEdit (stray Chinese chars in DPDK desc, English "thanks" leaked into libtins Arabic, "قو/watch" in Screens 5, Rizio→Rizzo in netmap, spacing/preposition errors); changed CyberChef cmd from broken curl to a clean deep-link recipe
+- Duplicate-name sweep: global uniq -d showed Snort + Security Onion colliding with parallel-written part10 → swapped t719 Snort→CrowdSec (crowdsec.net 200) and t718 Security Onion→Network Security Toolkit/NST (networksecuritytoolkit.org 200), both verified live + collision-free
+- Verification: rg -c 'id: "t' part8.ts = exactly 100; bunx tsc --noEmit filtered for part8 = 0 errors; bun import validation = ids sequential t701–t800, categories incident/osint/mobile/dev exactly 25/25/25/25, 100 unique names, all platform/license enums valid, difficulty 1–5, 66/100 entries carry cmd+cmdDesc (rest are pure web/GUI apps per contract)
+- Did not touch index.ts / toolCategories.ts or any other file (main-agent scope)
+
+Stage Summary:
+- Tools part8 complete: t701–t800, 100 real verified tools (incident 25, osint 25, mobile 25, dev 25), bilingual MSA/English descriptions, 0 new duplicate names across the whole catalog, tsc clean
+- Catalog now spans parts 1–11; remaining pre-existing duplicates (Get-NetAdapter, Scapy, etc. between parts 1–5) left for main-agent reconciliation

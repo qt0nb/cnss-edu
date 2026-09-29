@@ -71,6 +71,8 @@ const mkPort = (id: string, name: string, kind: Port["kind"]): Port => ({
   mask: null,
   accessVlan: 1,
   trunk: false,
+  secure: false,
+  stickyMac: null,
 });
 
 export function portsForKind(kind: DeviceKind): Port[] {
@@ -102,12 +104,36 @@ export function portsForKind(kind: DeviceKind): Port[] {
         ...Array.from({ length: 4 }, (_, i) => mkPort(`fa0/${i + 1}`, `FastEthernet0/${i + 1}`, "ethernet")),
         ...Array.from({ length: 8 }, (_, i) => mkPort(`radio${i}`, `Radio${i}`, "wireless")),
       ];
+    case "firewall":
+      return [
+        mkPort("g0/0", "GigabitEthernet0/0 (outside)", "ethernet"),
+        mkPort("g0/1", "GigabitEthernet0/1 (inside)", "ethernet"),
+        mkPort("g0/2", "GigabitEthernet0/2 (DMZ)", "ethernet"),
+        mkPort("g0/3", "GigabitEthernet0/3", "ethernet"),
+      ];
+    case "l3switch":
+      return [
+        ...Array.from({ length: 24 }, (_, i) => mkPort(`fa0/${i + 1}`, `FastEthernet0/${i + 1}`, "ethernet")),
+        mkPort("g0/1", "GigabitEthernet0/1", "ethernet"),
+        mkPort("g0/2", "GigabitEthernet0/2", "ethernet"),
+        mkPort("vlan10", "Vlan10 (SVI)", "svi"),
+        mkPort("vlan20", "Vlan20 (SVI)", "svi"),
+        mkPort("vlan30", "Vlan30 (SVI)", "svi"),
+      ];
+    case "ids":
+      return Array.from({ length: 4 }, (_, i) => mkPort(`g0/${i}`, `GigabitEthernet0/${i}`, "ethernet"));
+    case "attacker":
+      return [mkPort("eth0", "eth0 (Kali)", "ethernet")];
   }
 }
 
 const KIND_BASE: Record<DeviceKind, string> = {
   router: "Router",
+  l3switch: "L3Sw",
   switch: "Switch",
+  firewall: "FW",
+  ids: "IDS",
+  attacker: "Kali",
   pc: "PC",
   server: "Server",
   laptop: "Laptop",
@@ -144,6 +170,14 @@ export function createDevice(kind: DeviceKind, x: number, y: number, topo?: Topo
     nat: kind === "wirelessRouter",
     natTable: [],
     natWanCounter: 40000,
+    acls: [],
+    defaultDeny: false,
+    attack: null,
+    idsAlerts: [],
+    statsIn: 0,
+    statsDropped: 0,
+    overloaded: false,
+    halfOpen: 0,
   };
   if (kind === "server") {
     base.dnsZone = { a: {} };
@@ -240,7 +274,7 @@ export function connectPorts(
   return link;
 }
 
-const SWITCHY: DeviceKind[] = ["switch", "hub", "cloud", "ap"];
+const SWITCHY: DeviceKind[] = ["switch", "hub", "cloud", "ap", "l3switch", "ids"];
 export function autoCable(
   t: Topology,
   aDevId: string,
@@ -305,12 +339,25 @@ function mkPacket(p: Omit<Packet, "id" | "layers">, vlan?: number | null): Packe
 }
 
 // ─────────────── Simulation context ───────────────
+interface FlowStat {
+  echo: number;
+  syn: number;
+  dsts: string[];
+}
+
 interface Ctx {
   t: Topology;
   steps: SimStep[];
   sid: number;
   warn: string | null; // bilingual note at end
   seen: Set<string>; // loop guard
+  maxSteps: number;
+  /** per-source flow stats (flood/scan detection at IDS) */
+  flow: Map<string, FlowStat>;
+  /** IP→MAC binding DB for ARP-spoof detection */
+  ipMac: Map<string, string>;
+  /** per-target hit counters (flood saturation on victims) */
+  hit: Map<string, number>;
 }
 
 function step(
@@ -398,7 +445,7 @@ function wireOut(
   packet: Packet,
   depth = 0
 ): void {
-  if (depth > 40 || ctx.steps.length > 220) {
+  if (depth > 40 || ctx.steps.length > ctx.maxSteps) {
     step(ctx, fromDev, null, fromPortId, null, null, packet, info("تم إيقاف المحاكاة: حلقة أو عمق كبير — يحتاج STP", "Simulation stopped: loop or excessive depth — STP needed"), true);
     return;
   }
@@ -433,8 +480,30 @@ function deliver(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: n
   const inPort = findPort(d, inPortId);
   if (!inPort) return;
 
-  // ── bridges (switch/hub/cloud/ap) and wireless-router LAN side
+  // ── bridges (switch/hub/cloud/ap/l3switch/ids) and wireless-router LAN side
   if (isBridge(d) || (d.kind === "wirelessRouter" && inPortId !== "g0/0")) {
+    // port-security: lock access ports to their first learned MAC (anti ARP-spoof mitigation)
+    if ((d.kind === "switch" || d.kind === "l3switch") && inPort.kind === "ethernet" && inPort.secure) {
+      if (inPort.stickyMac && inPort.stickyMac !== packet.srcMac) {
+        d.statsDropped = (d.statsDropped ?? 0) + 1;
+        pushAlert(d, "port-security", "critical", packet.srcIp, packet.dstIp,
+          `انتهاك أمن المنفذ ${inPort.name}: MAC ${packet.srcMac} ≠ المثبّت ${inPort.stickyMac} — الإطار مرفوض`,
+          `Port-security violation on ${inPort.name}: MAC ${packet.srcMac} ≠ sticky ${inPort.stickyMac} — frame rejected`);
+        step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: أمن المنفذ أسقط إطاراً من ${packet.srcMac}`, `${d.name}: port-security dropped a frame from ${packet.srcMac}`), true);
+        return;
+      }
+      if (!inPort.stickyMac) inPort.stickyMac = packet.srcMac;
+    }
+    // IDS sensor: inspect everything that traverses this bridge
+    if (d.kind === "ids") idsInspect(ctx, d, inPortId, packet);
+    // L3 switch: packets addressed to an SVI (its MAC/IP) are routed instead of switched
+    if (d.kind === "l3switch") {
+      const svi = d.ports.find((p) => p.kind === "svi" && (p.mac === packet.dstMac || (p.ip != null && p.ip === packet.dstIp)));
+      if (svi || packet.proto === "ARP") {
+        l3Route(ctx, d, inPortId, packet, depth);
+        if (svi && packet.dstMac === svi.mac && packet.proto !== "ARP") return;
+      }
+    }
     const vlan = inPort.trunk ? (packet.vlan ?? 1) : inPort.accessVlan;
     if (d.kind !== "hub") learnMac(ctx, d, inPortId, packet.srcMac, vlan);
     const outs = egressPorts(ctx, d, inPortId, packet.dstMac, vlan);
@@ -476,13 +545,13 @@ function deliver(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: n
     return;
   }
 
-  // ── router / wireless-router WAN
-  if (d.kind === "router" || (d.kind === "wirelessRouter" && inPortId === "g0/0") || d.kind === "wirelessRouter") {
+  // ── router / firewall / wireless-router WAN
+  if (d.kind === "router" || d.kind === "firewall" || d.kind === "wirelessRouter") {
     routerHandle(ctx, d, inPortId, packet, depth);
     return;
   }
 
-  // ── hosts (pc/server/laptop/smartphone)
+  // ── hosts (pc/server/laptop/smartphone/attacker)
   hostHandle(ctx, d, inPortId, packet, depth);
 }
 
@@ -541,6 +610,14 @@ function hostHandle(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth
   }
 
   if (packet.proto === "ICMP" && packet.kind === "Echo Request" && ipForMe) {
+    // flood saturation: too many echoes from one source exhaust the victim CPU
+    const hits = (ctx.hit.get(`${d.id}|${packet.srcIp}`) ?? 0) + 1;
+    ctx.hit.set(`${d.id}|${packet.srcIp}`, hits);
+    if (hits >= 6) d.overloaded = true;
+    if (d.overloaded) {
+      step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: مشبع بالطلبات — CPU 100%، الحزمة مُسقطة`, `${d.name}: saturated by flood — CPU 100%, packet dropped`), true);
+      return;
+    }
     const out = d.ports.find((p) => p.linkId && p.adminUp) ?? d.ports[0];
     const reply = mkPacket({
       proto: "ICMP",
@@ -713,6 +790,20 @@ function routerHandle(ctx: Ctx, d: Device, inPortId: string, packet: Packet, dep
     step(ctx, d, inPortId, replyPort.id, null, null, reply, info(`${d.name}: الهدف أنا — رد Pong`, `${d.name}: I am the target — pong reply`));
     wireOut(ctx, d, replyPort.id, reply, depth);
     return;
+  }
+
+  // firewall ACL transit filter (traffic to the firewall itself was handled above)
+  if (d.kind === "firewall" || (d.acls?.length ?? 0) > 0 || d.defaultDeny) {
+    const verdict = aclCheck(d, packet);
+    if (verdict.action === "deny") {
+      d.statsDropped = (d.statsDropped ?? 0) + 1;
+      if (verdict.rule) verdict.rule.hits++;
+      pushAlert(d, "acl-deny", "warn", packet.srcIp, packet.dstIp,
+        `ACL أسقط ${packet.proto} من ${packet.srcIp} إلى ${packet.dstIp}${verdict.rule ? ` (قاعدة #${verdict.rule.id})` : " (سياسة الرفض الافتراضية)"}`,
+        `ACL dropped ${packet.proto} from ${packet.srcIp} to ${packet.dstIp}${verdict.rule ? ` (rule #${verdict.rule.id})` : " (default deny)"}`);
+      step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: ACL — رفض ${packet.proto} ${packet.srcIp} → ${packet.dstIp}`, `${d.name}: ACL — deny ${packet.proto} ${packet.srcIp} → ${packet.dstIp}`), true);
+      return;
+    }
   }
 
   // forwarding
@@ -938,6 +1029,14 @@ function httpHandle(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth
   const forMeIp = packet.dstIp === myIp;
 
   if (packet.kind === "TCP SYN" && forMeIp) {
+    // SYN flood: half-open connections exhaust the backlog
+    const hits = (ctx.hit.get(`${d.id}|${packet.srcIp}`) ?? 0) + 1;
+    ctx.hit.set(`${d.id}|${packet.srcIp}`, hits);
+    if (hits >= 6) d.halfOpen = 6;
+    if ((d.halfOpen ?? 0) >= 6) {
+      step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: طابور SYN ممتلئ — رفض الاتصال (SYN Flood?)`, `${d.name}: SYN backlog full — connection refused (SYN flood?)`), true);
+      return;
+    }
     const synack = mkPacket({ proto: "TCP", kind: "TCP SYN-ACK", kindBi: { ar: "مصافحة SYN-ACK", en: "TCP SYN-ACK" }, srcMac: out.mac, dstMac: packet.srcMac, srcIp: myIp, dstIp: packet.srcIp, ttl: 128, srcPort: packet.dstPort, dstPort: packet.srcPort, flags: "SYN,ACK", seq: "200" });
     step(ctx, d, inPortId, out.id, null, null, synack, info(`${d.name}: SYN-ACK — بدء المصافحة الثلاثية`, `${d.name}: SYN-ACK — three-way handshake`));
     wireOut(ctx, d, out.id, synack, depth);
@@ -958,8 +1057,8 @@ function httpHandle(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth
 }
 
 // ─────────────── Public simulation API ───────────────
-function newCtx(t: Topology): Ctx {
-  return { t, steps: [], sid: 0, warn: null, seen: new Set() };
+function newCtx(t: Topology, maxSteps = 220): Ctx {
+  return { t, steps: [], sid: 0, warn: null, seen: new Set(), maxSteps, flow: new Map(), ipMac: new Map(), hit: new Map() };
 }
 
 export function simulatePing(topo: Topology, srcId: string, dstIdOrIp: string): SimResult {
@@ -1118,5 +1217,304 @@ export function releaseIp(d: Device): void {
   d.dnsServer = null;
 }
 
-export const isHostKind = (k: DeviceKind) => ["pc", "server", "laptop", "smartphone"].includes(k);
+export const isHostKind = (k: DeviceKind) => ["pc", "server", "laptop", "smartphone", "attacker"].includes(k);
 export const infoBi = info;
+
+// ═══════════════ NetSim v2: ACL / IDS / L3-Switch / Attacks ═══════════════
+
+let _alertId = 0;
+
+/** Record an IDS-style alert on a device (ids sensors, firewalls, switches) */
+export function pushAlert(d: Device, kind: import("./types").IdsAlert["kind"], severity: import("./types").IdsAlert["severity"], srcIp: string, dstIp: string, ar: string, en: string): void {
+  if (!Array.isArray(d.idsAlerts)) d.idsAlerts = [];
+  d.idsAlerts.push({ id: ++_alertId, kind, severity, srcIp, dstIp, detail: { ar, en } });
+  if (d.idsAlerts.length > 80) d.idsAlerts.shift();
+}
+
+/** Evaluate a packet against a device ACL rule list (first match wins) */
+export function aclCheck(d: Device, packet: Packet): { action: "permit" | "deny"; rule: import("./types").AclRule | null } {
+  const rules = d.acls ?? [];
+  for (const r of rules) {
+    if (matchAcl(r, packet)) return { action: r.action, rule: r };
+  }
+  return { action: d.defaultDeny ? "deny" : "permit", rule: null };
+}
+
+function matchAcl(r: import("./types").AclRule, packet: Packet): boolean {
+  if (r.src !== "any" && r.srcMask !== "any" && !ipInSubnet(packet.srcIp, r.src, r.srcMask)) return false;
+  if (r.dst !== "any" && r.dstMask !== "any" && !ipInSubnet(packet.dstIp, r.dst, r.dstMask)) return false;
+  if (r.proto !== "any") {
+    const protoName =
+      packet.proto === "ICMP" ? "icmp"
+        : packet.proto === "TCP" || packet.proto === "HTTP" ? "tcp"
+          : packet.proto === "DNS" || packet.proto === "DHCP" ? "udp"
+            : "any";
+    if (r.proto !== protoName) return false;
+    if (r.port != null && packet.dstPort !== r.port) return false;
+  }
+  return true;
+}
+
+function ipInSubnet(ip: string, net: string, mask: string): boolean {
+  if (!isValidIp(ip) || !isValidIp(net) || !isValidIp(mask)) return false;
+  return networkOf(ip, mask) === networkOf(net, mask);
+}
+
+/** IDS sensor inspection: ARP-spoof binding conflicts, floods & scans */
+function idsInspect(ctx: Ctx, d: Device, inPortId: string, packet: Packet): void {
+  d.statsIn = (d.statsIn ?? 0) + 1;
+  // IP↔MAC binding DB: forged ARP replies that contradict a known binding = spoof
+  if (packet.proto === "ARP" && packet.kind === "ARP Reply" && isValidIp(packet.srcIp) && packet.srcIp !== ZERO_IP) {
+    const prev = ctx.ipMac.get(packet.srcIp);
+    if (prev && prev !== packet.srcMac) {
+      pushAlert(d, "arp-spoof", "critical", packet.srcIp, packet.dstIp,
+        `تسميم ARP مكتشف: ${packet.srcIp} كان ${prev} والآن يدّعي ${packet.srcMac} — مصدره منفذ ${inPortId}`,
+        `ARP poisoning detected: ${packet.srcIp} was ${prev} but now claims ${packet.srcMac} — seen on port ${inPortId}`);
+      return;
+    }
+    if (!prev) ctx.ipMac.set(packet.srcIp, packet.srcMac);
+  }
+  if (!isValidIp(packet.srcIp) || packet.srcIp === ZERO_IP) return;
+  // flow statistics per source
+  const fs = ctx.flow.get(packet.srcIp) ?? { echo: 0, syn: 0, dsts: [] };
+  if (packet.proto === "ICMP" && packet.kind === "Echo Request") fs.echo += 1;
+  if (packet.kind === "TCP SYN") fs.syn += 1;
+  if (!fs.dsts.includes(packet.dstIp)) fs.dsts.push(packet.dstIp);
+  ctx.flow.set(packet.srcIp, fs);
+  if (fs.echo === 8) {
+    pushAlert(d, "icmp-flood", "critical", packet.srcIp, packet.dstIp,
+      `إغراق ICMP: 8+ طلبات Echo متتالية من ${packet.srcIp} — نمط هجوم DDoS`,
+      `ICMP flood: 8+ consecutive echo requests from ${packet.srcIp} — DDoS attack pattern`);
+  }
+  if (fs.syn === 8) {
+    pushAlert(d, "syn-flood", "critical", packet.srcIp, packet.dstIp,
+      `إغراق SYN: 8+ محاولات اتصال نصف مفتوحة من ${packet.srcIp} إلى ${packet.dstIp}`,
+      `SYN flood: 8+ half-open connection attempts from ${packet.srcIp} to ${packet.dstIp}`);
+  }
+  if (fs.dsts.length === 5) {
+    pushAlert(d, "scan", "warn", packet.srcIp, packet.dstIp,
+      `مسح شبكة مكتشف: ${packet.srcIp} يرمي حزماً نحو 5 عناوين مختلفة — نمط Port/Host Scan`,
+      `Network scan detected: ${packet.srcIp} probing 5 distinct addresses — host/port scan pattern`);
+  }
+}
+
+// ─────────────── L3 switch SVI routing ───────────────
+function l3Route(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: number): void {
+  if (packet.proto === "ARP" && packet.kind === "ARP Request") {
+    addArp(d, packet.srcIp, packet.srcMac, inPortId);
+    const svi = d.ports.find((p) => p.kind === "svi" && p.ip === packet.dstIp);
+    if (svi && svi.ip) {
+      const reply = mkPacket({
+        proto: "ARP", kind: "ARP Reply", kindBi: { ar: "رد ARP (SVI)", en: "ARP Reply (SVI)" },
+        srcMac: svi.mac, dstMac: packet.srcMac, srcIp: svi.ip, dstIp: packet.srcIp, ttl: 128,
+        payload: { ar: `بوابة VLAN أنا ${svi.ip}`, en: `I am the VLAN gateway ${svi.ip}` },
+      });
+      step(ctx, d, inPortId, inPortId, null, null, reply, info(`${d.name}: SVI ${svi.id} يرد على ARP (${svi.ip})`, `${d.name}: SVI ${svi.id} answers ARP (${svi.ip})`));
+      wireOut(ctx, d, inPortId, reply, depth);
+    }
+    return;
+  }
+  if (packet.proto === "ARP" && packet.kind === "ARP Reply") {
+    addArp(d, packet.srcIp, packet.srcMac, inPortId);
+    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: تعلمت ${packet.srcIp} = ${packet.srcMac} في جدول ARP`, `${d.name}: learned ${packet.srcIp} = ${packet.srcMac} in ARP table`));
+    return;
+  }
+  const sviMe = d.ports.find((p) => p.kind === "svi" && p.ip === packet.dstIp);
+  if (packet.proto === "ICMP" && packet.kind === "Echo Request" && sviMe && sviMe.ip) {
+    const reply = mkPacket({
+      proto: "ICMP", kind: "Echo Reply", kindBi: { ar: "رد ICMP", en: "ICMP Echo Reply" },
+      srcMac: sviMe.mac, dstMac: packet.srcMac, srcIp: sviMe.ip, dstIp: packet.srcIp, ttl: 128,
+    });
+    step(ctx, d, inPortId, inPortId, null, null, reply, info(`${d.name}: SVI ${sviMe.id} هو الهدف — رد Pong`, `${d.name}: SVI ${sviMe.id} is the target — pong reply`));
+    wireOut(ctx, d, inPortId, reply, depth);
+    return;
+  }
+  if (packet.proto === "DHCP" || packet.proto === "DNS") return; // still bridge-serviced below
+  if (packet.dstMac !== BROADCAST_MAC) {
+    l3Forward(ctx, d, inPortId, packet, depth);
+  }
+}
+
+function l3Forward(ctx: Ctx, d: Device, inPortId: string, packet: Packet, depth: number): void {
+  if (packet.ttl <= 1) {
+    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: TTL انتهى — إسقاط`, `${d.name}: TTL expired — dropped`), true);
+    return;
+  }
+  const route = lookupRoute(d, packet.dstIp);
+  if (!route) {
+    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا مسار إلى ${packet.dstIp} — فعّل ip routing واضبط SVI`, `${d.name}: no route to ${packet.dstIp} — configure an SVI or add a route`), true);
+    return;
+  }
+  // resolve egress SVI by route iface or by subnet match
+  let svi = route.iface ? d.ports.find((p) => p.id === route.iface && p.kind === "svi") : undefined;
+  if (!svi) {
+    svi = d.ports.find((p) => p.kind === "svi" && p.ip && p.mask && networkOf(packet.dstIp, p.mask) === networkOf(p.ip, p.mask));
+  }
+  if (!svi || !svi.ip) {
+    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا SVI لشبكة ${packet.dstIp}`, `${d.name}: no SVI for ${packet.dstIp} subnet`), true);
+    return;
+  }
+  const vlan = parseInt(svi.id.replace("vlan", ""), 10) || 1;
+  const nextIp = route.nextHop ?? packet.dstIp;
+  let arpEntry = d.arp.find((a) => a.ip === nextIp);
+  if (!arpEntry) {
+    arpBroadcastOnVlan(ctx, d, vlan, svi, nextIp, depth);
+    arpEntry = d.arp.find((a) => a.ip === nextIp);
+    if (!arpEntry) {
+      step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا جواب ARP في VLAN${vlan} — الحزمة سقطت`, `${d.name}: no ARP reply in VLAN${vlan} — packet dropped`), true);
+      return;
+    }
+  }
+  // pick the physical port where the destination MAC lives (or flood the vlan)
+  const entry = d.macTable.find((e) => e.mac === arpEntry.mac && e.vlan === vlan);
+  const phys = d.ports.filter((p) => p.kind === "ethernet" && p.linkId && p.adminUp && p.id !== inPortId && (p.trunk || p.accessVlan === vlan));
+  const targets = entry ? phys.filter((p) => p.id === entry.portId) : phys;
+  if (targets.length === 0) {
+    step(ctx, d, inPortId, null, null, null, packet, info(`${d.name}: لا منافذ في VLAN${vlan} للخروج`, `${d.name}: no egress ports in VLAN${vlan}`), true);
+    return;
+  }
+  for (const p of targets) {
+    const fwd = mkPacket({ ...packet, srcMac: p.mac, dstMac: arpEntry.mac, ttl: packet.ttl - 1, vlan: p.trunk ? vlan : null });
+    step(ctx, d, inPortId, p.id, null, null, fwd, info(`${d.name}: توجيه بين VLANs → خارج ${p.name} نحو ${arpEntry.mac} (TTL-1)`, `${d.name}: inter-VLAN route → out ${p.name} toward ${arpEntry.mac} (TTL-1)`));
+    wireOut(ctx, d, p.id, fwd, depth);
+  }
+}
+
+function arpBroadcastOnVlan(ctx: Ctx, d: Device, vlan: number, svi: Port, targetIp: string, depth: number): void {
+  const phys = d.ports.filter((p) => p.kind === "ethernet" && p.linkId && p.adminUp && (p.trunk || p.accessVlan === vlan));
+  for (const p of phys) {
+    const req = mkPacket({
+      proto: "ARP", kind: "ARP Request", kindBi: { ar: "طلب ARP", en: "ARP Request" },
+      srcMac: p.mac, dstMac: BROADCAST_MAC, srcIp: svi.ip ?? ZERO_IP, dstIp: targetIp, ttl: 128,
+      payload: { ar: `من يعرف ${targetIp}؟ (SVI${vlan})`, en: `Who has ${targetIp}? (SVI${vlan})` },
+    });
+    step(ctx, d, null, p.id, null, null, req, info(`${d.name}: ARP من SVI${vlan} نحو ${targetIp}`, `${d.name}: ARP from SVI${vlan} for ${targetIp}`));
+    wireOut(ctx, d, p.id, req, depth);
+  }
+}
+
+// ─────────────── Attack simulation (Kali attacker device) ───────────────
+function resetAttackState(t: Topology): void {
+  for (const d of t.devices) {
+    d.overloaded = false;
+    d.halfOpen = 0;
+    d.statsIn = 0;
+    d.statsDropped = 0;
+    if (Array.isArray(d.idsAlerts)) d.idsAlerts = [];
+    for (const p of d.ports) p.stickyMac = p.secure ? p.stickyMac : null;
+  }
+}
+
+function findDevByIp(t: Topology, ip: string): Device | undefined {
+  return t.devices.find((d) => d.ports.some((p) => p.ip === ip));
+}
+
+export function simulateAttack(topo: Topology, attackerId: string): SimResult & { report: import("./types").AttackReport } {
+  const t = cloneTopo(topo);
+  resetAttackState(t);
+  const ctx = newCtx(t, 900);
+  const atk = findDevice(t, attackerId);
+  const empty: import("./types").AttackReport = { blocked: false, reached: 0, sent: 0, alerts: 0, targetDown: false, intercepted: false };
+  if (!atk || atk.kind !== "attacker" || !atk.attack || !atk.attack.active) {
+    return { steps: [], devices: topo.devices, success: false, note: info("اضبط الهجوم أولاً من تبويب «الهجمات» في جهاز المهاجم", "Configure the attack first in the attacker's Attacks tab"), report: empty };
+  }
+  const port = atk.ports.find((p) => p.linkId && p.adminUp);
+  if (!port) return { steps: [], devices: topo.devices, success: false, note: info("المهاجم غير موصول بكابل", "Attacker has no cable connected"), report: empty };
+  const { ip } = hostIp(atk);
+  if (!ip) return { steps: [], devices: topo.devices, success: false, note: info("المهاجم بلا عنوان IP", "Attacker has no IP address"), report: empty };
+  const { kind, targetIp, victimIp } = atk.attack;
+  let sent = 0;
+  let reached = 0;
+  let intercepted = false;
+
+  const send = (packet: Omit<Packet, "id" | "layers">) => {
+    sent += 1;
+    const before = ctx.steps.length;
+    wireOut(ctx, atk, port.id, mkPacket(packet), 0);
+    return ctx.steps.length - before;
+  };
+
+  step(ctx, atk, null, port.id, null, null, mkPacket({ proto: "ICMP", kind: "Attack Start", kindBi: { ar: "بدء الهجوم", en: "Attack Start" }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: targetIp, ttl: 128, payload: { ar: `${kind} → ${targetIp}`, en: `${kind} → ${targetIp}` } }), info(`${atk.name}: إطلاق ${kind} على ${targetIp}`, `${atk.name}: launching ${kind} at ${targetIp}`));
+
+  if (kind === "arpspoof") {
+    // forged unicast ARP replies: "I am <victimIp> at <attacker MAC>"
+    const targetDev = findDevByIp(t, targetIp);
+    const victimPort = targetDev?.ports.find((p) => p.linkId && p.adminUp);
+    if (targetDev && victimPort) {
+      for (let i = 0; i < 2; i++) {
+        send({
+          proto: "ARP", kind: "ARP Reply", kindBi: { ar: "رد ARP مسموم", en: "Poisoned ARP Reply" },
+          srcMac: port.mac, dstMac: victimPort.mac, srcIp: victimIp ?? targetIp, dstIp: targetIp, ttl: 128,
+          payload: { ar: `أنا ${victimIp} وعنواني ${port.mac} (زيف!)`, en: `I am ${victimIp}, my MAC is ${port.mac} (forged!)` },
+        });
+      }
+      const poisoned = targetDev.arp.find((a) => a.ip === (victimIp ?? ""));
+      intercepted = !!poisoned && poisoned.mac === port.mac;
+      reached = intercepted ? 1 : 0;
+      if (intercepted) {
+        step(ctx, targetDev, victimPort.id, null, null, null, mkPacket({ proto: "ARP", kind: "ARP Poison", kindBi: { ar: "تسمم ARP", en: "ARP Poison" }, srcMac: port.mac, dstMac: victimPort.mac, srcIp: ip, dstIp: targetIp, ttl: 64 }), info(`${targetDev.name}: سُمّم جدول ARP — ${victimIp} يُوجَّه الآن إلى MAC المهاجم!`, `${targetDev.name}: ARP table poisoned — ${victimIp} now points to the attacker MAC!`), true);
+      }
+    }
+  } else if (kind === "ddos") {
+    for (let i = 0; i < 10; i++) {
+      const before = ctx.steps.length;
+      send({ proto: "ICMP", kind: "Echo Request", kindBi: { ar: `طلب Echo #${i + 1}`, en: `Echo Request #${i + 1}` }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: targetIp, ttl: 64 });
+      const arrived = ctx.steps.slice(before).some((s) => s.deviceId === (findDevByIp(t, targetIp)?.id ?? "") && s.inPort && s.packet.kind === "Echo Request");
+      if (arrived) reached += 1;
+    }
+  } else if (kind === "synflood") {
+    for (let i = 0; i < 10; i++) {
+      const before = ctx.steps.length;
+      send({ proto: "TCP", kind: "TCP SYN", kindBi: { ar: `SYN #${i + 1}`, en: `SYN #${i + 1}` }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: targetIp, ttl: 64, srcPort: 4000 + i, dstPort: 80, flags: "SYN", seq: String(1000 + i) });
+      const arrived = ctx.steps.slice(before).some((s) => s.deviceId === (findDevByIp(t, targetIp)?.id ?? "") && s.inPort && s.packet.kind === "TCP SYN");
+      if (arrived) reached += 1;
+    }
+  } else {
+    // scan: probe a small address range
+    const base = ipToInt(targetIp);
+    for (let i = 0; i < 6; i++) {
+      send({ proto: "TCP", kind: "TCP SYN", kindBi: { ar: `مسح ${intToIp(base + i)}:80`, en: `probe ${intToIp(base + i)}:80` }, srcMac: port.mac, dstMac: BROADCAST_MAC, srcIp: ip, dstIp: intToIp(base + i), ttl: 64, srcPort: 5000 + i, dstPort: 80, flags: "SYN", seq: String(2000 + i) });
+      const arrived = ctx.steps.some((s) => s.packet.dstIp === intToIp(base + i) && s.inPort && s.deviceId === (findDevByIp(t, intToIp(base + i))?.id ?? ""));
+      if (arrived) reached += 1;
+    }
+  }
+
+  const target = findDevByIp(t, targetIp);
+  const alerts = t.devices.reduce((n, d) => n + (d.idsAlerts?.length ?? 0), 0);
+  const targetDown = kind === "ddos" ? !!(target?.overloaded) : kind === "synflood" ? (target?.halfOpen ?? 0) >= 6 : intercepted;
+  const blocked = sent > 0 && reached === 0;
+  const defended = !targetDown && !intercepted;
+  const report: import("./types").AttackReport = { blocked, reached, sent, alerts, targetDown, intercepted };
+
+  const notes: Record<string, { ar: string; en: string }> = {
+    defended: { ar: `صدَّت دفاعاتك الهجوم! ${alerts} تنبيه IDS، وصلت ${reached}/${sent} حزمة فقط`, en: `Your defense blocked the attack! ${alerts} IDS alerts, only ${reached}/${sent} packets got through` },
+    down: { ar: `الهجوم نجح: الهدف ${targetDown ? "سقط (مشبع)" : "مُعترض"} — أضف قواعد جدار ناري أو أمن منافذ`, en: `Attack succeeded: target ${targetDown ? "down (saturated)" : "intercepted"} — add firewall rules or port-security` },
+  };
+  return {
+    steps: ctx.steps,
+    devices: t.devices,
+    success: defended,
+    note: defended ? info(notes.defended.ar, notes.defended.en) : info(notes.down.ar, notes.down.en),
+    report,
+  };
+}
+
+/** Restore defaults on devices loaded from old saved topologies (missing v2 fields) */
+export function normalizeTopology(t: Topology): Topology {
+  for (const d of t.devices) {
+    d.acls = Array.isArray(d.acls) ? d.acls : [];
+    d.defaultDeny = !!d.defaultDeny;
+    d.attack = d.attack ?? null;
+    d.idsAlerts = Array.isArray(d.idsAlerts) ? d.idsAlerts : [];
+    d.statsIn = d.statsIn ?? 0;
+    d.statsDropped = d.statsDropped ?? 0;
+    d.overloaded = !!d.overloaded;
+    d.halfOpen = d.halfOpen ?? 0;
+    for (const p of d.ports) {
+      p.secure = !!p.secure;
+      p.stickyMac = p.stickyMac ?? null;
+    }
+    if (!KIND_BASE[d.kind]) d.kind = "pc";
+  }
+  return t;
+}

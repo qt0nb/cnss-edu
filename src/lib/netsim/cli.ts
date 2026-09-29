@@ -1,5 +1,5 @@
-// ─── NetSim mini IOS-like CLI interpreter (routers & switches) ─────────
-import type { Device } from "./types";
+// ─── NetSim mini IOS-like CLI interpreter (routers, switches, firewall, L3, IDS) ─────────
+import type { Device, AttackKind } from "./types";
 import { findPort, hostIp, isValidIp, networkOf, prefixToMask, connectedRoutes, maskToPrefix, isHostKind } from "./engine";
 
 export type CliMode = "exec" | "priv" | "conf" | "iface" | "vlan";
@@ -13,7 +13,7 @@ export interface CliState {
 export const initialCliState: CliState = { mode: "exec", iface: "", vlan: 0 };
 
 export interface CliAction {
-  type: "ping" | "dhcp-renew" | "dns" | "http";
+  type: "ping" | "dhcp-renew" | "dns" | "http" | "attack" | "stop-attack";
   arg: string;
 }
 
@@ -24,8 +24,14 @@ export interface CliResult {
 }
 
 const OK = [""];
-const isRouterLike = (d: Device) => d.kind === "router" || d.kind === "wirelessRouter" || d.kind === "switch" || d.kind === "hub";
-const isSwitchLike = (d: Device) => d.kind === "switch" || d.kind === "hub";
+const isRouterLike = (d: Device) => d.kind === "router" || d.kind === "wirelessRouter" || d.kind === "switch" || d.kind === "hub" || d.kind === "firewall" || d.kind === "l3switch" || d.kind === "ids";
+const isSwitchLike = (d: Device) => d.kind === "switch" || d.kind === "hub" || d.kind === "l3switch";
+const canFilter = (d: Device) => d.kind === "firewall" || d.kind === "l3switch";
+const ATTACK_KINDS: AttackKind[] = ["arpspoof", "ddos", "synflood", "scan"];
+
+function nextAclId(d: Device): number {
+  return (d.acls ?? []).reduce((m, r) => Math.max(m, r.id), 0) + 1;
+}
 
 export function promptOf(d: Device, s: CliState): string {
   const h = d.name;
@@ -49,9 +55,21 @@ export function runCliLine(d: Device, rawLine: string, state: CliState): CliResu
     lines.push("% الأوامر غير متاحة على هذا الجهاز / Commands not available on this device");
     return { lines, state: st };
   }
-  if (line === "") return { lines: [""], state: st };
+  if (line === "" || lower === "cls" || lower === "clear") return { lines, state: st };
   if (line === "?" || lower === "help") {
-    lines.push("الأوامر المتاحة / Available commands:", "  enable, disable, configure terminal", "  interface <name> | vlan <n>", "  hostname <name>, ip route <net> <mask> <nh>", "  show ip interface brief | show arp", "  show mac address-table | show ip route", "  show running-config | show vlan | write", "  ping <ip>, exit, end");
+    lines.push(
+      "الأوامر المتاحة / Available commands:",
+      "  enable, disable, configure terminal",
+      "  interface <name> | interface vlan <n>",
+      "  hostname <name>, ip route <net> <mask> <nh>",
+      "  access-list <permit|deny> <proto> <src> <dst> [port]  ← جدار ناري",
+      "  policy deny-all | no policy deny-all              ← السياسة الافتراضية",
+      "  switchport port-security                          ← أمن المنفذ",
+      "  show ip interface brief | show arp | show vlan",
+      "  show mac address-table | show ip route",
+      "  show access-list | show alerts | show running-config",
+      "  ping <ip>, attack ... (Kali), exit, end, write"
+    );
     return { lines, state: st };
   }
 
@@ -86,6 +104,17 @@ export function runCliLine(d: Device, rawLine: string, state: CliState): CliResu
       if (st.mode !== "conf") {
         lines.push("% خطأ: يجب أن تكون في وضع الإعداد (configure terminal أولاً)");
         return { lines, state: st };
+      }
+      const lowerArg = arg.toLowerCase();
+      if (lowerArg.startsWith("vlan") && d.kind === "l3switch") {
+        const n = parseInt(tokens[2] ?? "", 10);
+        const svi = d.ports.find((p) => p.kind === "svi" && p.id === `vlan${n}`);
+        if (!svi) {
+          lines.push(`% لا توجد SVI للـVLAN ${n} — المتاح: vlan10, vlan20, vlan30`);
+          return { lines, state: st };
+        }
+        st = { ...st, mode: "iface", iface: svi.id };
+        return { lines: OK, state: st };
       }
       const name = arg;
       const port = findPortByName(d, name);
@@ -141,11 +170,25 @@ export function runCliLine(d: Device, rawLine: string, state: CliState): CliResu
         if (p) p.adminUp = true;
         return { lines: [`%LINK-5-CHANGED: Interface ${p?.name}, changed state to up`], state: st };
       }
+      if (st.mode === "iface" && isSwitchLike(d) && sub === "switchport" && tokens[2] === "port-security") {
+        const p = findPort(d, st.iface);
+        if (p) { p.secure = false; p.stickyMac = null; }
+        return { lines: [`${p?.name}: أمن المنفذ معطّل`], state: st };
+      }
+      if (st.mode === "conf" && sub === "policy") {
+        d.defaultDeny = false;
+        return { lines: ["السياسة الافتراضية: السماح (permit-all)"], state: st };
+      }
       if (st.mode === "conf" && sub === "ip" && tokens[2] === "route") {
         const net = tokens[3];
         const mask = tokens[4];
         d.routes = d.routes.filter((r) => !(r.network === net && r.mask === mask && r.kind === "static"));
         return { lines: OK, state: st };
+      }
+      if (st.mode === "conf" && (sub === "access-list" || sub === "acl")) {
+        const id = parseInt(tokens[2] ?? "", 10);
+        d.acls = (d.acls ?? []).filter((r) => r.id !== id);
+        return { lines: [`حُذفت القاعدة ${id || ""} `], state: st };
       }
       lines.push("% أمر غير مدعوم");
       return { lines, state: st };
@@ -217,6 +260,75 @@ export function runCliLine(d: Device, rawLine: string, state: CliState): CliResu
       lines.push("% أمر ip غير مدعوم هنا");
       return { lines, state: st };
     }
+    case "access-list":
+    case "acl": {
+      if (!canFilter(d)) {
+        lines.push("% قوائم ACL تُضبط على الجدار الناري أو مبدّل L3");
+        return { lines, state: st };
+      }
+      if (st.mode !== "conf") {
+        lines.push("% يجب أن تكون في configure terminal");
+        return { lines, state: st };
+      }
+      const action = tokens[1]?.toLowerCase();
+      if (action !== "permit" && action !== "deny") {
+        lines.push("% صيغة: access-list permit|deny any|icmp|tcp|udp <src any|ip> <dst any|ip> [port]");
+        return { lines, state: st };
+      }
+      const proto = (tokens[2]?.toLowerCase() ?? "any") as "any" | "icmp" | "tcp" | "udp";
+      if (!["any", "icmp", "tcp", "udp"].includes(proto)) {
+        lines.push("% البروتوكول: any أو icmp أو tcp أو udp");
+        return { lines, state: st };
+      }
+      const src = tokens[3] ?? "any";
+      const dst = tokens[4] ?? "any";
+      const port = tokens[5] ? parseInt(tokens[5], 10) : null;
+      if (src !== "any" && !isValidIp(src)) { lines.push("% عنوان المصدر غير صالح (أو any)"); return { lines, state: st }; }
+      if (dst !== "any" && !isValidIp(dst)) { lines.push("% عنوان الوجهة غير صالح (أو any)"); return { lines, state: st }; }
+      const rule = { id: nextAclId(d), action: action as "permit" | "deny", src, srcMask: "any", dst, dstMask: "any", proto, port: Number.isFinite(port) ? port : null, hits: 0 };
+      d.acls = [...(d.acls ?? []), rule];
+      return { lines: [`قاعدة #${rule.id}: ${action} ${proto} ${src} → ${dst}${port ? ":" + port : ""}`], state: st };
+    }
+    case "policy": {
+      if (!canFilter(d)) { lines.push("% للجدار الناري فقط"); return { lines, state: st }; }
+      if (st.mode !== "conf") { lines.push("% يجب أن تكون في configure terminal"); return { lines, state: st }; }
+      if (tokens[1]?.toLowerCase() === "deny-all") {
+        d.defaultDeny = true;
+        return { lines: ["السياسة الافتراضية: رفض كل ما لا تطابقه قواعد permit"], state: st };
+      }
+      lines.push("% صيغة: policy deny-all");
+      return { lines, state: st };
+    }
+    case "attack": {
+      if (d.kind !== "attacker") {
+        lines.push("% أوامر الهجوم لجهاز المهاجم (Kali) فقط");
+        return { lines, state: st };
+      }
+      const sub = tokens[1]?.toLowerCase() ?? "";
+      if (sub === "stop") {
+        d.attack = null;
+        return { lines: ["أُوقف الهجوم وصفّرت الحالة"], state: st, action: { type: "stop-attack", arg: "" } };
+      }
+      if (!ATTACK_KINDS.includes(sub as AttackKind)) {
+        lines.push("% صيغ الهجوم:", "  attack arpspoof <ضحيةIP> <هوية مسروقةIP>", "  attack ddos <هدفIP>", "  attack synflood <هدفIP>", "  attack scan <بدايةIP>", "  attack stop");
+        return { lines, state: st };
+      }
+      const a1 = tokens[2];
+      const a2 = tokens[3];
+      if (!a1 || !isValidIp(a1)) { lines.push("% حدد عنوان IP صالحاً"); return { lines, state: st }; }
+      d.attack = {
+        kind: sub as AttackKind,
+        targetIp: a1,
+        victimIp: sub === "arpspoof" ? (a2 && isValidIp(a2) ? a2 : null) : null,
+        active: true,
+      };
+      const desc = sub === "arpspoof"
+        ? `تسميم ARP: سأقنع ${a1} أنني أنا ${a2 ?? "الهوية المسروقة"}`
+        : sub === "ddos" ? `إغراق ICMP نحو ${a1}`
+          : sub === "synflood" ? `إغراق SYN نحو ${a1}:80`
+            : `مسح الشبكة بدءاً من ${a1}`;
+      return { lines: [desc, "شغّل «تنفيذ الهجوم» أو اضغط زر الهجوم لمشاهدة المحاكاة"], state: st, action: { type: "attack", arg: "" } };
+    }
     case "switchport": {
       if (st.mode !== "iface") {
         lines.push("% استخدمه داخل واجهة");
@@ -228,6 +340,11 @@ export function runCliLine(d: Device, rawLine: string, state: CliState): CliResu
         return { lines, state: st };
       }
       const sub = tokens[1]?.toLowerCase();
+      if (sub === "port-security") {
+        p.secure = true;
+        p.stickyMac = null;
+        return { lines: [`${p.name}: أمن المنفذ مفعّل — سيتثبت أول MAC يتعلمه المنفذ`], state: st };
+      }
       if (sub === "mode") {
         const m = tokens[2]?.toLowerCase();
         if (m === "access") { p.trunk = false; lines.push(`منفذ ${p.name} صار access`); }
@@ -281,7 +398,22 @@ function findPortByName(d: Device, name: string): ReturnType<typeof findPort> {
 export function showCommand(d: Device, sub: string): string[] {
   const out: string[] = [];
   const s = sub.toLowerCase();
-  if (s.startsWith("ip interface brief") || s === "ip int brief" || s.startsWith("ip int")) {
+  if (s.startsWith("access-list") || s === "acl") {
+    out.push(`السياسة الافتراضية: ${d.defaultDeny ? "رفض الكل (deny-all)" : "السماح (permit-all)"}`);
+    out.push("#  Action  Proto  Source        Dest          Port  Hits");
+    const rules = d.acls ?? [];
+    out.push(rules.length ? rules.map((r) => `${String(r.id).padEnd(3)}${r.action.padEnd(8)}${r.proto.padEnd(7)}${(r.src === "any" ? "any" : r.src).padEnd(14)}${(r.dst === "any" ? "any" : r.dst).padEnd(14)}${(r.port ?? "-").toString().padEnd(6)}${r.hits}`).join("\n") : "  (لا قواعد)");
+  } else if (s.startsWith("alert")) {
+    const alerts = d.idsAlerts ?? [];
+    out.push(`تنبيهات ${d.name} (${alerts.length}):`);
+    out.push(alerts.length ? alerts.map((a) => `[${a.severity.toUpperCase()}] ${a.kind} ${a.srcIp} → ${a.dstIp} — ${a.detail.ar}`).join("\n") : "  (لا تنبيهات — شغّل حركة أو هجوماً)");
+  } else if (s.startsWith("attack")) {
+    if (d.kind !== "attacker") { out.push("% لجهاز المهاجم فقط"); return out; }
+    out.push(d.attack ? `الهجوم الحالي: ${d.attack.kind} → ${d.attack.targetIp}${d.attack.victimIp ? ` (سرقة هوية ${d.attack.victimIp})` : ""} — ${d.attack.active ? "نشط" : "متوقف"}` : "  (لا هجوم مضبوط — جرّب: attack ddos <ip>)");
+  } else if (s.startsWith("port-security")) {
+    const secured = d.ports.filter((p) => p.secure);
+    out.push(secured.length ? secured.map((p) => `${p.name}: ${p.stickyMac ?? "بانتظار أول MAC"}`).join("\n") : "  (لا منافذ مؤمّنة — استخدم switchport port-security داخل الواجهة)");
+  } else if (s.startsWith("ip interface brief") || s === "ip int brief" || s.startsWith("ip int")) {
     out.push("Interface              IP-Address      OK? Method Status  Protocol");
     out.push(d.ports.map((p) => {
       const short = p.name.replace("FastEthernet", "Fa").replace("GigabitEthernet", "Gi").replace("Serial", "Se").replace(" (WAN)", "").padEnd(22).slice(0, 22);
@@ -306,8 +438,10 @@ export function showCommand(d: Device, sub: string): string[] {
     }
   } else if (s.startsWith("running-config") || s === "run") {
     out.push("! التكوين الحالي لـ " + d.name);
-    out.push(d.ports.filter((p) => p.ip).map((p) => `interface ${p.name}\n ip address ${p.ip} ${p.mask}\n ${p.adminUp ? "no shutdown" : "shutdown"}`).join("\n"));
+    out.push(d.ports.filter((p) => p.ip).map((p) => `interface ${p.name}\n ip address ${p.ip} ${p.mask}\n ${p.adminUp ? "no shutdown" : "shutdown"}${p.secure ? "\n switchport port-security" : ""}${p.trunk ? "\n switchport mode trunk" : ""}${!p.trunk && p.accessVlan !== 1 && (d.kind === "switch" || d.kind === "l3switch") ? `\n switchport access vlan ${p.accessVlan}` : ""}`).join("\n"));
     out.push(d.routes.filter((r) => r.kind === "static").map((r) => `ip route ${r.network} ${r.mask} ${r.nextHop ?? r.iface}`).join("\n"));
+    out.push((d.acls ?? []).map((r) => `access-list ${r.action} ${r.proto} ${r.src} ${r.dst}${r.port ? " " + r.port : ""}`).join("\n"));
+    if (d.defaultDeny) out.push("policy deny-all");
   } else if (s.startsWith("version")) {
     out.push(`${d.name} — NetMastery Sim (IOS-like)\nالنموذج: ${d.kind === "router" ? "1941 ISR" : d.kind === "switch" ? "2960" : "عمومي"}\nالذاكرة: 512MB DRAM\nالبوابات: ${d.ports.length}`);
   } else {
@@ -324,7 +458,30 @@ export function runHostLine(d: Device, rawLine: string): { lines: string[]; acti
   if (!isHostKind(d.kind)) return { lines: ["ليس جهاز طرفية / not an end device"] };
   if (line === "" || lower === "cls" || lower === "clear") return { lines: [] };
   if (lower === "?" || lower === "help") {
-    return { lines: ["أوامر متاحة: ipconfig, ipconfig /ip <ip> <mask>, ipconfig /gw <ip>, ipconfig /dns <ip>, ipconfig /dhcp, arp -a, ping <ip>, nslookup <name>, http <host>, cls"] };
+    return { lines: [d.kind === "attacker"
+      ? "أوامر Kali: attack arpspoof <ضحية> <هوية> | attack ddos <هدف> | attack synflood <هدف> | attack scan <ip> | attack stop | attack status, ipconfig, arp -a, arp -d, ping <ip>"
+      : "أوامر متاحة: ipconfig, ipconfig /ip <ip> <mask>, ipconfig /gw <ip>, ipconfig /dns <ip>, ipconfig /dhcp, arp -a, arp -d, ping <ip>, nslookup <name>, http <host>, cls"] };
+  }
+  if (d.kind === "attacker" && lower.startsWith("attack")) {
+    const toks = line.split(/\s+/);
+    const sub = toks[1]?.toLowerCase() ?? "";
+    if (sub === "status") {
+      return { lines: [d.attack ? `الهجوم: ${d.attack.kind} → ${d.attack.targetIp}${d.attack.victimIp ? ` (هوية ${d.attack.victimIp})` : ""}` : "(لا هجوم مضبوط)"] };
+    }
+    if (sub === "stop") {
+      d.attack = null;
+      return { lines: ["أُوقف الهجوم"], action: { type: "stop-attack", arg: "" } };
+    }
+    if (!ATTACK_KINDS.includes(sub as AttackKind) || !toks[2] || !isValidIp(toks[2])) {
+      return { lines: ["% صيغة: attack arpspoof|ddos|synflood|scan <ip> [هوية] — أو attack stop"] };
+    }
+    d.attack = {
+      kind: sub as AttackKind,
+      targetIp: toks[2],
+      victimIp: sub === "arpspoof" && toks[3] && isValidIp(toks[3]) ? toks[3] : null,
+      active: true,
+    };
+    return { lines: [`هجوم ${sub} جاهز نحو ${toks[2]} — تنفيذ المحاكاة الآن...`], action: { type: "attack", arg: "" } };
   }
   const { ip, mask } = hostIp(d);
   if (lower === "ipconfig" || lower === "ifconfig" || lower === "ipconfig /all") {
@@ -379,6 +536,10 @@ export function runHostLine(d: Device, rawLine: string): { lines: string[]; acti
   }
   if (lower === "arp" || lower === "arp -a") {
     return { lines: d.arp.length ? d.arp.map((a) => `  ${a.ip.padEnd(16)} ${a.mac}`).join("\n").split("\n") : ["  (جدول ARP فارغ)"] };
+  }
+  if (lower === "arp -d" || lower === "arp /d") {
+    d.arp = [];
+    return { lines: ["أُفرغ جدول ARP — إعادة التعلم عند أول حزمة (علاج التسميم)"] };
   }
   if (lower.startsWith("ping")) {
     const ipn = line.split(/\s+/)[1];

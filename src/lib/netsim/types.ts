@@ -4,6 +4,10 @@ import type { Bi } from "@/lib/types";
 export type DeviceKind =
   | "router"
   | "switch"
+  | "l3switch"
+  | "firewall"
+  | "ids"
+  | "attacker"
   | "pc"
   | "server"
   | "laptop"
@@ -15,7 +19,39 @@ export type DeviceKind =
 
 export type LinkKind = "copper" | "crossover" | "serial" | "fiber" | "console" | "wireless";
 
-export type PortKind = "ethernet" | "serial" | "console" | "wireless" | "internet";
+export type PortKind = "ethernet" | "serial" | "console" | "wireless" | "internet" | "svi";
+
+/** Directional ACL rule enforced on firewall devices */
+export interface AclRule {
+  id: number;
+  action: "permit" | "deny";
+  src: string; // "any" or ip
+  srcMask: string; // "any" or dotted mask
+  dst: string;
+  dstMask: string;
+  proto: "any" | "icmp" | "tcp" | "udp";
+  port: number | null; // dst port match when proto tcp/udp
+  hits: number;
+}
+
+export type AttackKind = "arpspoof" | "ddos" | "synflood" | "scan";
+
+/** Live attack launched from an attacker device */
+export interface AttackState {
+  kind: AttackKind;
+  targetIp: string; // flood target / scan range start
+  victimIp: string | null; // arpspoof: identity being stolen (gateway usually)
+  active: boolean;
+}
+
+export interface IdsAlert {
+  id: number;
+  severity: "info" | "warn" | "critical";
+  kind: "arp-spoof" | "icmp-flood" | "syn-flood" | "scan" | "acl-deny" | "port-security";
+  srcIp: string;
+  dstIp: string;
+  detail: Bi;
+}
 
 export interface Port {
   id: string; // canonical short id, e.g. "g0/0"
@@ -28,6 +64,9 @@ export interface Port {
   mask: string | null;
   accessVlan: number;
   trunk: boolean;
+  /** switch port-security: lock the port to its first learned MAC */
+  secure: boolean;
+  stickyMac: string | null;
 }
 
 export interface ArpEntry {
@@ -93,6 +132,27 @@ export interface Device {
   nat: boolean;
   natTable: { lanIp: string; lanPort: number; wanPort: number }[];
   natWanCounter: number;
+  // firewall ACLs + default policy (firewall kind; l3switch can also filter)
+  acls: AclRule[];
+  defaultDeny: boolean;
+  // live attack state (attacker kind)
+  attack: AttackState | null;
+  // IDS alerts + inspection counters (ids, firewall, switch violations)
+  idsAlerts: IdsAlert[];
+  statsIn: number;
+  statsDropped: number;
+  // flood victim state (targets overwhelmed by attacks)
+  overloaded: boolean;
+  halfOpen: number;
+}
+
+export interface AttackReport {
+  blocked: boolean; // defense stopped every attack packet
+  reached: number; // attack packets that hit the target
+  sent: number;
+  alerts: number; // IDS alerts raised
+  targetDown: boolean; // victim overloaded / intercepted
+  intercepted: boolean; // arpspoof success
 }
 
 export interface Link {
@@ -164,7 +224,7 @@ export interface DeviceSpec {
   kind: DeviceKind;
   nameBi: Bi;
   descBi: Bi;
-  category: "end" | "network" | "wireless" | "wan";
+  category: "end" | "network" | "wireless" | "wan" | "security";
 }
 
 export const DEVICE_SPECS: DeviceSpec[] = [
@@ -173,6 +233,12 @@ export const DEVICE_SPECS: DeviceSpec[] = [
     category: "network",
     nameBi: { ar: "موجّه (Router)", en: "Router" },
     descBi: { ar: "1941 ISR — يوجّه الحزم بين الشبكات ويدعم CLI كامل", en: "1941 ISR — routes between networks, full IOS CLI" },
+  },
+  {
+    kind: "l3switch",
+    category: "network",
+    nameBi: { ar: "مبدّل طبقة-3 (L3 Switch)", en: "Layer-3 Switch" },
+    descBi: { ar: "3560 — تمدين + توجيه بين VLANs عبر واجهات SVI", en: "3560 — switching + inter-VLAN routing via SVIs" },
   },
   {
     kind: "switch",
@@ -185,6 +251,24 @@ export const DEVICE_SPECS: DeviceSpec[] = [
     category: "network",
     nameBi: { ar: "موزّع (Hub)", en: "Hub" },
     descBi: { ar: "جهاز قديم يكرر كل شيء لكل المنافذ — لتعلم الفرق عن المبدّل", en: "Legacy repeater — floods everything, to contrast with switches" },
+  },
+  {
+    kind: "firewall",
+    category: "security",
+    nameBi: { ar: "جدار ناري (Firewall)", en: "Firewall" },
+    descBi: { ar: "ASA 5505 — قواعد ACL تسمح/تمنع + سياسة افتراضية + سجل إسقاط", en: "ASA 5505 — permit/deny ACL rules + default policy + deny log" },
+  },
+  {
+    kind: "ids",
+    category: "security",
+    nameBi: { ar: "مستشعر IDS", en: "IDS Sensor" },
+    descBi: { ar: "يراقب الحركة العابرة ويكشف ARP-Spoof والإغراق ومسح المنافذ", en: "Inspects transit traffic — detects ARP-spoof, floods & scans" },
+  },
+  {
+    kind: "attacker",
+    category: "security",
+    nameBi: { ar: "جهاز مهاجم (Kali)", en: "Attacker (Kali)" },
+    descBi: { ar: "يطلق ARP-Spoof وDDoS وSYN-Flood وScan من CLI — للتمرين الدفاعي", en: "Launches ARP-spoof, DDoS, SYN-flood & scan from CLI — defensive drills" },
   },
   {
     kind: "pc",

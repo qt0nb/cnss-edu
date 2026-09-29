@@ -26,6 +26,18 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
   { id: "cloud", name: { ar: "شبكات السحابة", en: "Cloud Networking" }, icon: "Cloud" },
   { id: "windows", name: { ar: "شبكات ويندوز", en: "Windows Networking" }, icon: "AppWindow" },
   { id: "hardware", name: { ar: "العتاد والفحص", en: "Hardware & Testing" }, icon: "HardDrive" },
+  { id: "sdn", name: { ar: "SDN والتحكم البرمجي", en: "SDN & Controllers" }, icon: "Network" },
+  { id: "voip", name: { ar: "الصوت والهاتف VoIP", en: "VoIP & Telephony" }, icon: "PhoneCall" },
+  { id: "container", name: { ar: "شبكات الحاويات", en: "Container Networking" }, icon: "Package2" },
+  { id: "mesh", name: { ar: "الشبكات المتشابكة والتراكب", en: "Mesh & Overlay" }, icon: "GitFork" },
+  { id: "loadbalance", name: { ar: "موازنة الحمل", en: "Load Balancing" }, icon: "Scale" },
+  { id: "storage", name: { ar: "شبكات التخزين", en: "Storage Networking" }, icon: "Database" },
+  { id: "iot", name: { ar: "إنترنت الأشياء", en: "IoT & MQTT" }, icon: "Cpu" },
+  { id: "telecom", name: { ar: "الاتصالات والنواة", en: "Telecom & Mobile Core" }, icon: "Antenna" },
+  { id: "incident", name: { ar: "الاستجابة للحوادث", en: "Incident Response" }, icon: "Siren" },
+  { id: "osint", name: { ar: "الاستطلاع المفتوح OSINT", en: "OSINT & Recon" }, icon: "Eye" },
+  { id: "mobile", name: { ar: "تطبيقات الجوال الشبكية", en: "Mobile Network Apps" }, icon: "Smartphone" },
+  { id: "dev", name: { ar: "مكتبات و SDKs", en: "Libraries & SDKs" }, icon: "Code2" },
 ];
 
 export const toolCategoryById = (id: string): ToolCategory =>
