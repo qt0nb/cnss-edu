@@ -6,7 +6,7 @@ import {
   Wrench, Terminal, Star, Bookmark, BookmarkCheck, ExternalLink, Monitor,
   Globe, Smartphone, Apple, Laptop, Copy, Check, X,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
@@ -249,7 +249,10 @@ function ToolDialog({ tool, onClose }: { tool: Tool | null; onClose: () => void 
             </div>
           </DialogHeader>
 
-          <p className="text-[12px] leading-6 text-muted-foreground">{bi(tool.desc)}</p>
+          {/* description feeds the Radix aria-describedby → no a11y warning */}
+          <DialogDescription asChild>
+            <p className="text-[12px] leading-6 text-muted-foreground">{bi(tool.desc)}</p>
+          </DialogDescription>
 
           {/* example usage in a terminal window */}
           {tool.cmd && (

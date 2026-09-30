@@ -42,6 +42,7 @@ import type { ViewId } from "@/lib/types";
 import { ACHIEVEMENTS } from "@/data/achievements";
 import CommandPalette from "@/components/platform/shell/CommandPalette";
 import NetBackground from "@/components/platform/shell/NetBackground";
+import { ViewErrorBoundary } from "@/components/platform/shell/ViewErrorBoundary";
 
 const DashboardView = dynamic(() => import("@/components/platform/DashboardView"));
 const LessonsView = dynamic(() => import("@/components/platform/LessonsView"));
@@ -438,17 +439,21 @@ function ViewRouter() {
     [view]
   );
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={view}
-        initial={{ opacity: 0, y: 14, scale: 0.995 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -10, scale: 0.995 }}
-        transition={{ type: "spring", stiffness: 360, damping: 34, mass: 0.9 }}
-      >
-        {views[view]}
-      </motion.div>
-    </AnimatePresence>
+    // Per-view error boundary keyed on the view: a failed chunk (dev server
+    // restart) auto-retries via remount instead of blanking the whole app.
+    <ViewErrorBoundary resetKey={view}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={view}
+          initial={{ opacity: 0, y: 14, scale: 0.995 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10, scale: 0.995 }}
+          transition={{ type: "spring", stiffness: 360, damping: 34, mass: 0.9 }}
+        >
+          {views[view]}
+        </motion.div>
+      </AnimatePresence>
+    </ViewErrorBoundary>
   );
 }
 
