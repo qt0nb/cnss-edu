@@ -799,3 +799,29 @@ Stage Summary:
 - 2 commits ready to push (31a9c66 hydration, 5a36c82 chunk-load resilience + supervisor): blocked ONLY by missing GitHub credentials
 - All 13 pages verified error-free; server memory stabilized; auto-recovery proven working
 - Next: user must provide GitHub PAT (repo scope) to complete the push
+
+---
+Task ID: push-icon-1
+Agent: main (Z.ai Code)
+Task: Push to GitHub (token provided) + redesign app icon (user: old one "bad and sharp-edged")
+
+Work Log:
+- Push round 1: token authenticated as qt0nb but 403 — fine-grained PAT lacked Contents:write (verified via API probe "Resource not accessible by personal access token")
+- User updated token permissions → push round 2 SUCCESS: main branch created on github.com/qt0nb/cnss-edu with full history (e1f3226)
+- Icon audit: old mark = hexagon mesh (genuinely sharp corners). Redesigned as "soft network constellation": 6 round nodes on organic positions, curved bezier arcs (no straight spokes), dashed circular orbit rings, glowing packet dots, soft hub with curved caret wing (single bezier) + round dot. Applied to: src/app/icon.svg, public/logo.svg, CnssMark (page.tsx sidebar/splash/mobile), CertMark (certificate seal)
+- Created scripts/regenerate-icons.js (sharp, ESM): rasterizes SVG → icon-96/192/512, maskable-192/512 (full-bleed + 0.78 safe-zone), apple-touch-icon (full-bleed + 0.88)
+- VLM softness audit: 7/10 (v2 straight chevron) → 9/10 (v3 curved caret wing + dot)
+- DEBUGGING BONUS — found + fixed a real hydration bug while verifying the icon:
+  * Symptom: fresh reload showed hydration mismatch diff (server HTML had NEW paths, client DOM had OLD paths) in CnssMark
+  * Root cause: PWA service worker v2 served /_next/static chunks cache-first; Turbopack dev reuses stable chunk filenames across recompiles → SW fed stale client JS forever (explains recurring "small errors when entering pages" in dev preview)
+  * Fix: sw.js v3 — network-first + cache fallback for chunks/assets; byte-stable shell files stay cache-first; VERSION bump purges v2 caches; PwaRegister's SKIP_WAITING flow activates v3 on existing clients
+  * Also cleared stale Turbopack server cache (rm -rf .next + supervisor restart) — SSR module registry had old code
+- Verified: SW updated to v3 in browser, reload serves fresh chunks (curvedCaret:2/strongArcs:2 in DOM), hydration errors = 0, ALL 13 views CLEAN
+- Lint clean; committed a34e0d0; pushed to GitHub successfully
+
+Stage Summary:
+- GitHub repo qt0nb/cnss-edu: 2 pushes today (full project + icon/SW fix) — repo LIVE
+- Icon: soft constellation everywhere (favicon/sidebar/splash/certificates/PWA) + regeneration script for future tweaks
+- SW v3 eliminates dev stale-chunk hydration errors permanently while keeping offline PWA capability
+- Security note: user shared PAT in chat — advised to revoke after use
+- Next candidates: glossary view (planned last round, data design ready), certificate PDF export, study heatmap
