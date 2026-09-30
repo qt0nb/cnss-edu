@@ -199,6 +199,7 @@ export function createDevice(kind: DeviceKind, x: number, y: number, topo?: Topo
     defaultDeny: false,
     attack: null,
     idsAlerts: [],
+    motd: null,
     statsIn: 0,
     statsDropped: 0,
     overloaded: false,
@@ -1545,6 +1546,7 @@ export function normalizeTopology(t: Topology): Topology {
     d.defaultDeny = !!d.defaultDeny;
     d.attack = d.attack ?? null;
     d.idsAlerts = Array.isArray(d.idsAlerts) ? d.idsAlerts : [];
+    d.motd = d.motd ?? null;
     d.statsIn = d.statsIn ?? 0;
     d.statsDropped = d.statsDropped ?? 0;
     d.overloaded = !!d.overloaded;

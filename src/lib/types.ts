@@ -62,6 +62,115 @@ export interface CommandEntry {
   desc: Bi;
 }
 
+// ─── Academic sources (research-backed citations) ───────────────────────
+export type SourceKind =
+  | "rfc" // IETF Request For Comments
+  | "standard" // IEEE / ISO / NIST formal standard
+  | "paper" // peer-reviewed research paper
+  | "book" // canonical textbook
+  | "course" // university course / lecture notes
+  | "vendor" // official vendor documentation (Cisco, Wireshark…)
+  | "portal"; // reputable learning portal (Cloudflare, MDN…)
+
+export interface Source {
+  /** "rfc793", "stanford-cs144", "kuross-ross" … */
+  id: string;
+  kind: SourceKind;
+  /** Original (English) title */
+  title: string;
+  /** Issuing organization */
+  org: string;
+  year?: number;
+  /** Canonical public URL */
+  url: string;
+  authors?: string;
+  /**
+   * Original text shown inside the collapsible source box.
+   * `quote: true` → verbatim excerpt (rendered with citation marks + `ref`)
+   * `quote: false` → faithful official summary (labeled as such)
+   */
+  excerpt: string;
+  quote: boolean;
+  /** e.g. "§2.6" or "Abstract" for verbatim excerpts */
+  ref?: string;
+  /** bilingual description: why this source matters for the learner */
+  desc: Bi;
+}
+
+/** A lesson → source citation (references registry in src/data/sources.ts) */
+export interface LessonSourceRef {
+  sourceId: string;
+  /** which part of the lesson this source supports */
+  note?: Bi;
+}
+
+// ─── Interactive lesson widgets ─────────────────────────────────────────
+export interface InteractiveBase {
+  /** "w:l001:1" — unique per widget */
+  id: string;
+  /** render this widget after lesson.sections[sectionIndex] */
+  sectionIndex: number;
+  /** XP awarded once on solve */
+  xp: number;
+  title: Bi;
+  instructions: Bi;
+}
+
+/** Order the steps — tap items in the correct sequence (OSI layers, TCP handshake…) */
+export interface OrderWidget extends InteractiveBase {
+  kind: "order";
+  /** items in CORRECT order (engine shuffles for display) */
+  items: Bi[];
+}
+
+/** Match two columns — tap a left term then its right partner */
+export interface MatchWidget extends InteractiveBase {
+  kind: "match";
+  pairs: { left: Bi; right: Bi }[];
+}
+
+/** Classify items into 2-4 buckets */
+export interface ClassifyWidget extends InteractiveBase {
+  kind: "classify";
+  buckets: Bi[];
+  items: { text: Bi; bucket: number }[];
+}
+
+/** Fill blanks from a word bank. template uses "____" placeholders */
+export interface FillWidget extends InteractiveBase {
+  kind: "fill";
+  template: Bi;
+  blanks: { answer: Bi; hint?: Bi }[];
+  /** shuffled display bank (must contain every answer + distractors) */
+  bank: Bi[];
+}
+
+/** Binary↔decimal octet drill with 8 toggle bits (auto-generated rounds if empty) */
+export interface BinaryWidget extends InteractiveBase {
+  kind: "binary";
+  /** optional fixed octets; otherwise random 10-200 */
+  values?: number[];
+}
+
+/** Subnetting challenge — pick the mask that fits required hosts */
+export interface SubnetWidget extends InteractiveBase {
+  kind: "subnet";
+  network: string;
+  hosts: number;
+  options: string[];
+  /** index into options */
+  correct: number;
+  explain: Bi;
+}
+
+export type LessonInteractive =
+  | OrderWidget
+  | MatchWidget
+  | ClassifyWidget
+  | FillWidget
+  | BinaryWidget
+  | SubnetWidget;
+
 export interface Lesson {
   /** "l001" .. "l100" — must be globally unique, sequential by module order */
   id: string;
@@ -197,11 +306,53 @@ export interface ReviewCardState {
   lapses: number;
 }
 
+// ─── Analytics / assessment tracking (digital learner record) ──────────
+export interface LessonViewStats {
+  /** how many times the lesson reader was opened */
+  opens: number;
+  /** accumulated reading time (ms) — only while tab visible */
+  totalMs: number;
+  lastOpenedAt: string; // ISO
+}
+
+export type QuizMode = "lesson" | "module" | "random" | "final";
+
+export interface QuizRunEntry {
+  lessonId: string; // may be a synthetic key like "m01-exam" or "final" for aggregates
+  moduleId: string;
+  correct: number;
+  total: number;
+  at: string; // ISO
+  mode: QuizMode;
+}
+
+export interface QuizErrorEntry {
+  lessonId: string;
+  moduleId: string;
+  /** question index within the lesson quiz */
+  qIdx: number;
+  /** wrong option the learner chose */
+  chosen: number;
+  /** correct option index */
+  correct: number;
+  at: string; // ISO
+}
+
+export interface AiQueryEntry {
+  at: string; // ISO
+  /** context the query was asked from (e.g. "netsim.topology", "netsim.assistant") */
+  topic: string;
+  /** the query text (first 120 chars) */
+  q: string;
+}
+
 export interface ProgressState {
   version: number;
   xp: number;
   streak: number;
   lastActiveDay: string; // YYYY-MM-DD
+  /** learner name shown on certificates ("" → default placeholder) */
+  learnerName: string;
   completedLessons: Record<string, LessonProgress>;
   /** lessonId -> { attempts, correct, best } */
   quizStats: Record<string, { attempts: number; correct: number; best: number }>;
@@ -212,6 +363,16 @@ export interface ProgressState {
   projectBookmarks: string[];
   achievements: string[];
   playgroundUsed: string[]; // tool ids used
+  /** interactive widget ids solved (XP awarded once) */
+  interactiveDone: string[];
+  /** lessonId → reading-time tracking (digital record) */
+  lessonViews: Record<string, LessonViewStats>;
+  /** chronological quiz runs (capped 200) — the assessment trail */
+  quizLog: QuizRunEntry[];
+  /** every wrong answer with details (capped 300) — error taxonomy input */
+  errorLog: QuizErrorEntry[];
+  /** AI assistant / builder queries the learner asked (capped 100) */
+  aiQueries: AiQueryEntry[];
   /** challenge ids completed with auto-grading */
   challengesDone: string[];
 }
@@ -225,6 +386,8 @@ export type ViewId =
   | "projects"
   | "playground"
   | "challenges"
+  | "certificates"
+  | "analytics"
   | "integrations"
   | "achievements"
   | "settings";

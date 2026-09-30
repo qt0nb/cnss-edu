@@ -5,15 +5,16 @@
 // device, hits Verify — and the commands are REALLY applied to a cloned
 // simulated topology; connectivity checks (ping / http / dhcp / attack)
 // are executed with the netsim engine. No answer matching anywhere.
-import React, { useMemo, useState } from "react";
+// v3 "Ops Console" restyle — mission briefing cards + terminal pipeline.
+// All grading / XP / store logic below is untouched.
+import { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Swords, Trophy, Star, CheckCircle2, XCircle, Lightbulb, Play, RotateCcw,
-  ArrowLeft, Terminal, Zap, ShieldCheck, Wifi,
+  Swords, Trophy, CheckCircle2, XCircle, Lightbulb, Play, RotateCcw,
+  ArrowLeft, Terminal, Zap, ShieldCheck, Wifi, ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { useLang } from "@/lib/i18n";
 import { useProgress } from "@/lib/store";
@@ -104,6 +105,23 @@ const KIND_COLOR: Partial<Record<DeviceKind, string>> = {
 };
 
 const MAX_LINES = 200;
+
+// ─────────────── ops-console v3 helpers ───────────────
+
+/** "ch7" → mission code "c07" (display only — the store id is untouched). */
+function missionCode(id: string): string {
+  const n = parseInt(id.replace(/\D/g, ""), 10);
+  return `c${String(Number.isFinite(n) ? n : 0).padStart(2, "0")}`;
+}
+
+/** difficulty → severity chip + ops codename (bilingual, easy/medium/hard). */
+const DIFF_META: Record<number, { sev: string; label: { ar: string; en: string } }> = {
+  1: { sev: "chip-sev-ok", label: { ar: "RECON · سهل", en: "RECON · EASY" } },
+  2: { sev: "chip-sev-info", label: { ar: "PATROL · متوسط", en: "PATROL · MEDIUM" } },
+  3: { sev: "chip-sev-warn", label: { ar: "ASSAULT · صعب", en: "ASSAULT · HARD" } },
+};
+
+type StatusFilter = "all" | "ready" | "cleared";
 
 // ─────────────── grading core (shared with the engine) ───────────────
 
@@ -239,6 +257,9 @@ export default function ChallengesView() {
   const [busy, setBusy] = useState(false);
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  // v3 list chrome (visual only — does not affect any grading logic)
+  const [filter, setFilter] = useState<StatusFilter>("all");
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const loc = (o: { ar: string; en: string }) => (lang === "ar" ? o.ar : o.en);
 
@@ -330,85 +351,174 @@ export default function ChallengesView() {
     setHintCount((p) => ({ ...p, [sel.id]: Math.min((p[sel.id] ?? 0) + 1, sel.hints.length) }));
   };
 
-  // ── list view ──
+  // ── list view: mission briefings ──
   if (!sel) {
     const done = CHALLENGES.filter((c) => challengesDone.includes(c.id)).length;
+    const pct = Math.round((done / CHALLENGES.length) * 100);
+    const visible = CHALLENGES.filter((c) => {
+      const isDone = challengesDone.includes(c.id);
+      if (filter === "cleared") return isDone;
+      if (filter === "ready") return !isDone;
+      return true;
+    });
     return (
-      <div className="space-y-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="flex size-11 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-            <Swords className="size-6" />
-          </span>
-          <div>
-            <h1 className="text-2xl font-bold">{loc({ ar: "التحديات العملية", en: "Hands-on Challenges" })}</h1>
-            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{loc(L.subtitle)}</p>
+      <div className="space-y-5">
+        {/* section header */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2.5">
+            <span className="grid size-8 place-items-center rounded-lg bg-primary/10 text-primary">
+              <Swords className="size-4" />
+            </span>
+            <h2 className="text-sm font-black">{lang === "ar" ? "مهام ميدانية" : "Mission Briefings"}</h2>
+            <span className="code-chip">challenges.ops</span>
+            <span className="dot-leader" />
+            <span className="font-mono text-[10px] text-muted-foreground">
+              {done}/{CHALLENGES.length} {lang === "ar" ? "مكتملة" : "CLEARED"}
+            </span>
+          </div>
+          <p className="max-w-3xl text-sm text-muted-foreground">{loc(L.subtitle)}</p>
+        </div>
+
+        {/* progress + filter strip */}
+        <div className="hud-panel net-grid-bg rounded-xl p-4">
+          <div className="flex items-center justify-between gap-3 text-xs">
+            <span className="flex items-center gap-2 font-medium">
+              <span className="eq-bars" aria-hidden>
+                <i /><i /><i /><i />
+              </span>
+              {loc(L.progress)}
+            </span>
+            <span className="font-mono text-emerald-600 dark:text-emerald-400">
+              {done} / {CHALLENGES.length}
+            </span>
+          </div>
+          <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-muted" dir="ltr">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 transition-[width] duration-700"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {(["all", "ready", "cleared"] as StatusFilter[]).map((f) => {
+              const activeF = filter === f;
+              const count =
+                f === "all" ? CHALLENGES.length : f === "ready" ? CHALLENGES.length - done : done;
+              const label =
+                f === "all"
+                  ? lang === "ar" ? "الكل" : "ALL"
+                  : f === "ready"
+                    ? lang === "ar" ? "جاهزة" : "READY"
+                    : lang === "ar" ? "مكتملة" : "CLEARED";
+              return (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setFilter(f)}
+                  className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                    activeF
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "bg-muted/40 text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                  }`}
+                >
+                  {label} <span className="opacity-70">{String(count).padStart(2, "0")}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <Card className="gap-4 py-4">
-          <CardContent className="px-4">
-            <div className="mb-2 flex items-center justify-between gap-4 text-sm">
-              <span className="font-medium">{loc(L.progress)}</span>
-              <span className="font-mono text-emerald-600 dark:text-emerald-400">
-                {done} / {CHALLENGES.length}
-              </span>
-            </div>
-            <Progress value={(done / CHALLENGES.length) * 100} className="h-2" />
-          </CardContent>
-        </Card>
-
+        {/* mission briefing cards */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {CHALLENGES.map((ch) => {
+          {visible.map((ch, i) => {
             const isDone = challengesDone.includes(ch.id);
+            const isOpen = expanded === ch.id;
             return (
-              <Card
-                key={ch.id}
-                className={`group gap-4 transition-shadow hover:shadow-md ${isDone ? "border-emerald-500/40" : ""}`}
-              >
-                <CardHeader className="px-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="flex items-center gap-2 text-base leading-snug">
-                      <span className="font-mono text-xs text-muted-foreground">{ch.id}</span>
-                      {bi(ch.title)}
-                    </CardTitle>
-                    {isDone && (
-                      <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                        <Trophy className="size-3.5" />
-                        {loc(L.completed)}
+              <div key={ch.id} className="rise-in" style={{ animationDelay: `${i * 0.06}s` }}>
+                <article
+                  className={`hud-panel flex h-full flex-col gap-3 rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+                    isDone ? "border-emerald-500/40" : ""
+                  }`}
+                >
+                  {/* header row: mission code + title + status */}
+                  <div className="flex items-start gap-2">
+                    <span className="code-chip shrink-0">{missionCode(ch.id)}</span>
+                    <h3 className="min-w-0 flex-1 text-sm font-black leading-snug">{bi(ch.title)}</h3>
+                    {isDone ? (
+                      <span className="chip-sev chip-sev-ok inline-flex shrink-0 items-center gap-1">
+                        <CheckCircle2 className="size-3" /> CLEARED
+                      </span>
+                    ) : (
+                      <span className="chip-sev chip-sev-info inline-flex shrink-0 items-center gap-1">
+                        <span className="blink-dot inline-block size-1.5 rounded-full bg-emerald-500" /> READY
                       </span>
                     )}
                   </div>
-                  <CardDescription className="line-clamp-2">{bi(ch.story)}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-4 px-4">
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1" title={loc(L.difficultyWord)}>
-                      {[1, 2, 3].map((i) => (
-                        <Star
-                          key={i}
-                          className={`size-3.5 ${i <= ch.difficulty ? "fill-amber-400 text-amber-400" : "text-muted"}`}
-                        />
-                      ))}
-                      <span className="ms-1">{L.diffLabels[lang][ch.difficulty]}</span>
+
+                  {/* difficulty / XP / target chips */}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className={`chip-sev ${DIFF_META[ch.difficulty].sev}`} title={loc(L.difficultyWord)}>
+                      {loc(DIFF_META[ch.difficulty].label)}
                     </span>
-                    <Badge variant="secondary" className="gap-1 font-mono">
-                      <Zap className="size-3 text-amber-500" />
-                      {ch.xp} XP
-                    </Badge>
-                    <Badge variant="outline" className="gap-1 font-mono">
-                      <ShieldCheck className="size-3 text-emerald-500" />
-                      {ch.targetDevice}
-                    </Badge>
+                    <span className="code-chip inline-flex items-center gap-1" title="XP">
+                      <Zap className="size-3 text-amber-500" /> +{ch.xp}
+                    </span>
+                    <span className="code-chip inline-flex items-center gap-1" title={loc(L.targetOf)}>
+                      <ShieldCheck className="size-3 text-emerald-500" /> {ch.targetDevice}
+                    </span>
                   </div>
-                  <Button
-                    className="w-fit bg-emerald-600 text-white hover:bg-emerald-700"
-                    onClick={() => openChallenge(ch)}
-                  >
-                    <Play className={`size-4 ${dir === "rtl" ? "-scale-x-100" : ""}`} />
-                    {loc(L.start)}
-                  </Button>
-                </CardContent>
-              </Card>
+
+                  <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">{bi(ch.story)}</p>
+
+                  {/* expandable mission brief + objective steps */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="brief"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="term-window overflow-hidden">
+                          <div className="flex items-center gap-2 border-b border-border/60 px-5 py-1.5" dir="ltr">
+                            <span className="term-dots" aria-hidden />
+                            <span className="code-chip">mission.brief</span>
+                          </div>
+                          <p className="px-4 py-3 text-xs leading-6 text-foreground/90">{bi(ch.story)}</p>
+                        </div>
+                        <ol className="mt-2 space-y-1.5">
+                          {ch.checks.map((c, j) => (
+                            <li key={j} className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                              <span className="code-chip shrink-0">{String(j + 1).padStart(2, "0")}</span>
+                              <span className="min-w-0 flex-1 truncate">{bi(c.label)}</span>
+                              <span className="font-mono text-[9px] uppercase text-muted-foreground/60">{c.kind}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* actions */}
+                  <div className="mt-auto flex items-center gap-2">
+                    <Button className="bg-emerald-600 text-white hover:bg-emerald-700" onClick={() => openChallenge(ch)}>
+                      <Play className={`size-4 ${dir === "rtl" ? "-scale-x-100" : ""}`} />
+                      {loc(L.start)}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1 font-mono text-[10px] font-bold uppercase tracking-wider"
+                      onClick={() => setExpanded(isOpen ? null : ch.id)}
+                      aria-expanded={isOpen}
+                    >
+                      <ChevronDown className={`size-3.5 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                      {lang === "ar" ? "الموجز" : "BRIEF"}
+                    </Button>
+                  </div>
+                </article>
+              </div>
             );
           })}
         </div>
@@ -416,92 +526,103 @@ export default function ChallengesView() {
     );
   }
 
-  // ── detail view ──
+  // ── detail view: mission console ──
   const revealed = hintCount[sel.id] ?? 0;
   const ch = sel;
+  const allDone = outcome?.allPass ?? false;
+  const steps = outcome
+    ? outcome.results.map((r) => ({ label: r.label, kind: r.kind, pass: r.pass }))
+    : ch.checks.map((c) => ({ label: bi(c.label), kind: c.kind, pass: null as boolean | null }));
 
   return (
-    <div className="space-y-6">
-      {/* header */}
-      <div className="flex flex-wrap items-center gap-3">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-5"
+    >
+      {/* mission header */}
+      <div className="flex flex-wrap items-center gap-2.5">
         <Button variant="outline" size="sm" onClick={closeChallenge}>
           <ArrowLeft className={`size-4 ${dir === "rtl" ? "-scale-x-100" : ""}`} />
           {loc(L.back)}
         </Button>
-        <h1 className="flex flex-wrap items-center gap-2 text-xl font-bold">
-          <span className="font-mono text-sm text-muted-foreground">{ch.id}</span>
+        <span className="code-chip">{missionCode(ch.id)}</span>
+        <h1 className="flex flex-wrap items-center gap-2 text-xl font-black leading-snug">
           {bi(ch.title)}
           {challengesDone.includes(ch.id) && (
-            <Badge className="gap-1 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-              <Trophy className="size-3.5" />
-              {loc(L.completed)}
-            </Badge>
+            <span className="chip-sev chip-sev-ok inline-flex items-center gap-1">
+              <Trophy className="size-3" /> {loc(L.completed)}
+            </span>
           )}
         </h1>
-        <span className="flex items-center gap-1 text-xs text-muted-foreground">
-          {[1, 2, 3].map((i) => (
-            <Star
-              key={i}
-              className={`size-3.5 ${i <= ch.difficulty ? "fill-amber-400 text-amber-400" : "text-muted"}`}
-            />
-          ))}
-          <span className="ms-1">{L.diffLabels[lang][ch.difficulty]}</span>
+        <span className={`chip-sev ${DIFF_META[ch.difficulty].sev}`} title={loc(L.difficultyWord)}>
+          {loc(DIFF_META[ch.difficulty].label)}
         </span>
-        <Badge variant="secondary" className="gap-1 font-mono">
-          <Zap className="size-3 text-amber-500" />
-          {ch.xp} XP
-        </Badge>
+        <span className="code-chip inline-flex items-center gap-1">
+          <Zap className="size-3 text-amber-500" /> +{ch.xp} XP
+        </span>
+        <span className="code-chip inline-flex items-center gap-1">
+          <ShieldCheck className="size-3 text-emerald-500" /> {ch.targetDevice}
+        </span>
       </div>
 
-      {/* story */}
-      <Card>
-        <CardHeader className="px-6">
-          <CardTitle className="text-base">{loc(L.story)}</CardTitle>
-        </CardHeader>
-        <CardContent className="px-6">
-          <p className="leading-7">{bi(ch.story)}</p>
-        </CardContent>
-      </Card>
+      {/* objective block: mission brief terminal */}
+      <div className="term-window net-grid-bg relative overflow-hidden">
+        <span className="scanline" aria-hidden />
+        <div className="flex items-center gap-2 border-b border-border/60 px-5 py-2" dir="ltr">
+          <span className="term-dots" aria-hidden />
+          <span className="code-chip">mission.brief</span>
+          <span className="dot-leader" />
+          <span className="font-mono text-[10px] text-muted-foreground">{ch.id}.txt</span>
+        </div>
+        <p className="px-4 py-4 leading-7">
+          {bi(ch.story)}
+          <span className="caret ms-1 inline-block font-mono text-primary" aria-hidden>▌</span>
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* left column: topology + target + hints */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader className="px-6">
-              <CardTitle className="text-base">{loc(L.topology)}</CardTitle>
-              <CardDescription>{loc(L.legend)}</CardDescription>
-            </CardHeader>
-            <CardContent className="px-6">
-              {topo && <TopoDiagram topo={topo} targetName={ch.targetDevice} />}
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-                {[
-                  { c: "#0d9488", l: { ar: "راوتر", en: "Router" } },
-                  { c: "#059669", l: { ar: "مبدّل", en: "Switch" } },
-                  { c: "#d97706", l: { ar: "جدار", en: "Firewall" } },
-                  { c: "#71717a", l: { ar: "طرفية", en: "Host" } },
-                  { c: "#65a30d", l: { ar: "خادم", en: "Server" } },
-                  { c: "#14b8a6", l: { ar: "لاسلكي", en: "Wireless" } },
-                  { c: "#dc2626", l: { ar: "مهاجم", en: "Attacker" } },
-                ].map((it) => (
-                  <span key={it.l.en} className="flex items-center gap-1.5">
-                    <LegendDot color={it.c} />
-                    {loc(it.l)}
-                  </span>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <div className="space-y-5">
+          <div className="hud-panel rounded-xl p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="code-chip">lab.topology</span>
+              <span className="text-xs font-black">{loc(L.topology)}</span>
+              <span className="dot-leader" />
+              <span className="hidden font-mono text-[10px] text-muted-foreground sm:inline">{ch.targetDevice}</span>
+            </div>
+            {topo && <TopoDiagram topo={topo} targetName={ch.targetDevice} />}
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+              {[
+                { c: "#0d9488", l: { ar: "راوتر", en: "Router" } },
+                { c: "#059669", l: { ar: "مبدّل", en: "Switch" } },
+                { c: "#d97706", l: { ar: "جدار", en: "Firewall" } },
+                { c: "#71717a", l: { ar: "طرفية", en: "Host" } },
+                { c: "#65a30d", l: { ar: "خادم", en: "Server" } },
+                { c: "#14b8a6", l: { ar: "لاسلكي", en: "Wireless" } },
+                { c: "#dc2626", l: { ar: "مهاجم", en: "Attacker" } },
+              ].map((it) => (
+                <span key={it.l.en} className="flex items-center gap-1.5">
+                  <LegendDot color={it.c} />
+                  {loc(it.l)}
+                </span>
+              ))}
+            </div>
+          </div>
 
-          <Card className="border-emerald-500/30">
-            <CardHeader className="px-6">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldCheck className="size-4 text-emerald-500" />
-                {loc(L.targetOf)}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 px-6">
+          <div className="hud-panel rounded-xl border-emerald-500/30 p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="grid size-6 place-items-center rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                <ShieldCheck className="size-3.5" />
+              </span>
+              <span className="text-xs font-black">{loc(L.targetOf)}</span>
+              <span className="dot-leader" />
+              <span className="code-chip">target.device</span>
+            </div>
+            <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className="bg-emerald-600 hover:bg-emerald-600 font-mono">{ch.targetDevice}</Badge>
+                <Badge className="bg-emerald-600 font-mono hover:bg-emerald-600">{ch.targetDevice}</Badge>
                 <span className="text-sm text-muted-foreground">
                   {loc(KIND_LABEL[ch.targetKind] ?? { ar: "جهاز", en: "device" })}
                 </span>
@@ -513,29 +634,38 @@ export default function ChallengesView() {
                 {ch.targetDevice}&gt; enable … conf t … (IOS-like CLI)
               </p>
               <p className="text-xs text-muted-foreground">{loc(L.wrapNote)}</p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* hints */}
-          <Card>
-            <CardHeader className="px-6">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Lightbulb className="size-4 text-amber-500" />
-                {loc(L.hints)}
-                <span className="ms-auto font-mono text-xs text-muted-foreground">
-                  {revealed}/{ch.hints.length}
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 px-6">
-              {ch.hints.slice(0, revealed).map((h, i) => (
-                <div
-                  key={i}
-                  className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm leading-6"
-                >
-                  {bi(h)}
-                </div>
-              ))}
+          <div className="hud-panel rounded-xl p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="code-chip inline-flex items-center gap-1">
+                <Lightbulb className="size-3 text-amber-500" /> hints
+              </span>
+              <span className="text-xs font-black">{loc(L.hints)}</span>
+              <span className="dot-leader" />
+              <span className="font-mono text-[10px] text-muted-foreground">
+                {revealed}/{ch.hints.length}
+              </span>
+            </div>
+            <div className="space-y-3">
+              <AnimatePresence initial={false}>
+                {ch.hints.slice(0, revealed).map((h, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm leading-6">
+                      {bi(h)}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
               <Button
                 variant="secondary"
                 size="sm"
@@ -545,21 +675,25 @@ export default function ChallengesView() {
                 <Lightbulb className="size-3.5" />
                 {revealed >= ch.hints.length ? loc(L.noMoreHints) : loc(L.revealHint)}
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
-        {/* right column: console + checks + solution */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader className="px-6">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Terminal className="size-4 text-emerald-500" />
+        {/* right column: console + checks pipeline + solution */}
+        <div className="space-y-5">
+          {/* command console */}
+          <div className="term-window overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-border/60 px-5 py-2" dir="ltr">
+              <span className="term-dots" aria-hidden />
+              <span className="code-chip">{missionCode(ch.id)}.console</span>
+              <span className="dot-leader" />
+              <span className="font-mono text-[10px] text-emerald-600 dark:text-emerald-400">{ch.targetDevice}&gt;</span>
+            </div>
+            <div className="space-y-4 p-4">
+              <p className="flex items-center gap-1.5 text-xs font-bold">
+                <Terminal className="size-3.5 text-emerald-500" />
                 {loc(L.console)}
-                <span className="ms-auto font-mono text-xs text-muted-foreground">{ch.targetDevice}&gt;</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 px-6">
+              </p>
               <Textarea
                 dir="ltr"
                 spellCheck={false}
@@ -576,7 +710,7 @@ export default function ChallengesView() {
               />
               <div className="flex flex-wrap items-center gap-3">
                 <Button
-                  className="bg-emerald-600 text-white hover:bg-emerald-700"
+                  className={`bg-emerald-600 text-white hover:bg-emerald-700 ${allDone ? "breathe" : ""}`}
                   onClick={() => void runVerify()}
                   disabled={busy}
                 >
@@ -587,8 +721,8 @@ export default function ChallengesView() {
                   <RotateCcw className="size-4" />
                   {loc(L.reset)}
                 </Button>
-                <span className="ms-auto font-mono text-xs text-muted-foreground">
-                  Ctrl+Enter
+                <span className="ms-auto flex items-center gap-1 font-mono text-[10px] text-muted-foreground" dir="ltr">
+                  <span className="kbd">Ctrl</span>+<span className="kbd">Enter</span>
                 </span>
               </div>
               {msg && (
@@ -610,18 +744,32 @@ export default function ChallengesView() {
                   </pre>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* checks */}
-          <Card>
-            <CardHeader className="px-6">
-              <CardTitle className="text-base">{loc(L.checks)}</CardTitle>
-              {!outcome && <CardDescription>{loc(L.checksWaiting)}</CardDescription>}
-            </CardHeader>
-            <CardContent className="space-y-3 px-6">
-              {outcome ? (
-                <>
+          {/* grading pipeline */}
+          <div className="hud-panel rounded-xl p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="code-chip">grading.pipeline</span>
+              <span className="text-xs font-black">{loc(L.checks)}</span>
+              <span className="dot-leader" />
+              <span className="font-mono text-[10px] text-muted-foreground">
+                {outcome
+                  ? `${outcome.results.filter((r) => r.pass).length}/${outcome.results.length} PASS`
+                  : `${ch.checks.length} ${loc(L.cmd)}`}
+              </span>
+            </div>
+            {!outcome && <p className="mb-3 text-xs text-muted-foreground">{loc(L.checksWaiting)}</p>}
+            <AnimatePresence initial={false} mode="wait">
+              {outcome && (
+                <motion.div
+                  key={outcome.allPass ? "pass" : "partial"}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.25 }}
+                  className="mb-3"
+                >
                   {outcome.allPass ? (
                     <div className="flex items-start gap-3 rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-4">
                       <Trophy className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
@@ -640,68 +788,68 @@ export default function ChallengesView() {
                       <p className="mt-1 text-xs">{loc(L.keepTrying)}</p>
                     </div>
                   )}
-                  <ul className="space-y-2">
-                    {outcome.results.map((r, i) => (
-                      <li
-                        key={i}
-                        className={`flex items-center gap-2 rounded-lg border p-3 text-sm ${
-                          r.pass
-                            ? "border-emerald-500/30 bg-emerald-500/5"
-                            : "border-rose-500/30 bg-rose-500/5"
-                        }`}
-                      >
-                        {r.pass ? (
-                          <CheckCircle2 className="size-4 shrink-0 text-emerald-500" />
-                        ) : (
-                          <XCircle className="size-4 shrink-0 text-rose-500" />
-                        )}
-                        <span className="flex-1">{r.label}</span>
-                        <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] uppercase text-muted-foreground">
-                          {r.kind}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <ul className="space-y-2">
-                  {ch.checks.map((c, i) => (
-                    <li
-                      key={i}
-                      className="flex items-center gap-2 rounded-lg border p-3 text-sm text-muted-foreground"
-                    >
-                      <span className="size-4 shrink-0 rounded-full border border-dashed" />
-                      <span className="flex-1">{bi(c.label)}</span>
-                      <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] uppercase">
-                        {c.kind}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                </motion.div>
               )}
-            </CardContent>
-          </Card>
+            </AnimatePresence>
+            {/* numbered terminal pipeline with side rail */}
+            <div className="relative">
+              <span aria-hidden className="data-rail absolute bottom-3 top-3 start-[7px]" />
+              <ol className="space-y-2">
+                {steps.map((s, i) => (
+                  <li
+                    key={i}
+                    className={`flex items-center gap-2.5 rounded-lg border p-2.5 ${
+                      s.pass === true
+                        ? "border-emerald-500/30 bg-emerald-500/5"
+                        : s.pass === false
+                          ? "border-rose-500/30 bg-rose-500/5"
+                          : "border-dashed"
+                    }`}
+                  >
+                    <span className="relative z-10 grid size-4 shrink-0 place-items-center bg-background">
+                      {s.pass === true ? (
+                        <CheckCircle2 className="size-4 shrink-0 text-emerald-500" />
+                      ) : s.pass === false ? (
+                        <XCircle className="size-4 shrink-0 text-rose-500" />
+                      ) : (
+                        <span className="size-2.5 shrink-0 rounded-full border border-dashed border-muted-foreground/50" />
+                      )}
+                    </span>
+                    <span className="code-chip shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                    <span className={`min-w-0 flex-1 text-xs leading-snug ${s.pass === null ? "text-muted-foreground" : ""}`}>
+                      {s.label}
+                    </span>
+                    <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] uppercase text-muted-foreground">
+                      {s.kind}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
 
           {/* solution */}
-          <Card className={solved ? "border-emerald-500/40" : ""}>
-            <CardHeader className="px-6">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Trophy className="size-4 text-emerald-500" />
-                {loc(L.solution)}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="px-6">
-              {solved ? (
-                <p className="rounded-lg bg-muted p-3 font-mono text-xs leading-6" dir="ltr">
+          <div className={`hud-panel rounded-xl p-4 ${solved ? "border-emerald-500/40" : ""}`}>
+            <div className="mb-3 flex items-center gap-2">
+              <span className="grid size-6 place-items-center rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                <Trophy className="size-3.5" />
+              </span>
+              <span className="text-xs font-black">{loc(L.solution)}</span>
+              <span className="dot-leader" />
+              <span className="code-chip">{solved ? "solution.unlocked" : "solution.locked"}</span>
+            </div>
+            {solved ? (
+              <div className="term-window overflow-hidden">
+                <p className="p-3 font-mono text-xs leading-6" dir="ltr">
                   {bi(ch.solution)}
                 </p>
-              ) : (
-                <p className="text-sm text-muted-foreground">{loc(L.solutionLocked)}</p>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">{loc(L.solutionLocked)}</p>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

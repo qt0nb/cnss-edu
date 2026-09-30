@@ -26,6 +26,10 @@ import {
   Layers3,
   Download,
   WifiOff,
+  Search,
+  Terminal,
+  Award,
+  LineChart,
 } from "lucide-react";
 import { LangProvider, useLang } from "@/lib/i18n";
 import { useNav } from "@/lib/nav";
@@ -36,6 +40,8 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import { toast } from "@/hooks/use-toast";
 import type { ViewId } from "@/lib/types";
 import { ACHIEVEMENTS } from "@/data/achievements";
+import CommandPalette from "@/components/platform/shell/CommandPalette";
+import NetBackground from "@/components/platform/shell/NetBackground";
 
 const DashboardView = dynamic(() => import("@/components/platform/DashboardView"));
 const LessonsView = dynamic(() => import("@/components/platform/LessonsView"));
@@ -47,7 +53,60 @@ const PlaygroundView = dynamic(() => import("@/components/platform/PlaygroundVie
 const AchievementsView = dynamic(() => import("@/components/platform/AchievementsView"));
 const SettingsView = dynamic(() => import("@/components/platform/SettingsView"));
 const ChallengesView = dynamic(() => import("@/components/platform/ChallengesView"));
+const CertificatesView = dynamic(() => import("@/components/platform/CertificatesView"));
+const AnalyticsView = dynamic(() => import("@/components/platform/AnalyticsView"));
 const IntegrationsView = dynamic(() => import("@/components/platform/IntegrationsView"));
+
+/** The CNSS-edu identity mark — hex network mesh with terminal hub (matches favicon) */
+function CnssMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 512 512" className={className} aria-hidden="true">
+      <defs>
+        <linearGradient id="cmk-g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#34d399" />
+          <stop offset="0.5" stopColor="#10b981" />
+          <stop offset="1" stopColor="#0d9488" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M256 106 L385.9 181 L385.9 331 L256 406 L126.1 331 L126.1 181 Z"
+        fill="none"
+        stroke="url(#cmk-g)"
+        strokeWidth="22"
+        strokeLinejoin="round"
+      />
+      <g stroke="#10b981" strokeOpacity="0.78" strokeWidth="14" strokeLinecap="round">
+        <path d="M256 256 L256 106" />
+        <path d="M256 256 L385.9 181" />
+        <path d="M256 256 L385.9 331" />
+        <path d="M256 256 L256 406" />
+        <path d="M256 256 L126.1 331" />
+        <path d="M256 256 L126.1 181" />
+      </g>
+      <g fill="#0c1310" stroke="url(#cmk-g)" strokeWidth="18">
+        <circle cx="256" cy="106" r="29" />
+        <circle cx="385.9" cy="181" r="29" />
+        <circle cx="385.9" cy="331" r="29" />
+        <circle cx="256" cy="406" r="29" />
+        <circle cx="126.1" cy="331" r="29" />
+        <circle cx="126.1" cy="181" r="29" />
+      </g>
+      <g fill="#34d399">
+        <circle cx="256" cy="106" r="10" />
+        <circle cx="385.9" cy="181" r="10" />
+        <circle cx="385.9" cy="331" r="10" />
+        <circle cx="256" cy="406" r="10" />
+        <circle cx="126.1" cy="331" r="10" />
+        <circle cx="126.1" cy="181" r="10" />
+      </g>
+      <circle cx="256" cy="256" r="62" fill="url(#cmk-g)" />
+      <g stroke="#032b20" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <path d="M234 238 L256 258 L234 278" />
+        <path d="M264 274 H288" />
+      </g>
+    </svg>
+  );
+}
 
 const NAV_ITEMS: { view: ViewId; icon: React.ElementType; key: string }[] = [
   { view: "dashboard", icon: LayoutDashboard, key: "home" },
@@ -58,6 +117,8 @@ const NAV_ITEMS: { view: ViewId; icon: React.ElementType; key: string }[] = [
   { view: "projects", icon: Rocket, key: "projects" },
   { view: "playground", icon: FlaskConical, key: "playground" },
   { view: "challenges", icon: Swords, key: "challenges" },
+  { view: "certificates", icon: Award, key: "certificates" },
+  { view: "analytics", icon: LineChart, key: "analytics" },
   { view: "integrations", icon: Layers3, key: "integrations" },
   { view: "achievements", icon: Trophy, key: "achievements" },
   { view: "settings", icon: Settings, key: "settings" },
@@ -69,12 +130,12 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
   const { t } = useLang();
   return (
     <div className="flex items-center gap-2.5 select-none">
-      <div className="relative grid size-10 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-primary-foreground shadow-lg glow-primary radar">
-        <Network className="size-5 relative z-10" strokeWidth={2.4} />
+      <div className="relative grid size-10 place-items-center rounded-xl bg-[#0c1310] border border-emerald-500/30 shadow-lg glow-primary radar overflow-hidden">
+        <CnssMark className="size-9 relative z-10" />
       </div>
       {!compact && (
         <div className="leading-tight">
-          <div className="font-mono font-extrabold text-[15px] tracking-tight text-glow">
+          <div className="font-mono font-extrabold text-[15px] tracking-tight text-glow glitch-hover">
             {t("appName")}
             <span className="caret text-emerald-500 font-bold">_</span>
           </div>
@@ -254,10 +315,17 @@ function BottomTabs() {
             <button
               key={v}
               onClick={() => go(v)}
-              className={`flex h-14 flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-colors
+              className={`relative flex h-14 flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition-colors
                 ${active ? "text-primary" : "text-muted-foreground"}`}
               aria-current={active ? "page" : undefined}
             >
+              {active && (
+                <motion.span
+                  layoutId="mobile-tab-pill"
+                  className="absolute top-1.5 h-1 w-6 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400"
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                />
+              )}
               <Icon className="size-5" strokeWidth={active ? 2.5 : 2} />
               <span className="truncate max-w-full px-0.5">{t(item.key)}</span>
             </button>
@@ -361,6 +429,8 @@ function ViewRouter() {
       projects: <ProjectsView />,
       playground: <PlaygroundView />,
       challenges: <ChallengesView />,
+      certificates: <CertificatesView />,
+      analytics: <AnalyticsView />,
       integrations: <IntegrationsView />,
       achievements: <AchievementsView />,
       settings: <SettingsView />,
@@ -371,10 +441,10 @@ function ViewRouter() {
     <AnimatePresence mode="wait">
       <motion.div
         key={view}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.22, ease: "easeOut" }}
+        initial={{ opacity: 0, y: 14, scale: 0.995 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10, scale: 0.995 }}
+        transition={{ type: "spring", stiffness: 360, damping: 34, mass: 0.9 }}
       >
         {views[view]}
       </motion.div>
@@ -437,7 +507,14 @@ function Footer() {
           <span className="text-muted-foreground/60">·</span>
           <span className="hidden sm:inline text-[10.5px]">{t("appNameFull")}</span>
         </div>
-        <span className="text-center">{t("footerRights")}</span>
+        <button
+          onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))}
+          className="hidden lg:inline-flex items-center gap-2 text-[10.5px] text-muted-foreground/80 hover:text-foreground transition-colors"
+        >
+          <span>{t("tipPalette")}</span>
+          <span className="kbd">Ctrl K</span>
+        </button>
+        <span className="text-center sm:text-end">{t("footerRights")}</span>
       </div>
     </footer>
   );
@@ -494,7 +571,7 @@ function PwaButtons() {
 /** Terminal-style boot splash — shown once per session, overlays the shell */
 function BootSplash({ onDone }: { onDone: () => void }) {
   useEffect(() => {
-    const t = setTimeout(onDone, 1750);
+    const t = setTimeout(onDone, 1900);
     return () => clearTimeout(t);
   }, [onDone]);
   const lines = [
@@ -503,6 +580,7 @@ function BootSplash({ onDone }: { onDone: () => void }) {
     "> loading 1060 tools / 37 categories  [ OK ]",
     "> starting simulation engine ........ [ OK ]",
     "> arming AI lab assistant ........... [ OK ]",
+    "> binding command palette (ctrl+k) .. [ OK ]",
     "> SYSTEM ONLINE_",
   ];
   return (
@@ -515,8 +593,8 @@ function BootSplash({ onDone }: { onDone: () => void }) {
       <div className="scanline absolute inset-x-0 top-0" />
       <div className="relative w-[min(92vw,520px)] rounded-xl border border-emerald-500/25 bg-black/70 p-5 shadow-2xl hud-panel">
         <div className="flex items-center gap-2 border-b border-emerald-500/15 pb-2.5 mb-3">
-          <div className="radar grid size-7 place-items-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-            <Network className="size-4 relative z-10" strokeWidth={2.5} />
+          <div className="radar relative grid size-7 place-items-center rounded-lg bg-[#0c1310] border border-emerald-500/30 text-white overflow-hidden">
+            <CnssMark className="size-6 relative z-10" />
           </div>
           <span className="font-mono text-sm font-bold tracking-tight text-emerald-300">CNSS-edu</span>
           <span className="ms-auto font-mono text-[10px] text-emerald-500/60">v2.0 · boot</span>
@@ -543,6 +621,7 @@ function AppShell() {
   const view = useNav((s) => s.view);
   const syncFromHash = useNav((s) => s.syncFromHash);
   const [booting, setBooting] = useState(true);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   // Keep the store in sync with location.hash (deep links, back/forward).
   // Runs before paint on the client to avoid a flash of the default view.
@@ -563,6 +642,25 @@ function AppShell() {
     return () => clearTimeout(t);
   }, [booting]);
 
+  // command palette shortcuts: Ctrl/Cmd+K anywhere, "/" outside inputs
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      } else if (e.key === "/" && !paletteOpen) {
+        const el = document.activeElement as HTMLElement | null;
+        const tag = el?.tagName?.toLowerCase();
+        if (tag !== "input" && tag !== "textarea" && tag !== "select" && !el?.isContentEditable) {
+          e.preventDefault();
+          setPaletteOpen(true);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [paletteOpen]);
+
   const finishBoot = () => {
     setBooting(false);
     try { sessionStorage.setItem("cnss-booted", "1"); } catch { /* private mode */ }
@@ -570,6 +668,8 @@ function AppShell() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <NetBackground />
+      <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} />
       <ProgressWatcher />
       <AnimatePresence>{booting && <BootSplash onDone={finishBoot} />}</AnimatePresence>
       {/* Desktop sidebar */}
@@ -592,10 +692,32 @@ function AppShell() {
               <BrandMark compact />
             </div>
             <div className="hidden lg:flex items-center gap-2.5 min-w-0">
-              <span className="code-chip shrink-0">{view}</span>
+              <Terminal className="size-4 text-primary shrink-0" />
+              <span className="font-mono text-[12px] text-muted-foreground shrink-0" dir="ltr">~$</span>
+              <span className="code-chip shrink-0" dir="ltr">{`view/${view}`}</span>
               <h1 className="text-base font-extrabold truncate">{t(view === "dashboard" ? "appNameFull" : NAV_ITEMS.find((n) => n.view === view)?.key ?? "appName")}</h1>
             </div>
             <div className="ms-auto flex items-center gap-1.5">
+              {/* command palette trigger */}
+              <button
+                onClick={() => setPaletteOpen(true)}
+                className="hidden md:flex items-center gap-2 h-9 rounded-lg border border-border bg-muted/50 px-3 text-[11.5px] font-semibold text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all group"
+                aria-label={t("commandPalette")}
+              >
+                <Search className="size-3.5 group-hover:text-primary transition-colors" />
+                <span className="hidden xl:inline">{t("searchEverything")}</span>
+                <span className="xl:hidden">{t("commandPalette")}</span>
+                <span className="kbd">Ctrl K</span>
+              </button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-9 rounded-lg md:hidden"
+                aria-label={t("commandPalette")}
+                onClick={() => setPaletteOpen(true)}
+              >
+                <Search className="size-4" />
+              </Button>
               <StatPills />
               <PwaButtons />
               <LangToggle />

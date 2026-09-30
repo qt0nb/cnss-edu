@@ -30,16 +30,22 @@ export interface NetSimActions {
   runDhcp(clientId: string): string[];
   runDns(srcId: string, name: string): string[];
   runHttp(srcId: string, host: string): { lines: string[]; page: { title: string; body: string } | null };
+  /** 11-e: `copy run start` / `write memory` — persist topology snapshot to localStorage */
+  saveStartupConfig(): boolean;
+  /** 11-e: `reload` — clear volatile state (ARP/MAC/alerts/NAT sessions) */
+  reloadDevice(devId: string): void;
 }
 
 export function CliTerminal({
   device,
   actions,
   isHost,
+  bootBanner,
 }: {
   device: Device;
   actions: NetSimActions;
   isHost: boolean;
+  bootBanner?: string[];
 }) {
   const { lang } = useLang();
   const [lines, setLines] = useState<string[]>([
@@ -51,27 +57,56 @@ export function CliTerminal({
   const [cliState, setCliState] = useState<CliState>(initialCliState);
   const [hist, setHist] = useState<string[]>([]);
   const [hIdx, setHIdx] = useState(-1);
+  const [busy, setBusy] = useState(false); // 11-e: console busy printing ping replies
   const endRef = useRef<HTMLDivElement>(null);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const bannerShownRef = useRef(false);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
   }, [lines]);
 
+  // 11-e: one-time "startup-config restored" banner (provided by NetSim after resume)
+  useEffect(() => {
+    if (bootBanner?.length && !bannerShownRef.current) {
+      bannerShownRef.current = true;
+      setLines((ls) => [...bootBanner, ...ls]);
+    }
+  }, [bootBanner]);
+
+  // clear pending ping-stream timers on unmount
+  useEffect(() => () => { for (const t of timersRef.current) clearTimeout(t); }, []);
+
   const prompt = isHost
     ? `${device.name}>`
     : promptOf(device, cliState);
 
+  /** 11-e realism: stagger output lines over time (ping replies / summary) */
+  const streamLines = (outLines: string[], delayMs = 350) => {
+    setBusy(true);
+    outLines.forEach((l, i) => {
+      const t = setTimeout(() => {
+        setLines((ls) => [...ls, l]);
+        timersRef.current = timersRef.current.filter((x) => x !== t);
+        if (i === outLines.length - 1) setBusy(false);
+      }, delayMs * (i + 1));
+      timersRef.current.push(t);
+    });
+  };
+
   const submit = () => {
+    if (busy) return; // console busy — like a real router mid-ping
     const line = input;
     setInput("");
     if (line.trim()) setHist((h) => [...h, line]);
     setHIdx(-1);
     const promptLine = `${prompt} ${line}`;
     let out: string[] = [];
+    let pingOut: string[] | null = null;
     if (isHost) {
       const r = runHostLine(device, line);
       out = r.lines;
-      if (r.action?.type === "ping") out = [...out, ...actions.runPing(device.id, r.action.arg)];
+      if (r.action?.type === "ping") pingOut = actions.runPing(device.id, r.action.arg);
       else if (r.action?.type === "dhcp-renew") out = [...out, ...actions.runDhcp(device.id)];
       else if (r.action?.type === "dns") out = [...out, ...actions.runDns(device.id, r.action.arg)];
       else if (r.action?.type === "http") {
@@ -83,10 +118,13 @@ export function CliTerminal({
       const r = runCliLine(device, line, cliState);
       setCliState(r.state);
       out = r.lines;
-      if (r.action?.type === "ping") out = [...out, ...actions.runPing(device.id, r.action.arg)];
+      if (r.action?.type === "ping") pingOut = actions.runPing(device.id, r.action.arg);
+      else if (r.action?.type === "save-config") actions.saveStartupConfig();
+      else if (r.action?.type === "reload") actions.reloadDevice(device.id);
       actions.updateDevice();
     }
     setLines((ls) => [...ls, promptLine, ...out]);
+    if (pingOut && pingOut.length) streamLines(pingOut);
   };
 
   return (
@@ -101,6 +139,7 @@ export function CliTerminal({
         <span className="text-xs font-mono text-emerald-500 shrink-0">{prompt}</span>
         <Input
           value={input}
+          disabled={busy}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") submit();
@@ -116,11 +155,11 @@ export function CliTerminal({
             }
           }}
           className="font-mono text-xs h-8 bg-zinc-950 border-zinc-800 text-emerald-200"
-          placeholder="?"
+          placeholder={busy ? (lang === "ar" ? "قيد الإرسال..." : "transmitting...") : "?"}
           autoComplete="off"
           spellCheck={false}
         />
-        <Button size="sm" onClick={submit} className="h-8">↵</Button>
+        <Button size="sm" onClick={submit} disabled={busy} className="h-8">↵</Button>
       </div>
     </div>
   );
@@ -145,10 +184,12 @@ export default function DeviceDialog({
   device,
   onClose,
   actions,
+  bootBanner,
 }: {
   device: Device | null;
   onClose: () => void;
   actions: NetSimActions;
+  bootBanner?: string[];
 }) {
   const { lang, t } = useLang();
   const [url, setUrl] = useState("");
@@ -263,7 +304,7 @@ export default function DeviceDialog({
           {/* ── router CLI ── */}
           {isRouterLike && (
             <TabsContent value="cli">
-              <CliTerminal device={d} actions={actions} isHost={false} />
+              <CliTerminal device={d} actions={actions} isHost={false} bootBanner={bootBanner} />
             </TabsContent>
           )}
 

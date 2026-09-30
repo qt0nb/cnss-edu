@@ -12,6 +12,8 @@ const VALID_VIEWS: string[] = [
   "projects",
   "playground",
   "challenges",
+  "certificates",
+  "analytics",
   "integrations",
   "achievements",
   "settings",

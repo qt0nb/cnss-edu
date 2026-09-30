@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLang } from "@/lib/i18n";
+import { useProgress } from "@/lib/store";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -107,6 +108,8 @@ export default function AiAssistantPanel({
   const send = async (question: string) => {
     const q = question.trim();
     if (!q || loading) return;
+    // behavioral tracking: log the AI query (digital record) — side-effect only
+    useProgress.getState().recordAiQuery("netsim.assistant", q);
     setError(null);
     setInput("");
     const history = [...messages, { role: "user" as const, content: q }].slice(-10);

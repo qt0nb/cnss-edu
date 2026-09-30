@@ -55,3 +55,4 @@ server.log
 # database (runtime sqlite)
 /db/*.db
 /db/*.db-journal
+tool-results/

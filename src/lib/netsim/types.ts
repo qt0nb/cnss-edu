@@ -148,6 +148,8 @@ export interface Device {
   attack: AttackState | null;
   // IDS alerts + inspection counters (ids, firewall, switch violations)
   idsAlerts: IdsAlert[];
+  // 11-e realism: MOTD banner set via `banner motd <text>` (re-emitted on reload)
+  motd?: string | null;
   statsIn: number;
   statsDropped: number;
   // flood victim state (targets overwhelmed by attacks)

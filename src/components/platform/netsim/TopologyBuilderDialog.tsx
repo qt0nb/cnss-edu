@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/lib/i18n";
+import { useProgress } from "@/lib/store";
 import { toast } from "@/hooks/use-toast";
 import type { DeviceKind } from "@/lib/netsim/types";
 
@@ -91,6 +92,8 @@ export default function TopologyBuilderDialog({
   const generate = async () => {
     const p = prompt.trim();
     if (!p || loading) return;
+    // behavioral tracking: log the AI prompt (digital record) — side-effect only
+    useProgress.getState().recordAiQuery("netsim.topology-builder", p);
     setLoading(true);
     setError(null);
     setSuccess(null);

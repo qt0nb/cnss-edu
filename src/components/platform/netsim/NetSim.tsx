@@ -6,7 +6,7 @@ import {
   MousePointer2, Trash2, Cable, Radar, Globe, HandCoins, Play, Pause, SkipBack,
   SkipForward, RotateCcw, Save, FolderOpen, Upload, FlaskConical, Info,
   MessageSquareText, Eraser, X, Sparkles, Bot, SlidersHorizontal, Skull, Shield, Network, Cpu,
-  ZoomIn, ZoomOut, Maximize2, Expand, Minimize, Route, Search, Maximize,
+  ZoomIn, ZoomOut, Maximize2, Expand, Minimize, Route, Search, Maximize, HardDriveDownload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,7 +30,7 @@ import { DEVICE_SPECS, LINK_SPECS } from "@/lib/netsim/types";
 import {
   createDevice, autoCable, connectPorts, simulatePing, simulateDhcp, simulateDns,
   simulateHttp, simulateAttack, cloneTopo, resetMacCounterFor, findDevice, findPort,
-  maskToPrefix, isHostKind,
+  maskToPrefix, isHostKind, normalizeTopology,
 } from "@/lib/netsim/engine";
 import { runCliLine, runHostLine, initialCliState } from "@/lib/netsim/cli";
 import { NETSIM_LABS } from "@/lib/netsim/labs";
@@ -63,6 +63,9 @@ const CATEGORY_ORDER = ["end", "network", "wireless", "wan", "security", "iot"] 
 
 const CANVAS_W = 2400;
 const CANVAS_H = 1400;
+
+/** 11-e: versioned localStorage key for `copy running-config startup-config` snapshots */
+const STARTUP_KEY = "netsim-startup-config";
 
 /** device kinds that open the dedicated security side panel on click */
 const SEC_KINDS: Device["kind"][] = ["attacker", "firewall", "l3switch", "ids"];
@@ -122,6 +125,44 @@ export default function NetSim() {
   const [aiOpen, setAiOpen] = useState(false);
   const [builderOpen, setBuilderOpen] = useState(false);
   const [secDevId, setSecDevId] = useState<string | null>(null);
+
+  // ── 11-e: startup-config resume offer + restored-router console banner ──
+  const [startupOffer, setStartupOffer] = useState<{ savedAt: string } | null>(null);
+  const [bootBanner, setBootBanner] = useState<string[] | null>(null);
+
+  const resumeStartup = useCallback(() => {
+    try {
+      const raw = localStorage.getItem(STARTUP_KEY);
+      if (raw) {
+        const snap = JSON.parse(raw) as { version?: number; savedAt?: string; topo?: Topology };
+        if (snap?.topo && Array.isArray(snap.topo.devices) && Array.isArray(snap.topo.links)) {
+          resetMacCounterFor(snap.topo);
+          pendingFit.current = true;
+          setTopo(normalizeTopology(snap.topo));
+          setSim(null);
+          setTrace(null);
+          const when = snap.savedAt ? new Date(snap.savedAt).toLocaleString() : "";
+          setBootBanner([`%STARTUP-CONFIG: restored from flash${when ? ` (saved ${when})` : ""}`]);
+          toast({ title: lang === "ar" ? `استُعيد startup-config (${snap.topo.devices.length} جهازاً)` : `startup-config restored (${snap.topo.devices.length} devices)` });
+        }
+      }
+    } catch {
+      toast({ title: lang === "ar" ? "ملف startup-config غير صالح" : "invalid startup-config snapshot", variant: "destructive" });
+    }
+    setStartupOffer(null);
+  }, [lang]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STARTUP_KEY);
+      if (raw) {
+        const snap = JSON.parse(raw) as { savedAt?: string; topo?: Topology };
+        if (snap?.topo?.devices?.length) setStartupOffer({ savedAt: snap.savedAt ?? "" });
+      }
+    } catch {
+      /* snapshot unreadable — offer nothing */
+    }
+  }, []);
   const [isDesktop, setIsDesktop] = useState(true);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
@@ -265,20 +306,81 @@ export default function NetSim() {
     [commitDevices]
   );
 
+  // ── 11-e realism: startup-config snapshot (copy run start / write memory) ──
+  const saveStartupConfig = useCallback((): boolean => {
+    try {
+      localStorage.setItem(STARTUP_KEY, JSON.stringify({ version: 1, savedAt: new Date().toISOString(), topo: topoRef.current }));
+      toast({ title: lang === "ar" ? "حُفظ startup-config في ذاكرة المحاكي" : "startup-config saved to simulated flash" });
+      return true;
+    } catch {
+      toast({ title: lang === "ar" ? "تعذر الحفظ" : "Save failed", variant: "destructive" });
+      return false;
+    }
+  }, [lang]);
+
+  // ── 11-e realism: reload — clear volatile state, keep the config ──
+  const reloadDevice = useCallback((devId: string) => {
+    setTopo((t) => ({
+      devices: t.devices.map((d) => (d.id === devId
+        ? { ...d, arp: [], macTable: [], idsAlerts: [], statsIn: 0, statsDropped: 0, natTable: [], halfOpen: 0, overloaded: false, attack: null }
+        : d)),
+      links: t.links,
+    }));
+  }, []);
+
   const actions: NetSimActions = useMemo(() => ({
     updateDevice: () => setTopo((t) => ({ devices: [...t.devices], links: t.links })),
     runPing: (srcId, ip) => {
       setTrace(null); // hop list belongs to the latest traceroute only
-      const r = simulatePing(topoRef.current, srcId, ip);
+      const t = topoRef.current;
+      const r = simulatePing(t, srcId, ip);
       runSim(r.steps, r.devices, r.note, r.success);
-      const lines = r.success
-        ? [
-            `Reply from ${ip}: bytes=32 time${lang === "ar" ? "≈" : "≈"}1ms TTL=${128 - Math.max(0, r.steps.filter((s) => s.outPort && s.deviceId !== srcId).length - 1)}`,
-            `Reply from ${ip}: bytes=32 time≈1ms`,
-            lang === "ar" ? "نجح: 4/4 — Ping يعمل" : "Success: 4/4 — ping working",
-          ]
-        : [lang === "ar" ? "انتهت المهلة: الطلب لم يجد طريقه — راجع لوحة المحاكاة" : "Request timed out — check the simulation panel"];
-      return lines;
+      // 11-e realism: Cisco-accurate ping output — RTT scales with hop count, TTL = 128 - L3 hops
+      const src = findDevice(t, srcId);
+      const hostStyle = src ? isHostKind(src.kind) : true;
+      const L3_KINDS = new Set(["router", "firewall", "l3switch", "wirelessRouter"]);
+      const l3 = new Set<string>();
+      for (const st of r.steps) {
+        if (st.packet.kind !== "Echo Request" || st.deviceId === srcId) continue;
+        const dev = findDevice(t, st.deviceId);
+        if (dev && L3_KINDS.has(dev.kind)) l3.add(dev.id);
+      }
+      const hops = l3.size;
+      const ttl = Math.max(1, 128 - hops);
+      const count = hostStyle ? 4 : 5; // Windows hosts send 4, IOS sends 5
+      const base = 1 + hops * 2;
+      if (r.success) {
+        const times = Array.from({ length: count }, () => Math.max(1, base + Math.floor(Math.random() * 3)));
+        const min = Math.min(...times);
+        const max = Math.max(...times);
+        const avg = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+        if (hostStyle) {
+          return [
+            ...times.map((tm) => `Reply from ${ip}: bytes=32 time=${tm}ms TTL=${ttl}`),
+            "",
+            `Ping statistics for ${ip}:`,
+            `    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),`,
+            "Approximate round trip times in milli-seconds:",
+            `    Minimum = ${min}ms, Maximum = ${max}ms, Average = ${avg}ms`,
+          ];
+        }
+        return [
+          ...times.map((tm) => `Reply from ${ip}: bytes=100 time=${tm}ms TTL=${ttl}`),
+          `Success rate is 100 percent (${count}/${count}), round-trip min/avg/max = ${min}/${avg}/${max} ms`,
+        ];
+      }
+      if (hostStyle) {
+        return [
+          ...Array.from({ length: count }, () => "Request timed out."),
+          "",
+          `Ping statistics for ${ip}:`,
+          `    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),`,
+        ];
+      }
+      return [
+        ...Array.from({ length: count }, () => "Request timed out."),
+        `Success rate is 0 percent (0/${count})`,
+      ];
     },
     runDhcp: (clientId) => {
       setTrace(null);
@@ -301,7 +403,9 @@ export default function NetSim() {
       runSim(r.steps, r.devices, r.note, r.success, false);
       return { lines: [bi(r.note)], page: r.page };
     },
-  }), [lang, bi, runSim]);
+    saveStartupConfig,
+    reloadDevice,
+  }), [lang, bi, runSim, saveStartupConfig, reloadDevice]);
 
   // ── v2: attack simulation (feeds the sim panel + returns the report) ──
   const runAttackSim = useCallback(
@@ -851,6 +955,26 @@ export default function NetSim() {
         </div>
       </div>
 
+      {/* 11-e: startup-config resume offer (shown when a snapshot exists on mount) */}
+      {startupOffer && (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-1.5">
+          <HardDriveDownload className="size-4 text-amber-600 shrink-0" />
+          <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 min-w-0">
+            {lang === "ar"
+              ? `startup-config محفوظ${startupOffer.savedAt ? ` (${new Date(startupOffer.savedAt).toLocaleString()})` : ""} — استئناف جلسة الإعداد السابقة؟`
+              : `startup-config on flash${startupOffer.savedAt ? ` (${new Date(startupOffer.savedAt).toLocaleString()})` : ""} — resume the previous session?`}
+          </span>
+          <span className="ms-auto flex items-center gap-1.5 shrink-0">
+            <Button size="sm" className="min-h-11 sm:h-9 px-3 text-xs" onClick={resumeStartup}>
+              <RotateCcw className="size-3.5" /> {lang === "ar" ? "استئناف" : "Resume"}
+            </Button>
+            <Button variant="ghost" size="sm" className="min-h-11 sm:h-9 px-3 text-xs" onClick={() => setStartupOffer(null)}>
+              {lang === "ar" ? "تجاهل" : "Dismiss"}
+            </Button>
+          </span>
+        </div>
+      )}
+
       {/* toolbar */}
       <div className="flex flex-wrap items-center gap-1.5 rounded-xl border bg-card p-1.5">
         {tools.map((tt) => (
@@ -987,6 +1111,30 @@ export default function NetSim() {
                   >
                     <DeviceIcon kind={dev.kind} size={44} />
                     <span className="text-[10px] font-black text-foreground/90 bg-background/70 rounded px-1 leading-tight">{dev.name}</span>
+                    {/* 11-e: per-interface link-state LEDs — green=up, amber=shutdown, dark=no cable */}
+                    {(() => {
+                      const phys = dev.ports.filter((p) => p.kind !== "svi");
+                      // compact cards: hosts show every port; multi-port devices show only active (cabled/shut) ports
+                      const show = phys.length <= 8 ? phys : phys.filter((p) => p.linkId || !p.adminUp).slice(0, 12);
+                      if (show.length === 0) return null;
+                      return (
+                        <span className="flex flex-wrap justify-center gap-1 max-w-[76px] leading-none" dir="ltr" aria-hidden="true">
+                          {show.map((p) => (
+                            <span
+                              key={p.id}
+                              title={`${p.name} — ${!p.adminUp ? (lang === "ar" ? "مغلق (shutdown)" : "shutdown") : p.linkId ? (lang === "ar" ? "يعمل" : "up") : (lang === "ar" ? "بلا كابل" : "no cable")}`}
+                              className={`size-1.5 rounded-full ${
+                                !p.adminUp
+                                  ? "bg-amber-500"
+                                    : p.linkId
+                                      ? "bg-emerald-500 shadow-[0_0_3px] shadow-emerald-500/80"
+                                      : "bg-zinc-600/70"
+                              }`}
+                            />
+                          ))}
+                        </span>
+                      );
+                    })()}
                   </button>
                 );
               })}
@@ -1271,7 +1419,7 @@ export default function NetSim() {
       {/* AI topology builder */}
       <TopologyBuilderDialog open={builderOpen} onOpenChange={setBuilderOpen} onApply={applyPlan} />
 
-      <DeviceDialog device={openDevice ?? null} onClose={() => setOpenDevId(null)} actions={actions} />
+      <DeviceDialog device={openDevice ?? null} onClose={() => setOpenDevId(null)} actions={actions} bootBanner={bootBanner ?? undefined} />
       <PduDialog step={pduStep} onClose={() => setPduStep(null)} />
 
       {/* HTTP URL prompt */}

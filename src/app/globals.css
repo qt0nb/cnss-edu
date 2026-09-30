@@ -432,3 +432,274 @@
 .breathe {
   animation: breathe 2.6s ease-in-out infinite;
 }
+
+/* ═══════════ CNSS-edu v3 · ops-console identity layer ═══════════ */
+
+/* terminal window chrome — dots + bar */
+.term-window {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: oklch(0.16 0.01 163 / 55%);
+  backdrop-filter: blur(6px);
+}
+.dark .term-window { background: oklch(0.14 0.01 163 / 75%); }
+.term-dots::before {
+  content: "";
+  display: inline-flex;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: oklch(0.68 0.19 25);
+  box-shadow: -18px 0 0 oklch(0.78 0.16 85), -36px 0 0 oklch(0.72 0.17 150);
+  margin-inline-start: 20px;
+}
+
+/* animated dashed flow line (connections / pipelines) */
+@keyframes dash-flow {
+  to { stroke-dashoffset: -14; }
+}
+.flow-line {
+  stroke-dasharray: 6 4;
+  animation: dash-flow 0.9s linear infinite;
+}
+@keyframes border-dash-flow {
+  to { background-position: 60px 0, -60px 0, 0 -60px, 0 60px; }
+}
+.flow-border {
+  border: 1px dashed oklch(0.722 0.16 162 / 45%);
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 14px, oklch(0.722 0.16 162 / 8%) 14px 28px),
+    repeating-linear-gradient(90deg, transparent 0 14px, oklch(0.722 0.16 162 / 8%) 14px 28px);
+  animation: border-dash-flow 3s linear infinite;
+}
+
+/* hexagonal mesh backdrop */
+.hex-bg {
+  background-image:
+    radial-gradient(circle at 50% 50%, oklch(0.722 0.16 162 / 6%) 1.5px, transparent 1.6px);
+  background-size: 22px 19px;
+}
+
+/* signal equalizer bars */
+@keyframes eq-bounce {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+}
+.eq-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+.eq-bars > i {
+  display: block;
+  width: 2.5px;
+  height: 100%;
+  border-radius: 2px;
+  background: oklch(0.722 0.16 162);
+  transform-origin: bottom;
+  animation: eq-bounce 1.1s ease-in-out infinite;
+}
+.eq-bars > i:nth-child(1) { animation-delay: 0s; }
+.eq-bars > i:nth-child(2) { animation-delay: 0.18s; }
+.eq-bars > i:nth-child(3) { animation-delay: 0.36s; }
+.eq-bars > i:nth-child(4) { animation-delay: 0.09s; }
+
+/* keyboard key chip */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* command palette result highlight */
+.cmd-hl {
+  background: oklch(0.722 0.16 162 / 22%);
+  border-radius: 3px;
+  padding: 0 1px;
+  color: oklch(0.75 0.13 163);
+}
+.dark .cmd-hl { color: oklch(0.88 0.12 163); }
+
+/* severity chips (security ops feel) */
+.chip-sev {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 5px;
+  padding: 2px 7px;
+  border: 1px solid;
+}
+.chip-sev-ok { color: oklch(0.72 0.17 150); border-color: oklch(0.72 0.17 150 / 35%); background: oklch(0.72 0.17 150 / 10%); }
+.chip-sev-info { color: oklch(0.75 0.12 163); border-color: oklch(0.72 0.16 162 / 35%); background: oklch(0.722 0.16 162 / 10%); }
+.chip-sev-warn { color: oklch(0.78 0.16 85); border-color: oklch(0.78 0.16 85 / 35%); background: oklch(0.78 0.16 85 / 10%); }
+.chip-sev-crit { color: oklch(0.68 0.19 25); border-color: oklch(0.68 0.19 25 / 35%); background: oklch(0.68 0.19 25 / 10%); }
+
+/* expanding status pulse ring */
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+.pulse-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1.5px solid oklch(0.722 0.16 162 / 70%);
+  animation: pulse-ring 1.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+  pointer-events: none;
+}
+
+/* row scan highlight (tables / logs) */
+@keyframes row-scan {
+  0% { top: -14%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 114%; opacity: 0; }
+}
+
+/* aurora hero gradient */
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%, 100% 50%; }
+  50% { background-position: 100% 50%, 0% 50%; }
+}
+.aurora {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(42% 38% at 22% 30%, oklch(0.722 0.16 162 / 14%), transparent 70%),
+    radial-gradient(38% 34% at 78% 70%, oklch(0.68 0.12 185 / 11%), transparent 70%);
+  background-size: 200% 200%;
+  animation: aurora-shift 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* chart bar grow */
+@keyframes bar-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.bar-grow {
+  transform-origin: bottom;
+  animation: bar-grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* vertical data rail with traveling packet */
+@keyframes rail-y {
+  0% { top: -6%; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { top: 104%; opacity: 0; }
+}
+.data-rail {
+  position: relative;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, oklch(0.722 0.16 162 / 30%), oklch(0.722 0.16 162 / 6%));
+  overflow: hidden;
+}
+.data-rail::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 26px;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, transparent, oklch(0.722 0.16 162 / 90%), transparent);
+  animation: rail-y 2.6s linear infinite;
+}
+
+/* conic progress ring helper */
+@keyframes ring-spin {
+  to { transform: rotate(1turn); }
+}
+
+/* glitch brand hover (subtle, dual-channel shift) */
+@keyframes glitch-x {
+  0%, 92%, 100% { transform: translateX(0); text-shadow: none; }
+  94% { transform: translateX(-1.5px); text-shadow: 1.5px 0 oklch(0.68 0.19 25 / 55%), -1.5px 0 oklch(0.72 0.16 162 / 55%); }
+  96% { transform: translateX(1px); text-shadow: -1px 0 oklch(0.68 0.19 25 / 45%), 1px 0 oklch(0.72 0.16 162 / 45%); }
+  98% { transform: translateX(0); }
+}
+.glitch-hover:hover {
+  animation: glitch-x 2.2s linear infinite;
+}
+
+/* gradient headline text */
+.grad-text {
+  background: linear-gradient(120deg, oklch(0.722 0.16 162), oklch(0.75 0.14 180), oklch(0.78 0.16 85));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* dotted leader line (toc / index rows) */
+.dot-leader {
+  flex: 1;
+  margin: 0 6px;
+  border-bottom: 1.5px dotted var(--border);
+  transform: translateY(-3px);
+}
+
+/* binary strip (decorative data stream) */
+@keyframes bin-scroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+.bin-strip {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: 0.14em;
+  color: oklch(0.722 0.16 162 / 26%);
+  user-select: none;
+  pointer-events: none;
+  overflow: hidden;
+  white-space: pre;
+}
+.bin-strip > span {
+  display: block;
+  animation: bin-scroll 14s linear infinite;
+}
+
+/* focus-visible programmatic ring */
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid oklch(0.722 0.16 162 / 70%);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* smooth view scroll behavior */
+html { scroll-behavior: smooth; }
+
+/* respect reduced motion: kill decorative loops */
+@media (prefers-reduced-motion: reduce) {
+  .radar::after,
+  .scanline,
+  .packet-line .pkt,
+  .ticker-track,
+  .breathe,
+  .float-soft,
+  .blink-dot,
+  .aurora,
+  .eq-bars > i,
+  .data-rail::after,
+  .bin-strip > span,
+  .flow-line,
+  .flow-border,
+  .hud-ring::before,
+  .pulse-ring,
+  .glitch-hover:hover { animation: none !important; }
+  html { scroll-behavior: auto; }
+}

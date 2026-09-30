@@ -29,7 +29,6 @@ import {
   Rocket,
   Info,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -143,6 +142,13 @@ const LICENSE_CLASS: Record<IntegrationLicense, string> = {
   freemium: "border-amber-500/30 bg-amber-500/15 text-amber-700 dark:text-amber-400",
 };
 
+/** display-only "type" chip for each lab platform (ops console v3) */
+const PLATFORM_TYPE: Record<IntegrationId, { sev: string; label: Bi }> = {
+  eveng: { sev: "chip-sev-info", label: { ar: "مُضاهاة", en: "EMULATOR" } },
+  gns3: { sev: "chip-sev-info", label: { ar: "مُضاهاة", en: "EMULATOR" } },
+  containerlab: { sev: "chip-sev-ok", label: { ar: "حاويات", en: "CONTAINER LAB" } },
+};
+
 const PLATFORM_LABEL_KEYS: Record<TargetPlatform, string> = {
   Linux: "linux",
   Windows: "windows",
@@ -154,11 +160,20 @@ function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+/** hostname of an official site link (for the mono url chip) */
+function hostOf(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
 /* ------------------------------------------------------------------ */
-/* Code block with copy-to-clipboard                                   */
+/* Code block with copy-to-clipboard (term-window chrome, v3)          */
 /* ------------------------------------------------------------------ */
 
-function CodeBlock({ language, code }: { language: string; code: string }) {
+function CodeBlock({ language, code, chip }: { language: string; code: string; chip?: string }) {
   const { lang, t } = useLang();
   const [copied, setCopied] = useState(false);
 
@@ -175,12 +190,14 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   };
 
   return (
-    <div className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950" dir="ltr">
-      <div className="flex items-center justify-between gap-2 border-b border-zinc-800 bg-zinc-900/60 px-3 py-1.5">
-        <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-emerald-400">
+    <div className="term-window overflow-hidden" dir="ltr">
+      <div className="flex items-center gap-2 border-b border-border/60 px-5 py-1.5">
+        <span className="term-dots" aria-hidden />
+        <span className="code-chip inline-flex items-center gap-1">
           <Terminal className="size-3" />
-          {language}
+          {chip ?? language}
         </span>
+        <span className="dot-leader" />
         <button
           type="button"
           onClick={onCopy}
@@ -198,6 +215,7 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
 
 /* ------------------------------------------------------------------ */
 /* Architecture diagram (flex boxes + arrows, RTL-aware)               */
+/* rendering kept exactly as-is — only the wrapper changed (v3)        */
 /* ------------------------------------------------------------------ */
 
 function ArchDiagram({ nodes }: { nodes: ArchNode[] }) {
@@ -246,82 +264,96 @@ function Stars({ n }: { n: number }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Platform overview card (grid of three)                              */
+/* Platform overview card (grid of three) — mission-card style v3      */
 /* ------------------------------------------------------------------ */
 
 function PlatformCard({ p, i }: { p: IntegrationPlatform; i: number }) {
   const { lang, t } = useLang();
   const Icon = PLATFORM_ICONS[p.id];
+  const site = p.links.find((l) => l.kind === "site");
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: i * 0.06 }}
+      transition={{ duration: 0.3, delay: i * 0.08 }}
+      className="rise-in h-full"
+      style={{ animationDelay: `${i * 0.09}s` }}
     >
-      <Card className="flex h-full flex-col overflow-hidden">
-        <CardHeader className="pb-3">
-          <div className="flex items-start gap-3">
-            <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-primary-foreground shadow-md">
-              <Icon className="size-6" />
-            </div>
-            <div className="min-w-0">
-              <CardTitle className="text-base">{p.name}</CardTitle>
-              <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{p.tagline[lang]}</p>
-            </div>
+      <div className="hud-panel flex h-full flex-col gap-3 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+        <div className="flex items-start gap-3">
+          <div className="grid size-10 shrink-0 place-items-center rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <Icon className="size-5" />
           </div>
-        </CardHeader>
-        <CardContent className="flex flex-1 flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Badge variant="outline" className={LICENSE_CLASS[p.license]}>
-              {LICENSE_LABEL[p.license][lang]}
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <h4 className="font-mono text-sm font-black tracking-tight">{p.name}</h4>
+              <span className={`chip-sev ${PLATFORM_TYPE[p.id].sev}`}>{PLATFORM_TYPE[p.id].label[lang]}</span>
+            </div>
+            <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{p.tagline[lang]}</p>
+            {site && (
+              <a
+                href={site.url}
+                target="_blank"
+                rel="noreferrer"
+                dir="ltr"
+                className="code-chip mt-1.5 inline-flex items-center gap-1 transition-colors hover:border-primary/40"
+              >
+                {hostOf(site.url)}
+                <ExternalLink className="size-2.5" />
+              </a>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Badge variant="outline" className={LICENSE_CLASS[p.license]}>
+            {LICENSE_LABEL[p.license][lang]}
+          </Badge>
+          {p.platforms.map((pl) => (
+            <Badge key={pl} variant="secondary" className="font-mono text-[10px]">
+              {t(PLATFORM_LABEL_KEYS[pl])}
             </Badge>
-            {p.platforms.map((pl) => (
-              <Badge key={pl} variant="secondary" className="text-[10px]">
-                {t(PLATFORM_LABEL_KEYS[pl])}
-              </Badge>
-            ))}
-          </div>
-          <p className="text-[10px] leading-snug text-muted-foreground">{p.licenseNote[lang]}</p>
-          <p className="text-xs leading-relaxed">
-            <span className="font-bold text-emerald-600 dark:text-emerald-400">{L.bestFor[lang]}: </span>
-            {p.bestFor[lang]}
-          </p>
-          <Separator />
-          <div className="mt-auto space-y-1.5">
-            {p.links.map((link) => {
-              const LinkIcon = LINK_ICONS[link.kind];
-              return (
-                <Button
-                  key={link.url}
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="h-9 w-full justify-between gap-2 text-[11px] font-bold"
-                >
-                  <a href={link.url} target="_blank" rel="noreferrer">
-                    <span className="flex min-w-0 items-center gap-1.5">
-                      <LinkIcon className="size-3.5 shrink-0 text-emerald-500" />
-                      <span className="truncate">{link.label[lang]}</span>
-                    </span>
-                    <ExternalLink className="size-3.5 shrink-0 text-muted-foreground" />
-                  </a>
-                </Button>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+          ))}
+        </div>
+        <p className="text-[10px] leading-snug text-muted-foreground">{p.licenseNote[lang]}</p>
+        <p className="text-xs leading-relaxed">
+          <span className="font-bold text-emerald-600 dark:text-emerald-400">{L.bestFor[lang]}: </span>
+          {p.bestFor[lang]}
+        </p>
+        <Separator />
+        <div className="mt-auto space-y-1.5">
+          {p.links.map((link) => {
+            const LinkIcon = LINK_ICONS[link.kind];
+            return (
+              <Button
+                key={link.url}
+                asChild
+                variant="outline"
+                size="sm"
+                className="h-9 w-full justify-between gap-2 text-[11px] font-bold"
+              >
+                <a href={link.url} target="_blank" rel="noreferrer">
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <LinkIcon className="size-3.5 shrink-0 text-emerald-500" />
+                    <span className="truncate">{link.label[lang]}</span>
+                  </span>
+                  <ExternalLink className="size-3.5 shrink-0 text-muted-foreground" />
+                </a>
+              </Button>
+            );
+          })}
+        </div>
+      </div>
     </motion.div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* Per-platform detail section (what / install / arch / API)           */
+/* Per-platform detail section (what / install / arch / API) — v3      */
 /* ------------------------------------------------------------------ */
 
 function SectionHeading({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <h4 className="flex items-center gap-1.5 text-xs font-black text-emerald-600 dark:text-emerald-400">
+    <h4 className="flex items-center gap-1.5 font-mono text-[10px] font-black uppercase tracking-wider text-primary">
       <Icon className="size-3.5" />
       {children}
     </h4>
@@ -339,65 +371,63 @@ function PlatformSection({ p }: { p: IntegrationPlatform }) {
           <Icon className="size-5" />
         </div>
         <div className="min-w-0">
-          <h3 className="text-sm font-black">{p.name}</h3>
+          <h3 className="font-mono text-sm font-black tracking-tight">{p.name}</h3>
           <p className="text-[11px] text-muted-foreground">{p.tagline[lang]}</p>
         </div>
+        <span className="eq-bars ms-auto hidden shrink-0 sm:inline-flex" aria-hidden>
+          <i /><i /><i /><i />
+        </span>
       </div>
 
       {/* what it is */}
-      <Card>
-        <CardContent className="space-y-2 p-4">
-          <SectionHeading icon={BookOpen}>{L.whatIs[lang]}</SectionHeading>
-          <p className="text-xs leading-relaxed">{p.what[lang]}</p>
-        </CardContent>
-      </Card>
+      <div className="hud-panel space-y-2 rounded-xl p-4">
+        <SectionHeading icon={BookOpen}>{L.whatIs[lang]}</SectionHeading>
+        <p className="text-xs leading-relaxed">{p.what[lang]}</p>
+      </div>
 
-      {/* install steps */}
-      <Card>
-        <CardContent className="space-y-3 p-4">
-          <SectionHeading icon={Download}>{L.installSteps[lang]}</SectionHeading>
-          {p.install.map((step, i) => (
-            <div key={i} className="space-y-1.5">
-              <div className="flex items-center gap-2 text-xs font-bold">
-                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/15 text-[10px] font-black text-emerald-600 dark:text-emerald-400">
-                  {i + 1}
-                </span>
-                <span className="leading-snug">{step.title[lang]}</span>
-              </div>
-              {step.code && <CodeBlock language="bash" code={step.code} />}
-              {step.note && (
-                <p className="flex items-start gap-1.5 text-[10.5px] leading-relaxed text-muted-foreground">
-                  <Info className="mt-0.5 size-3 shrink-0 text-teal-500" />
-                  {step.note[lang]}
-                </p>
-              )}
+      {/* install steps — numbered terminal lines */}
+      <div className="hud-panel space-y-3 rounded-xl p-4">
+        <SectionHeading icon={Download}>{L.installSteps[lang]}</SectionHeading>
+        {p.install.map((step, i) => (
+          <div key={i} className="space-y-1.5 rise-in" style={{ animationDelay: `${i * 0.07}s` }}>
+            <div className="flex items-center gap-2 text-xs font-bold">
+              <span className="code-chip shrink-0 font-black">{String(i + 1).padStart(2, "0")}</span>
+              <span className="leading-snug">{step.title[lang]}</span>
             </div>
-          ))}
-        </CardContent>
-      </Card>
+            {step.code && <CodeBlock language="bash" code={step.code} />}
+            {step.note && (
+              <p className="flex items-start gap-1.5 text-[10.5px] leading-relaxed text-muted-foreground">
+                <Info className="mt-0.5 size-3 shrink-0 text-teal-500" />
+                {step.note[lang]}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
 
-      {/* integration architecture */}
-      <Card>
-        <CardContent className="space-y-3 p-4">
-          <SectionHeading icon={Network}>{p.archTitle[lang]}</SectionHeading>
-          <ArchDiagram nodes={p.arch} />
-          <p className="text-[11px] leading-relaxed text-muted-foreground">{p.archNote[lang]}</p>
-        </CardContent>
-      </Card>
+      {/* integration architecture — same diagram, hud-panel + caption */}
+      <div className="hud-panel space-y-3 rounded-xl p-4">
+        <SectionHeading icon={Network}>{p.archTitle[lang]}</SectionHeading>
+        <ArchDiagram nodes={p.arch} />
+        <p className="text-[11px] leading-relaxed text-muted-foreground">{p.archNote[lang]}</p>
+        <div className="flex items-center gap-2 border-t border-border/60 pt-2.5">
+          <span className="code-chip">arch.topology</span>
+          <span className="dot-leader" />
+          <span className="font-mono text-[10px] text-muted-foreground" dir="ltr">{p.id}.diagram</span>
+        </div>
+      </div>
 
-      {/* API examples */}
-      <Card>
-        <CardContent className="space-y-3 p-4">
-          <SectionHeading icon={Code2}>{L.apiExamples[lang]}</SectionHeading>
-          {p.examples.map((ex, i) => (
-            <div key={i} className="space-y-1.5">
-              <div className="text-xs font-bold">{ex.title[lang]}</div>
-              <CodeBlock language={ex.lang} code={ex.code} />
-              {ex.desc && <p className="text-[10.5px] leading-relaxed text-muted-foreground">{ex.desc[lang]}</p>}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      {/* API examples — term-window with mono title chip */}
+      <div className="hud-panel space-y-3 rounded-xl p-4">
+        <SectionHeading icon={Code2}>{L.apiExamples[lang]}</SectionHeading>
+        {p.examples.map((ex, i) => (
+          <div key={i} className="space-y-1.5">
+            <div className="text-xs font-bold">{ex.title[lang]}</div>
+            <CodeBlock language={ex.lang} code={ex.code} chip={`api.${p.id}`} />
+            {ex.desc && <p className="text-[10.5px] leading-relaxed text-muted-foreground">{ex.desc[lang]}</p>}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -419,27 +449,33 @@ export default function IntegrationsView() {
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      {/* header */}
-      <div className="flex items-center gap-2.5">
-        <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-primary-foreground glow-primary">
-          <Layers3 className="size-5" />
+      {/* section header — ops console v3 */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2.5">
+          <span className="grid size-8 place-items-center rounded-lg bg-primary/10 text-primary">
+            <Layers3 className="size-4" />
+          </span>
+          <h2 className="text-sm font-black">{t("integrations")}</h2>
+          <span className="code-chip">lab.bridge</span>
+          <span className="dot-leader" />
+          <span className="font-mono text-[10px] text-muted-foreground">
+            3 {lang === "ar" ? "منصات" : "PLATFORMS"} · 100% IN-BROWSER
+          </span>
         </div>
-        <div>
-          <h2 className="text-base font-black">{t("integrations")}</h2>
-          <p className="text-[11px] text-muted-foreground">{L.subtitle[lang]}</p>
-        </div>
+        <p className="text-[11px] text-muted-foreground">{L.subtitle[lang]}</p>
       </div>
 
       {/* hero */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-        <Card className="overflow-hidden border-emerald-500/25 bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent">
-          <CardContent className="space-y-4 p-4 sm:p-6">
+        <div className="hud-panel relative overflow-hidden rounded-2xl p-4 sm:p-6 net-grid-bg">
+          <div aria-hidden className="aurora" />
+          <div className="relative space-y-4">
             <div className="space-y-1.5">
-              <Badge variant="outline" className="gap-1 border-emerald-500/30 text-emerald-700 dark:text-emerald-400">
+              <span className="code-chip inline-flex items-center gap-1">
                 <Zap className="size-3" />
                 {L.kicker[lang]}
-              </Badge>
-              <h3 className="text-xl font-black leading-tight sm:text-2xl">{L.heroTitle[lang]}</h3>
+              </span>
+              <h3 className="grad-text text-xl font-black leading-tight sm:text-2xl">{L.heroTitle[lang]}</h3>
               <p className="text-xs text-muted-foreground" dir={lang === "ar" ? "ltr" : "rtl"}>
                 {L.heroTitle[lang === "ar" ? "en" : "ar"]}
               </p>
@@ -450,14 +486,10 @@ export default function IntegrationsView() {
             <div className="grid gap-2 sm:grid-cols-3">
               {HERO_STEPS.map((st, i) => (
                 <div key={i} className="flex items-start gap-2.5 rounded-xl border bg-background/70 p-3">
-                  <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                    <st.icon className="size-4" />
-                  </div>
+                  <span className="code-chip shrink-0 font-black">{String(i + 1).padStart(2, "0")}</span>
+                  <st.icon className="mt-0.5 size-4 shrink-0 text-emerald-500" />
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5 text-xs font-bold">
-                      <span className="font-black text-emerald-600 dark:text-emerald-400">{i + 1}.</span>
-                      <span className="leading-snug">{st.title[lang]}</span>
-                    </div>
+                    <div className="text-xs font-bold leading-snug">{st.title[lang]}</div>
                     <p className="mt-0.5 text-[10.5px] leading-snug text-muted-foreground">{st.sub[lang]}</p>
                   </div>
                 </div>
@@ -466,27 +498,29 @@ export default function IntegrationsView() {
 
             {/* stats */}
             <div className="flex flex-wrap gap-1.5">
-              <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-2.5 py-1 text-[11px] font-bold text-muted-foreground">
-                <Boxes className="size-3.5 text-emerald-500" />
+              <span className="code-chip inline-flex items-center gap-1.5">
+                <Boxes className="size-3" />
                 {L.statPlatformsValue[lang]} {L.statPlatforms[lang]}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-2.5 py-1 text-[11px] font-bold text-muted-foreground">
-                <MonitorSmartphone className="size-3.5 text-emerald-500" />
+              <span className="code-chip inline-flex items-center gap-1.5">
+                <MonitorSmartphone className="size-3" />
                 {L.statBrowser[lang]}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-2.5 py-1 text-[11px] font-bold text-muted-foreground">
-                <Wrench className="size-3.5 text-emerald-500" />
+              <span className="code-chip inline-flex items-center gap-1.5">
+                <Wrench className="size-3" />
                 {L.statToolsValue[lang]} {L.statTools[lang]}
               </span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </motion.div>
 
       {/* platform cards */}
       <section className="space-y-2.5">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-sm font-black">{L.pickTitle[lang]}</h3>
+          <span className="code-chip">platforms.pick</span>
+          <span className="dot-leader" />
           <p className="text-[11px] text-muted-foreground">{L.pickDesc[lang]}</p>
         </div>
         <div className="grid gap-3 md:grid-cols-3">
@@ -496,15 +530,19 @@ export default function IntegrationsView() {
         </div>
       </section>
 
-      {/* sticky sub-nav + per-platform deep dives */}
+      {/* sticky sub-nav (terminal segmented pills) + per-platform deep dives */}
       <Tabs value={active} onValueChange={setActive}>
         <div className="sticky top-14 z-10 -mx-1 border-b bg-background/95 px-1 py-1.5 backdrop-blur-md">
           <div className="flex items-center gap-2">
-            <TabsList className="h-9 flex-1 overflow-x-auto rounded-lg">
+            <TabsList className="h-9 flex-1 gap-1 overflow-x-auto rounded-full border bg-muted/40 p-1">
               {INTEGRATION_PLATFORMS.map((p) => {
                 const Icon = PLATFORM_ICONS[p.id];
                 return (
-                  <TabsTrigger key={p.id} value={p.id} className="gap-1.5 text-xs font-bold">
+                  <TabsTrigger
+                    key={p.id}
+                    value={p.id}
+                    className="rounded-full px-3 font-mono text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
                     <Icon className="size-3.5 text-emerald-500" />
                     {p.name}
                   </TabsTrigger>
@@ -525,13 +563,15 @@ export default function IntegrationsView() {
 
         {INTEGRATION_PLATFORMS.map((p) => (
           <TabsContent key={p.id} value={p.id} className="mt-3">
-            <PlatformSection p={p} />
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+              <PlatformSection p={p} />
+            </motion.div>
           </TabsContent>
         ))}
       </Tabs>
 
       {/* compare table */}
-      <section id="sec-compare" className="scroll-mt-28 space-y-2.5">
+      <section id="sec-compare" className="rise-in scroll-mt-28 space-y-2.5">
         <div className="flex items-center gap-2.5">
           <div className="grid size-9 shrink-0 place-items-center rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
             <Cpu className="size-5" />
@@ -541,53 +581,58 @@ export default function IntegrationsView() {
             <p className="text-[11px] text-muted-foreground">{L.compareDesc[lang]}</p>
           </div>
         </div>
-        <Card className="overflow-hidden py-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-xs">{L.criteria[lang]}</TableHead>
-                {INTEGRATION_PLATFORMS.map((p) => {
-                  const Icon = PLATFORM_ICONS[p.id];
-                  return (
-                    <TableHead key={p.id} className="text-center text-xs">
-                      <span className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
-                        <Icon className="size-3.5 text-emerald-500" />
-                        {p.name}
-                      </span>
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {COMPARE_ROWS.map((row) => (
-                <TableRow key={row.label.en}>
-                  <TableCell className="text-xs">
-                    <div className="font-bold">{row.label[lang]}</div>
-                    {row.note && (
-                      <div className="mt-0.5 max-w-[220px] text-[10px] leading-snug text-muted-foreground">
-                        {row.note[lang]}
-                      </div>
-                    )}
-                  </TableCell>
-                  {INTEGRATION_PLATFORMS.map((p) => (
-                    <TableCell key={p.id} className="text-center">
-                      <Stars n={row.stars[p.id]} />
-                    </TableCell>
-                  ))}
+        <div className="hud-panel overflow-hidden rounded-xl">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                  <TableHead className="font-mono text-[10px] font-bold uppercase tracking-wider">
+                    {L.criteria[lang]}
+                  </TableHead>
+                  {INTEGRATION_PLATFORMS.map((p) => {
+                    const Icon = PLATFORM_ICONS[p.id];
+                    return (
+                      <TableHead key={p.id} className="text-center font-mono text-[10px] font-bold uppercase tracking-wider">
+                        <span className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                          <Icon className="size-3.5 text-emerald-500" />
+                          {p.name}
+                        </span>
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+              </TableHeader>
+              <TableBody>
+                {COMPARE_ROWS.map((row) => (
+                  <TableRow key={row.label.en} className="hover:bg-muted/30">
+                    <TableCell className="text-xs font-bold">
+                      <div>{row.label[lang]}</div>
+                      {row.note && (
+                        <div className="mt-0.5 max-w-[220px] text-[10px] font-normal leading-snug text-muted-foreground">
+                          {row.note[lang]}
+                        </div>
+                      )}
+                    </TableCell>
+                    {INTEGRATION_PLATFORMS.map((p) => (
+                      <TableCell key={p.id} className="text-center">
+                        <Stars n={row.stars[p.id]} />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </section>
 
       {/* cross-links back into the platform */}
-      <Card className="border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent">
-        <CardContent className="space-y-3 p-4 sm:p-5">
+      <div className="hud-panel rise-in relative overflow-hidden rounded-2xl border-emerald-500/30 p-4 sm:p-5">
+        <div aria-hidden className="aurora" />
+        <div className="relative space-y-3">
           <div className="flex items-center gap-2.5">
             <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-primary-foreground shadow-md">
-              <Wrench className="size-4.5" />
+              <Wrench className="size-4" />
             </div>
             <div className="min-w-0">
               <h3 className="text-sm font-black">{L.journeyTitle[lang]}</h3>
@@ -608,11 +653,11 @@ export default function IntegrationsView() {
               {L.netSimBtn[lang]}
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* footer note */}
-      <Alert className="border-emerald-500/25 bg-emerald-500/5">
+      <Alert className="rise-in border-emerald-500/25 bg-emerald-500/5">
         <ShieldCheck className="size-4" />
         <AlertTitle className="text-xs font-black">{L.safetyTitle[lang]}</AlertTitle>
         <AlertDescription className="text-[11px] leading-relaxed">{L.footerNote[lang]}</AlertDescription>
