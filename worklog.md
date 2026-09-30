@@ -771,3 +771,31 @@ Stage Summary:
 - ALL user-requested features are browser-verified end-to-end: research-backed sources with original-text dropdowns, per-lesson certificates with serious-quiz gating, 76 interactive checkpoints, realistic NetSim (Cisco ping/show commands/startup-config/LEDs — verified by agent 11-e), advanced assessment analytics engine (6 dimensions, classification, error taxonomy, engagement, patterns, recommendations, digital-record export), new CNSS-edu icon
 - Repo state: 1 commit ahead of origin, not pushed (credentials missing) — the ONLY unresolved item
 - Known ops quirk: dev server freezes between invocations (thaw with pkill -CONT -f 'next'); Turbopack cache may need rm -rf .next after heavy parallel edits
+
+---
+Task ID: push-fix-1
+Agent: main (Z.ai Code)
+Task: Push to github.com/qt0nb/cnss-edu.git + fix small errors when entering some pages
+
+Work Log:
+- Checked repo state: origin already configured, 5 modified files (hydration fixes from previous session, uncommitted)
+- Ran lint: 1 warning (stale eslint-disable in i18n.tsx) → auto-fixed, now 0 problems
+- Committed hydration fixes as 31a9c66
+- Push attempt 1 failed: no GitHub credentials in environment (no gh CLI, no GITHUB_TOKEN, no SSH keys, no credential helper)
+- Browser-tested all 13 hash views with agent-browser; dashboard/lessons/quizzes/review/tools/projects/playground/challenges clean; certificates→settings threw ChunkLoadError (CertificatesView chunk)
+- Root-cause analysis: dmesg showed kernel OOM-killer had killed next-server (RSS 2.3GB of 4.1GB total RAM) — after any dev-server restart, stale chunk hashes → ChunkLoadError on not-yet-visited pages. This is exactly the "small errors when entering some pages" the user reported
+- Fixes implemented:
+  1. scripts/dev-supervisor.sh — watchdog restarting dev server on death/hang, NODE_OPTIONS max-old-space-size=1536 (next-server now ~960MB RSS vs 2.3GB)
+  2. src/components/platform/shell/ViewErrorBoundary.tsx — per-view error boundary; transient chunk/network errors auto-retry via remount; exhausted retries → branded bilingual recovery card (retry / reload). Verified live: caught a real ChunkLoadError during HMR rebuild and recovered
+  3. ViewRouter wrapped in boundary (resetKey=view)
+  4. ToolsView tool dialog: added missing DialogDescription (Radix a11y warning gone)
+- Killed stray agent-browser chromium processes (memory recovery: 3.2GB free)
+- Re-verified via agent-browser: ALL 13 views + lesson detail (l001, full content tables) + quiz golden path (start quiz → answer → next) = 0 errors
+- Lint: 0 errors, 0 warnings
+- Committed as 5a36c82
+- Push attempt 2 failed: same auth issue — GitHub requires authentication for push even to public repos (anonymous push does not exist)
+
+Stage Summary:
+- 2 commits ready to push (31a9c66 hydration, 5a36c82 chunk-load resilience + supervisor): blocked ONLY by missing GitHub credentials
+- All 13 pages verified error-free; server memory stabilized; auto-recovery proven working
+- Next: user must provide GitHub PAT (repo scope) to complete the push
