@@ -3,13 +3,16 @@
  * Strategy:
  *  - Navigations (the SPA shell): network-first → cached shell → inline offline page.
  *    The app is a hash-routed client SPA, so the single cached "/" shell serves every page.
- *  - Static assets & chunks: cache-first (hashed /_next/static stays immutable;
- *    non-hashed get a background refresh = stale-while-revalidate).
+ *  - Static assets & chunks: **network-first with cache fallback** (v3).
+ *    Why: in dev, Turbopack reuses stable chunk filenames across recompiles, so a
+ *    cache-first SW would serve stale code forever (hydration mismatches vs SSR).
+ *    Network-first is always fresh when online and still serves offline from cache.
+ *    Truly static public/ shell files (icons, manifest, offline.html) stay cache-first.
  *  - /api/* : network-only (the app degrades gracefully offline).
  *  - Everything is captured on first visit; PwaRegister additionally prefetches
  *    all view chunks so every page works offline after the FIRST load.
  */
-const VERSION = "cnss-v2";
+const VERSION = "cnss-v3";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const MAX_RUNTIME_ENTRIES = 600;
@@ -129,18 +132,37 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Static assets & build chunks → cache-first (+ background SWR refresh for non-hashed)
+  // Precached shell files (icons/manifest/offline.html) are byte-stable → cache-first.
+  // Everything else (incl. /_next/static chunks) → network-first + cache fallback:
+  // always-fresh when online, offline-capable when not.
+  const isPrecachedShell =
+    url.pathname.startsWith("/icons/") ||
+    url.pathname === "/manifest.webmanifest" ||
+    url.pathname === "/offline.html";
+
+  if (isPrecachedShell) {
+    event.respondWith(
+      (async () => {
+        const cached = await caches.match(req, { ignoreVary: true, ignoreSearch: true });
+        if (cached) return cached;
+        try {
+          const fresh = await fetch(req);
+          if (fresh && fresh.ok) {
+            const cache = await caches.open(SHELL_CACHE);
+            await cache.put(req, fresh.clone());
+          }
+          return fresh;
+        } catch {
+          return new Response("", { status: 504, statusText: "Offline" });
+        }
+      })()
+    );
+    return;
+  }
+
+  // chunks & other static assets → network-first, cache fallback
   event.respondWith(
     (async () => {
-      const cached = await caches.match(req, { ignoreVary: true, ignoreSearch: true });
-      if (cached) {
-        if (!url.pathname.startsWith("/_next/static/")) {
-          fetch(req)
-            .then((r) => (r && r.ok ? caches.open(RUNTIME_CACHE).then((c) => c.put(req, r.clone())) : null))
-            .catch(() => {});
-        }
-        return cached;
-      }
       try {
         const fresh = await fetch(req);
         if (fresh && fresh.ok && (fresh.type === "basic" || fresh.type === "default")) {
@@ -150,6 +172,8 @@ self.addEventListener("fetch", (event) => {
         }
         return fresh;
       } catch {
+        const cached = await caches.match(req, { ignoreVary: true, ignoreSearch: true });
+        if (cached) return cached;
         return new Response("", { status: 504, statusText: "Offline" });
       }
     })()

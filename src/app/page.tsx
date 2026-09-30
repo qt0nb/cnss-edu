@@ -58,7 +58,7 @@ const CertificatesView = dynamic(() => import("@/components/platform/Certificate
 const AnalyticsView = dynamic(() => import("@/components/platform/AnalyticsView"));
 const IntegrationsView = dynamic(() => import("@/components/platform/IntegrationsView"));
 
-/** The CNSS-edu identity mark — hex network mesh with terminal hub (matches favicon) */
+/** The CNSS-edu identity mark — soft network constellation with terminal hub (matches favicon) */
 function CnssMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 512 512" className={className} aria-hidden="true">
@@ -69,42 +69,42 @@ function CnssMark({ className }: { className?: string }) {
           <stop offset="1" stopColor="#0d9488" />
         </linearGradient>
       </defs>
-      <path
-        d="M256 106 L385.9 181 L385.9 331 L256 406 L126.1 331 L126.1 181 Z"
-        fill="none"
-        stroke="url(#cmk-g)"
-        strokeWidth="22"
-        strokeLinejoin="round"
+      {/* gentle dashed orbit ring — a circle, not a polygon */}
+      <circle
+        cx="256" cy="256" r="182" fill="none" stroke="#10b981" strokeOpacity="0.3"
+        strokeWidth="3" strokeDasharray="3 15" strokeLinecap="round"
       />
-      <g stroke="#10b981" strokeOpacity="0.78" strokeWidth="14" strokeLinecap="round">
-        <path d="M256 256 L256 106" />
-        <path d="M256 256 L385.9 181" />
-        <path d="M256 256 L385.9 331" />
-        <path d="M256 256 L256 406" />
-        <path d="M256 256 L126.1 331" />
-        <path d="M256 256 L126.1 181" />
+      {/* soft curved network arcs */}
+      <g fill="none" stroke="#10b981" strokeOpacity="0.8" strokeWidth="9" strokeLinecap="round">
+        <path d="M256 256 Q282 182 256 112" />
+        <path d="M256 256 Q342 196 372 168" />
+        <path d="M256 256 Q350 302 392 314" />
+        <path d="M256 256 Q294 348 298 404" />
+        <path d="M256 256 Q186 322 152 352" />
+        <path d="M256 256 Q174 208 142 176" />
       </g>
-      <g fill="#0c1310" stroke="url(#cmk-g)" strokeWidth="18">
-        <circle cx="256" cy="106" r="29" />
-        <circle cx="385.9" cy="181" r="29" />
-        <circle cx="385.9" cy="331" r="29" />
-        <circle cx="256" cy="406" r="29" />
-        <circle cx="126.1" cy="331" r="29" />
-        <circle cx="126.1" cy="181" r="29" />
+      {/* perimeter nodes */}
+      <g fill="#0c1310" stroke="url(#cmk-g)" strokeWidth="11">
+        <circle cx="256" cy="112" r="27" />
+        <circle cx="372" cy="168" r="27" />
+        <circle cx="392" cy="314" r="27" />
+        <circle cx="298" cy="404" r="27" />
+        <circle cx="152" cy="352" r="27" />
+        <circle cx="142" cy="176" r="27" />
       </g>
       <g fill="#34d399">
-        <circle cx="256" cy="106" r="10" />
-        <circle cx="385.9" cy="181" r="10" />
-        <circle cx="385.9" cy="331" r="10" />
-        <circle cx="256" cy="406" r="10" />
-        <circle cx="126.1" cy="331" r="10" />
-        <circle cx="126.1" cy="181" r="10" />
+        <circle cx="256" cy="112" r="7.5" />
+        <circle cx="372" cy="168" r="7.5" />
+        <circle cx="392" cy="314" r="7.5" />
+        <circle cx="298" cy="404" r="7.5" />
+        <circle cx="152" cy="352" r="7.5" />
+        <circle cx="142" cy="176" r="7.5" />
       </g>
-      <circle cx="256" cy="256" r="62" fill="url(#cmk-g)" />
-      <g stroke="#032b20" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" fill="none">
-        <path d="M234 238 L256 258 L234 278" />
-        <path d="M264 274 H288" />
-      </g>
+      {/* central hub: soft circle + curved caret wing + soft dot */}
+      <circle cx="256" cy="256" r="60" fill="#0c1310" stroke="url(#cmk-g)" strokeWidth="12" />
+      <circle cx="256" cy="256" r="44" fill="url(#cmk-g)" />
+      <path d="M234 239 Q261 257 234 275" stroke="#032b20" strokeWidth="11" strokeLinecap="round" fill="none" />
+      <circle cx="268" cy="271" r="6.5" fill="#032b20" />
     </svg>
   );
 }

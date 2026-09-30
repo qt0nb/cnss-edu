@@ -10,72 +10,76 @@
       <stop offset="0" stop-color="#101917"/>
       <stop offset="1" stop-color="#09090b"/>
     </linearGradient>
-    <radialGradient id="cnssGlow" cx="0.5" cy="0.44" r="0.62">
-      <stop offset="0" stop-color="#10b981" stop-opacity="0.35"/>
+    <radialGradient id="cnssGlow" cx="0.5" cy="0.46" r="0.6">
+      <stop offset="0" stop-color="#10b981" stop-opacity="0.32"/>
       <stop offset="1" stop-color="#10b981" stop-opacity="0"/>
     </radialGradient>
-    <filter id="cnssSoft" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="7"/>
+    <filter id="cnssSoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="8"/>
     </filter>
   </defs>
 
-  <rect width="512" height="512" rx="118" fill="url(#cnssBg)"/>
-  <rect width="512" height="512" rx="118" fill="url(#cnssGlow)"/>
+  <!-- soft rounded-square canvas -->
+  <rect width="512" height="512" rx="120" fill="url(#cnssBg)"/>
+  <rect width="512" height="512" rx="120" fill="url(#cnssGlow)"/>
 
-  <!-- faint grid mesh -->
-  <g stroke="#10b981" stroke-opacity="0.06" stroke-width="2">
+  <!-- faint background mesh -->
+  <g stroke="#10b981" stroke-opacity="0.05" stroke-width="2">
     <path d="M0 128 H512 M0 384 H512 M128 0 V512 M384 0 V512"/>
   </g>
 
-  <!-- orbit ring -->
-  <circle cx="256" cy="256" r="208" fill="none" stroke="#34d399" stroke-opacity="0.20"
-          stroke-width="3" stroke-dasharray="3 14" stroke-linecap="round"/>
+  <!-- gentle dashed orbit rings (circles, not polygons) -->
+  <circle cx="256" cy="256" r="182" fill="none" stroke="#10b981" stroke-opacity="0.30"
+          stroke-width="3" stroke-dasharray="3 15" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#10b981" stroke-opacity="0.14"
+          stroke-width="2.5" stroke-dasharray="2 12" stroke-linecap="round"/>
 
-  <!-- network hex-mesh: ring edges -->
-  <path d="M256 106 L385.9 181 L385.9 331 L256 406 L126.1 331 L126.1 181 Z"
-        fill="none" stroke="url(#cnssG)" stroke-width="14" stroke-linejoin="round"/>
-
-  <!-- spokes from center -->
-  <g stroke="#10b981" stroke-opacity="0.78" stroke-width="9" stroke-linecap="round">
-    <path d="M256 256 L256 106"/>
-    <path d="M256 256 L385.9 181"/>
-    <path d="M256 256 L385.9 331"/>
-    <path d="M256 256 L256 406"/>
-    <path d="M256 256 L126.1 331"/>
-    <path d="M256 256 L126.1 181"/>
+  <!-- ── soft curved network arcs (bezier, round caps) ─────────────── -->
+  <g fill="none" stroke="#10b981" stroke-opacity="0.8" stroke-width="9" stroke-linecap="round">
+    <path d="M256 256 Q282 182 256 112"/>
+    <path d="M256 256 Q342 196 372 168"/>
+    <path d="M256 256 Q350 302 392 314"/>
+    <path d="M256 256 Q294 348 298 404"/>
+    <path d="M256 256 Q186 322 152 352"/>
+    <path d="M256 256 Q174 208 142 176"/>
+  </g>
+  <!-- quieter inter-node mesh arcs -->
+  <g fill="none" stroke="#10b981" stroke-opacity="0.32" stroke-width="6" stroke-linecap="round">
+    <path d="M372 168 Q414 240 392 314"/>
+    <path d="M152 352 Q110 262 142 176"/>
   </g>
 
-  <!-- data packets in flight -->
+  <!-- data packets in flight (soft glow) -->
   <g fill="#2dd4bf" filter="url(#cnssSoft)">
-    <circle cx="256" cy="181" r="9"/>
-    <circle cx="321" cy="293.5" r="8"/>
-    <circle cx="191" cy="218.5" r="7"/>
+    <circle cx="312" cy="202" r="9"/>
+    <circle cx="198" cy="302" r="8"/>
+    <circle cx="262" cy="182" r="7"/>
+    <circle cx="284" cy="344" r="6.5"/>
   </g>
 
-  <!-- perimeter nodes -->
-  <g fill="#0a0f0d" stroke="url(#cnssG)" stroke-width="12">
-    <circle cx="256" cy="106" r="29"/>
-    <circle cx="385.9" cy="181" r="29"/>
-    <circle cx="385.9" cy="331" r="29"/>
-    <circle cx="256" cy="406" r="29"/>
-    <circle cx="126.1" cy="331" r="29"/>
-    <circle cx="126.1" cy="181" r="29"/>
+  <!-- ── perimeter nodes (round, soft) ─────────────────────────────── -->
+  <g fill="#0a0f0d" stroke="url(#cnssG)" stroke-width="11">
+    <circle cx="256" cy="112" r="27"/>
+    <circle cx="372" cy="168" r="27"/>
+    <circle cx="392" cy="314" r="27"/>
+    <circle cx="298" cy="404" r="27"/>
+    <circle cx="152" cy="352" r="27"/>
+    <circle cx="142" cy="176" r="27"/>
   </g>
   <!-- node cores -->
   <g fill="#34d399">
-    <circle cx="256" cy="106" r="8"/>
-    <circle cx="385.9" cy="181" r="8"/>
-    <circle cx="385.9" cy="331" r="8"/>
-    <circle cx="256" cy="406" r="8"/>
-    <circle cx="126.1" cy="331" r="8"/>
-    <circle cx="126.1" cy="181" r="8"/>
+    <circle cx="256" cy="112" r="7.5"/>
+    <circle cx="372" cy="168" r="7.5"/>
+    <circle cx="392" cy="314" r="7.5"/>
+    <circle cx="298" cy="404" r="7.5"/>
+    <circle cx="152" cy="352" r="7.5"/>
+    <circle cx="142" cy="176" r="7.5"/>
   </g>
 
-  <!-- center hub with terminal caret -->
-  <circle cx="256" cy="256" r="58" fill="#0a0f0d" stroke="url(#cnssG)" stroke-width="12"/>
-  <circle cx="256" cy="256" r="43" fill="url(#cnssG)"/>
-  <g stroke="#032b20" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M238 240 L256 256 L238 272"/>
-    <path d="M262 270 H281"/>
-  </g>
+  <!-- ── central hub: soft circle + rounded terminal caret ─────────── -->
+  <circle cx="256" cy="256" r="60" fill="#0a0f0d" stroke="url(#cnssG)" stroke-width="12"/>
+  <circle cx="256" cy="256" r="44" fill="url(#cnssG)"/>
+  <!-- curved caret wing + soft dot — terminal identity, zero straight lines -->
+  <path d="M234 239 Q261 257 234 275" stroke="#032b20" stroke-width="11" stroke-linecap="round" fill="none"/>
+  <circle cx="268" cy="271" r="6.5" fill="#032b20"/>
 </svg>

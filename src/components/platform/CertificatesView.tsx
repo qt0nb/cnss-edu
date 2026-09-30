@@ -134,38 +134,41 @@ const DIAMOND_MARKS: { top?: string; bottom?: string; left?: string; right?: str
 function CertMark({ style }: { style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 512 512" style={style} aria-hidden="true">
-      <path
-        d="M256 106 L385.9 181 L385.9 331 L256 406 L126.1 331 L126.1 181 Z"
-        fill="none"
-        stroke={EM}
-        strokeWidth="26"
-        strokeLinejoin="round"
+      {/* soft dashed orbit ring */}
+      <circle
+        cx="256" cy="256" r="182" fill="none"
+        stroke={EM} strokeOpacity="0.45" strokeWidth="8"
+        strokeDasharray="4 18" strokeLinecap="round"
       />
-      <g stroke={EM} strokeOpacity="0.55" strokeWidth="12" strokeLinecap="round">
-        <path d="M256 256 L256 106" />
-        <path d="M256 256 L385.9 181" />
-        <path d="M256 256 L385.9 331" />
-        <path d="M256 256 L256 406" />
-        <path d="M256 256 L126.1 331" />
-        <path d="M256 256 L126.1 181" />
+      {/* soft curved network arcs */}
+      <g fill="none" stroke={EM} strokeOpacity="0.7" strokeWidth="12" strokeLinecap="round">
+        <path d="M256 256 Q282 182 256 112" />
+        <path d="M256 256 Q342 196 372 168" />
+        <path d="M256 256 Q350 302 392 314" />
+        <path d="M256 256 Q294 348 298 404" />
+        <path d="M256 256 Q186 322 152 352" />
+        <path d="M256 256 Q174 208 142 176" />
       </g>
+      {/* perimeter nodes */}
       <g fill={PAPER} stroke={EM} strokeWidth="14">
-        <circle cx="256" cy="106" r="26" />
-        <circle cx="385.9" cy="181" r="26" />
-        <circle cx="385.9" cy="331" r="26" />
-        <circle cx="256" cy="406" r="26" />
-        <circle cx="126.1" cy="331" r="26" />
-        <circle cx="126.1" cy="181" r="26" />
+        <circle cx="256" cy="112" r="26" />
+        <circle cx="372" cy="168" r="26" />
+        <circle cx="392" cy="314" r="26" />
+        <circle cx="298" cy="404" r="26" />
+        <circle cx="152" cy="352" r="26" />
+        <circle cx="142" cy="176" r="26" />
       </g>
-      <circle cx="256" cy="256" r="56" fill={EM} />
+      {/* central hub + curved caret wing + soft dot */}
+      <circle cx="256" cy="256" r="58" fill={PAPER} stroke={EM} strokeWidth="14" />
+      <circle cx="256" cy="256" r="42" fill={EM} />
       <path
-        d="M232 240 L254 258 L232 276 M262 272 H286"
+        d="M234 239 Q261 257 234 275"
         stroke={PAPER}
-        strokeWidth="13"
+        strokeWidth="12"
         strokeLinecap="round"
-        strokeLinejoin="round"
         fill="none"
       />
+      <circle cx="268" cy="271" r="7" fill={PAPER} />
     </svg>
   );
 }
