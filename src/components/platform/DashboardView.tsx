@@ -91,10 +91,16 @@ export default function DashboardView() {
   const totalQuestions = ALL_LESSONS.reduce((s, l) => s + l.quiz.length, 0);
 
   /* ── live session uptime (honest: seconds since this mount) ── */
+  /* ── wall clock: hydration-safe (placeholder until mount, ticks every second) ── */
   const [uptimeSec, setUptimeSec] = useState(0);
+  const [nowHms, setNowHms] = useState("--:--:--");
   useEffect(() => {
     const start = Date.now();
-    const tick = () => setUptimeSec(Math.floor((Date.now() - start) / 1000));
+    const tick = () => {
+      setUptimeSec(Math.floor((Date.now() - start) / 1000));
+      const d = new Date();
+      setNowHms(`${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`);
+    };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
@@ -119,7 +125,7 @@ export default function DashboardView() {
 
   /* ── live feed: real store events, newest first, capped at 6 ── */
   const feed = useMemo(() => {
-    const nowTs = `${pad2(new Date().getHours())}:${pad2(new Date().getMinutes())}:${pad2(new Date().getSeconds())}`;
+    const nowTs = nowHms;
     const lines: { ts: string; text: string; tone: string; lessonId?: string }[] = [];
     for (const [id, v] of Object.entries(completedLessons).sort((a, b) => (a[1].completedAt < b[1].completedAt ? 1 : -1)).slice(0, 4)) {
       const d = new Date(v.completedAt);
@@ -140,9 +146,9 @@ export default function DashboardView() {
       tone: streak > 0 ? "text-teal-400" : "text-zinc-500",
     });
     return lines.slice(0, 6);
-  }, [completedLessons, dueCount, streak, lang]);
+  }, [completedLessons, dueCount, streak, lang, nowHms]);
   const feedEmpty = doneCount === 0 && totalCards === 0 && streak === 0;
-  const nowClock = `${pad2(new Date().getHours())}:${pad2(new Date().getMinutes())}`;
+  const nowClock = nowHms;
 
   /* ── animated counters ── */
   const xpDisplay = useCountUp(xp);

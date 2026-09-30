@@ -284,6 +284,10 @@ export const useProgress = create<Store>()(
     {
       name: "nm-progress",
       storage: createJSONStorage(() => localStorage),
+      // Rehydrate manually after mount (page.tsx) so the first client render
+      // matches the server HTML — prevents React hydration mismatches when
+      // persisted progress (XP, lessons, streaks…) differs from defaults.
+      skipHydration: true,
       onRehydrateStorage: () => (state) => {
         state?.setHydrated();
       },

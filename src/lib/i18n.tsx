@@ -428,12 +428,20 @@ const LangContext = createContext<LangCtx>({
   t: (k) => String(k),
 });
 
-export function LangProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(() => {
-    if (typeof window === "undefined") return "ar";
-    const saved = window.localStorage.getItem("nm-lang");
-    return saved === "ar" || saved === "en" ? saved : "ar";
-  });
+/**
+ * Hydration-safe language provider.
+ * `initialLang` comes from the `nm-lang` cookie read server-side in layout.tsx,
+ * so SSR HTML and the first client render always agree (no hydration mismatch).
+ * A one-time mount effect migrates legacy `localStorage`-only preferences.
+ */
+export function LangProvider({
+  children,
+  initialLang = "ar",
+}: {
+  children: React.ReactNode;
+  initialLang?: Lang;
+}) {
+  const [lang, setLangState] = useState<Lang>(initialLang);
 
   useEffect(() => {
     const dir = lang === "ar" ? "rtl" : "ltr";
@@ -441,9 +449,29 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.setAttribute("lang", lang);
   }, [lang]);
 
+  // one-time legacy migration: adopt a localStorage preference if no cookie exists yet
+  useEffect(() => {
+    if (/(?:^|;\s*)nm-lang=/.test(document.cookie)) return;
+    try {
+      const saved = window.localStorage.getItem("nm-lang");
+      if (saved === "ar" || saved === "en") {
+        document.cookie = `nm-lang=${saved}; path=/; max-age=31536000; samesite=lax`;
+        if (saved !== initialLang) setLangState(saved);
+      }
+    } catch {
+      /* private mode — keep server-provided language */
+    }
+     
+  }, []);
+
   const setLang = (l: Lang) => {
     setLangState(l);
-    window.localStorage.setItem("nm-lang", l);
+    try {
+      window.localStorage.setItem("nm-lang", l);
+    } catch {
+      /* private mode */
+    }
+    document.cookie = `nm-lang=${l}; path=/; max-age=31536000; samesite=lax`;
   };
 
   const value = useMemo<LangCtx>(

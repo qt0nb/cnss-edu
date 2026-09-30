@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import { Geist, Cairo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/platform/theme-provider";
 import PwaRegister from "@/components/platform/PwaRegister";
+import { LangProvider } from "@/lib/i18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -71,13 +73,19 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Read the language cookie server-side so SSR HTML, <html> attrs and the
+  // first client render all agree — no hydration mismatch, no AR flash for EN users.
+  const cookieStore = await cookies();
+  const savedLang = cookieStore.get("nm-lang")?.value;
+  const initialLang = savedLang === "en" ? "en" : "ar";
+
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang={initialLang} dir={initialLang === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${cairo.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground min-h-screen`}
       >
@@ -87,9 +95,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <PwaRegister />
-          <Toaster />
+          <LangProvider initialLang={initialLang}>
+            {children}
+            <PwaRegister />
+            <Toaster />
+          </LangProvider>
         </ThemeProvider>
       </body>
     </html>

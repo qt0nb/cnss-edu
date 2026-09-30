@@ -31,7 +31,7 @@ import {
   Award,
   LineChart,
 } from "lucide-react";
-import { LangProvider, useLang } from "@/lib/i18n";
+import { useLang } from "@/lib/i18n";
 import { useNav } from "@/lib/nav";
 import { useCountUp } from "@/lib/useCountUp";
 import { useProgress, learnerLevel, levelTitle } from "@/lib/store";
@@ -635,6 +635,17 @@ function AppShell() {
     }
   }, [syncFromHash]);
 
+  // Manual rehydration — the store opts out of automatic rehydrate
+  // (skipHydration) so the first client render matches the SSR HTML exactly.
+  // Real persisted progress lands a frame later, guarded by `hydrated`.
+  useEffect(() => {
+    void Promise.resolve(useProgress.persist.rehydrate())
+      .catch(() => {})
+      .finally(() => {
+        if (!useProgress.getState().hydrated) useProgress.getState().setHydrated();
+      });
+  }, []);
+
   // safety: never trap the user on the splash
   useEffect(() => {
     if (!booting) return;
@@ -745,9 +756,5 @@ function AppShell() {
 }
 
 export default function Page() {
-  return (
-    <LangProvider>
-      <AppShell />
-    </LangProvider>
-  );
+  return <AppShell />;
 }
