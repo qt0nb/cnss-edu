@@ -10,6 +10,11 @@
 // mathematically valid fit (2^hostbits − 2 ≥ hosts).
 
 import type { LessonInteractive } from "@/lib/types";
+import { M11_INTERACTIVES } from "./interactivesParts/m11";
+import { M12_INTERACTIVES } from "./interactivesParts/m12";
+import { M13_INTERACTIVES } from "./interactivesParts/m13";
+import { M14_INTERACTIVES } from "./interactivesParts/m14";
+import { M15_INTERACTIVES } from "./interactivesParts/m15";
 
 export const LESSON_INTERACTIVES: Record<string, LessonInteractive[]> = {
   // ═══════════════ MODULE 01 · Foundations ═══════════════
@@ -1970,5 +1975,9 @@ export const LESSON_INTERACTIVES: Record<string, LessonInteractive[]> = {
       ],
     },
   ],
+  ...M11_INTERACTIVES,
+  ...M12_INTERACTIVES,
+  ...M13_INTERACTIVES,
+  ...M14_INTERACTIVES,
+  ...M15_INTERACTIVES,
 };
-

@@ -1,0 +1,510 @@
+APPROVED
+
+IT6001: Computer Systems
+Course Details
+Course Code:
+
+IT6001
+
+Course Title:
+
+Computer Systems APPROVED
+
+Short Title:
+
+CS
+
+Course Level::
+
+Level 6
+
+Valid From::
+
+2024/2025 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To provide students with an understanding and appreciation of the computer system architecture and operations. It will introduce students to
+computer hardware and software with emphasis on Cloud Computing and internal operations of computer systems
+
+Page 1 of 4
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Describe the role of hardware components in building different computer architectures
+
+2
+
+Install and administer various end-user operating system software
+
+3
+
+Solve problems relating to low-level computer processes using Boolean logic and data representation
+
+4
+
+Demonstrate a detailed knowledge of professional and ethical issues in information technology
+
+5
+
+Describe and evaluate the types and advantages of Cloud Computing models
+
+Requisites
+No requisites
+
+Page 2 of 4
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Assessment Type
+Examination (Unseen)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Lab Assignment
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8011
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+3 Programme
+
+AEng
+
+Associate Degree in Engineering (Electrical)
+
+1 Programme
+
+BBS6015
+
+Diploma in Real Estate
+
+1 Programme
+
+BBS8000
+
+Bachelor of Business
+
+3 Programme
+
+BBS8001
+
+Bachelor of Business (General)
+
+1 Programme
+
+BBS8010
+
+Bachelor of Business: Marketing
+
+4 Programme
+
+BBS8041
+
+Bachelor of Business: Accounting
+
+2 Programme
+
+BBS8070
+
+Bachelor of Business: Human Resource
+Management
+
+3 Programme
+
+BFA7000
+
+Associate Degree in Film and Animation
+
+1 Programme
+
+BFT8100
+
+Bachelor of Science in Financial Technology
+
+2 Programme
+
+BFT8101
+
+Bachelor of Science in Financial Technology
+
+1 Programme
+
+BWM6000
+
+Diploma in Web Media
+
+3 Programme
+
+DES7000
+
+Associate Degree in Visual Design
+
+1 Programme
+
+DES8000
+
+Bachelor of Visual Design
+
+5 Programme
+
+DES8001
+
+Bachelor of Arts in Visual Design
+
+2 Programme
+
+ENT7020
+
+Associate Degree in Engineering Technology
+(Mechanical)
+
+2 Programme
+
+ENT7021
+
+Associate Degree in Engineering
+(Mechanical)
+
+1 Programme
+
+ENT7031
+
+Associate Degree in Engineering Technology
+(Electronics)
+
+2 Programme
+
+ENT7035
+
+Associate Degree in Engineering (Renewable
+and Clean Energy)
+
+1 Programme
+
+ENT7040
+
+Associate Degree in Engineering Technology
+(Electrical)
+
+1 Programme
+
+ENT7041
+
+Associate Degree in Engineering (Electrical)
+
+1 Programme
+
+ENT7050
+
+Associate degree in Engineering Technology
+(Electromechanical)
+
+1 Programme
+
+ENT7051
+
+Associate degree in Engineering
+(Electromechanical)
+
+1 Programme
+
+ENT7060
+
+Associate Degree in Engineering Technology
+(Communications and Networks)
+
+1 Programme
+
+ENT7061
+
+Associate Degree in Engineering
+(Communications and Networks)
+
+1 Programme
+
+ENT8035
+
+Bachelor of Engineering (Renewable and
+Clean Energy)
+
+2 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+2 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+3 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+2 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+3 Programme
+
+ICT7011
+
+Associate Degree in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT7022
+
+Associate Degree in Information and
+Communications Technology (Information
+Systems)
+
+1 Programme
+
+ICT7041
+
+Associate Degree in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8010
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+4 Programme
+
+ICT8012
+
+Bachelor of Science in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+
+5 Programme
+
+Technology (Networking Major)
+Page 3 of 4
+
+Entity Version Entity Type
+
+Technology (Networking Major)
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8040
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+5 Programme
+
+ICT8041
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+3 Programme
+
+ICT8042
+
+Bachelor of Science in Data Analytics
+
+3 Programme
+
+ICT8044
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8045
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICT8060
+
+Bachelor of Science in Artificial Intelligence
+and Robotics Software
+
+1 Programme
+
+No Code Yet
+
+Bachelor of Visual Design (Updated)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Associate Degree in Engineering
+Technology (Communications and Networks)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+No Code Yet
+
+test Bachelor of Information and
+Communications Technology
+
+1 Programme
+
+TBC
+
+To be deleted
+
+1 Programme
+
+ELE1
+
+Electives 1
+
+1 Group
+
+ELE2
+
+Electives 2
+
+1 Group
+
+Page 4 of 4
+
+

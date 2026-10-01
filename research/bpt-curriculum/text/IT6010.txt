@@ -1,0 +1,542 @@
+APPROVED
+
+IT6010: Maths for Computing
+Course Details
+Course Code:
+
+IT6010
+
+Course Title:
+
+Maths for Computing APPROVED
+
+Short Title:
+
+Maths for Computing
+
+Course Level::
+
+Level 6
+
+Valid From::
+
+2025/2026 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To develop the ability to apply standard mathematical and statistical techniques which can be used in the ICT sector.
+
+Page 1 of 4
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Apply appropriate statistical techniques to solve problems in defined and some undefined ICT scenarios.
+
+2
+
+Use some advanced geometrical methods in simulation applications.
+
+3
+
+Apply basic and some advanced number theory principles to solve a variety of problems in ICT context.
+
+4
+
+Solve cryptography-related problems which are linked to information security.
+
+Requisites
+No requisites
+
+Page 2 of 4
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Assessment Type
+Examination (Unseen)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Practical Project
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8011
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+3 Programme
+
+BFA8001
+
+Bachelor of Arts in Film and Animation
+
+2 Programme
+
+BFA8800
+
+Bachelor of Film and Animation
+
+4 Programme
+
+BFA8801
+
+Bachelor of Arts in Digital Filmmaking
+
+3 Programme
+
+BFA8802
+
+Bachelor of Arts in Animation and Visual
+Effects
+
+3 Programme
+
+BFT8100
+
+Bachelor of Science in Financial Technology
+
+2 Programme
+
+BFT8101
+
+Bachelor of Science in Financial Technology
+
+1 Programme
+
+ENT7080
+
+Associate Degree in Engineering Technology
+(Civil)
+
+1 Programme
+
+ENT7081
+
+Associate Degree in Engineering (Civil)
+
+1 Programme
+
+ENT8020
+
+Bachelor of Engineering Technology
+(Mechanical)
+
+3 Programme
+
+ENT8021
+
+Bachelor of Engineering (Mechanical)
+
+1 Programme
+
+ENT8025
+
+Bachelor of Engineering (Industrial Design
+and Process)
+
+2 Programme
+
+ENT8031
+
+Bachelor of Engineering Technology
+(Electronics)
+
+4 Programme
+
+ENT8032
+
+Bachelor of Engineering (Electronics)
+
+1 Programme
+
+ENT8032
+
+Bachelor of Engineering (Electronics)
+
+1 Programme
+
+ENT8040
+
+Bachelor of Engineering Technology
+(Electrical)
+
+2 Programme
+
+ENT8041
+
+Bachelor of Engineering (Electrical)
+
+1 Programme
+
+ENT8050
+
+Bachelor of Engineering Technology
+(Electromechanical)
+
+2 Programme
+
+ENT8051
+
+Bachelor of Engineering (Electromechanical)
+
+1 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+2 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+3 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+1 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+2 Programme
+
+ENT8070
+
+Bachelor of Engineering Technology
+(Chemical and Industrial Processes
+Engineering)
+
+1 Programme
+
+ENT8071
+
+Bachelor of Engineering (Chemical and
+Industrial Processes)
+
+1 Programme
+
+ENT8071
+
+Bachelor of Engineering (Chemical and
+Industrial Processes)
+
+2 Programme
+
+ENT8080
+
+Bachelor of Engineering Technology (Civil)
+
+1 Programme
+
+ENT8081
+
+Bachelor of Engineering (Civil)
+
+1 Programme
+
+ENT8090
+
+Bachelors in Engineering (Industrial
+Instrumentation and Automatic Control.
+
+1 Programme
+
+ENT8091
+
+Bachelors in Engineering (Industrial
+Instrumentation and Automatic Control.
+
+1 Programme
+
+ENT8091
+
+Bachelors in Engineering (Industrial
+Instrumentation and Automatic Control.
+
+2 Programme
+
+ENT8100
+
+Bachelor of Engineering Technology
+(Biomedical)
+
+1 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+2 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+3 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+2 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+3 Programme
+
+ICT7011
+
+Associate Degree in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT7022
+
+Associate Degree in Information and
+Communications Technology (Information
+Systems)
+
+1 Programme
+
+ICT7041
+
+Associate Degree in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8010
+
+Bachelor of Information and Communications
+
+4 Programme
+
+Technology (Programming Major)
+Page 3 of 4
+
+Entity Version Entity Type
+
+Technology (Programming Major)
+ICT8012
+
+Bachelor of Science in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8040
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+5 Programme
+
+ICT8041
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+3 Programme
+
+ICT8042
+
+Bachelor of Science in Data Analytics
+
+3 Programme
+
+ICT8044
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8045
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICT8060
+
+Bachelor of Science in Artificial Intelligence
+and Robotics Software
+
+1 Programme
+
+MDM8040
+
+Minor in Data Mining
+
+1 Programme
+
+No Code Yet
+
+Bachelor of Engineering (Electromechanical)
+
+1 Programme
+
+No Code Yet
+
+Bachelor of Engineering (Electromechanical)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+No Code Yet
+
+test Bachelor of Information and
+Communications Technology
+
+1 Programme
+
+NEDICTE
+
+Non-faculty Electives
+
+1 Group
+
+Page 4 of 4
+
+

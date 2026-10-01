@@ -10,6 +10,11 @@ import { m07_LESSONS } from "./m07";
 import { m08_LESSONS } from "./m08";
 import { m09_LESSONS } from "./m09";
 import { m10_LESSONS } from "./m10";
+import { m11_LESSONS } from "./m11";
+import { m12_LESSONS } from "./m12";
+import { m13_LESSONS } from "./m13";
+import { m14_LESSONS } from "./m14";
+import { m15_LESSONS } from "./m15";
 
 export const ALL_LESSONS: Lesson[] = [
   ...m01_LESSONS,
@@ -22,6 +27,11 @@ export const ALL_LESSONS: Lesson[] = [
   ...m08_LESSONS,
   ...m09_LESSONS,
   ...m10_LESSONS,
+  ...m11_LESSONS,
+  ...m12_LESSONS,
+  ...m13_LESSONS,
+  ...m14_LESSONS,
+  ...m15_LESSONS,
 ];
 
 export const lessonsByModule = (moduleId: string): Lesson[] =>

@@ -1,0 +1,172 @@
+APPROVED
+
+IT7301: Ethical Hacking
+Course Details
+Course Code:
+
+IT7301
+
+Course Title:
+
+Ethical Hacking APPROVED
+
+Short Title:
+
+Ethical Hacking
+
+Course Level::
+
+Level 7
+
+Valid From::
+
+2024/2025 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To examine Information Technology security from the hacker's point of view to allow students develop countermeasures to stop security breaches.
+This will give students an insight into how to secure systems and to be work ready in the field of Information Technology with a focus on security.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate advanced knowledge of the concepts and technologies used in ethical hacking.
+
+2
+
+Design a security policy to protect data assets from being compromised.
+
+3
+
+Critically analyze network enabled software applications and hardware devices for security vulnerabilities.
+
+4
+
+Implement advanced ethical penetration tests on a controlled test environment.
+
+5
+
+Defend network infrastructure from a range of basic attacks using industry defined countermeasures.
+
+Requisites
+Pre Requisite: IT6003 & IT6004 & IT6008
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Assessment Type
+Examination (Unseen)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Project (Group)
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+ICTDip-Optional
+
+ICT Diploma Optional
+
+1 Group
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

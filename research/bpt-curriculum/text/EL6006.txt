@@ -1,0 +1,807 @@
+APPROVED
+
+EL6006: English Communication Skills A
+Course Details
+Course Code:
+
+EL6006
+
+Course Title:
+
+English Communication Skills A APPROVED
+
+Short Title:
+
+English A
+
+Course Level::
+
+Level 6
+
+Valid From::
+
+2026/2027 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+School of Foundation
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+This course develops students’ advanced English communication skills for undergraduate study through data interpretation, survey communication,
+academic writing, presentations, and responsible use of digital tools including AI.
+
+Page 1 of 5
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Analyze complex written, spoken, visual and data - based information using appropriate communication strategies in academic and workplace contexts.
+
+2
+
+Design survey questions appropriate to purpose, audience, and research context.
+
+3
+
+Interpret charts and graphical data to draw justified conclusions in oral and written forms.
+
+4
+
+Use digital tools, including AI, to support the development of communication outputs, with awareness of ethical considerations and limitations.
+
+Requisites
+Anti Requisite: EL6901; EL6001; EL6003, EL6404
+Pre Requisite: (EL5001 and EL5002) or (EL5005 and EL5004, OR EL5006), AP5202 OR equivalent
+
+Page 2 of 5
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Other Controlled Assessments
+Assessment Type
+Interview
+Uncontrolled Assessments
+Assessment Type
+Portfolio
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8011
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+3 Programme
+
+BBS6010
+
+Diploma in Business
+
+5 Programme
+
+BBS6010
+
+Diploma in Business
+
+6 Programme
+
+BBS6015
+
+Diploma in Business
+
+1 Programme
+
+BBS7070
+
+Associate Degree in Business (HRM)
+
+1 Programme
+
+BBS8010
+
+Bachelor of Business: Marketing
+
+4 Programme
+
+BBS8010
+
+Bachelor of Business: Marketing
+
+5 Programme
+
+BBS8010
+
+Bachelor of Business: Marketing
+
+1 Programme
+
+BBS8011
+
+Bachelor of Business: Marketing
+
+1 Programme
+
+BBS8020
+
+Bachelor of Business: Management
+
+5 Programme
+
+BBS8020
+
+Bachelor of Business: Management
+
+6 Programme
+
+BBS8021
+
+Bachelor of Business: Management
+
+1 Programme
+
+BBS8030
+
+Bachelor of Business (Banking and Finance)
+
+8 Programme
+
+BBS8030
+
+Bachelor of Business (Banking and Finance)
+
+9 Programme
+
+BBS8031
+
+Bachelor of Business (Banking and Finance)
+
+2 Programme
+
+BBS8040
+
+Bachelor of Business: Accounting
+
+6 Programme
+
+BBS8041
+
+Bachelor of Business: Accounting
+
+2 Programme
+
+BBS8070
+
+Bachelor of Business: Human Resource
+Management
+
+4 Programme
+
+BBS8071
+
+Bachelor of Business: Human Resource
+Management
+
+1 Programme
+
+BFA6000
+
+Diploma in Film and Animation
+
+4 Programme
+
+BFA8001
+
+Bachelor of Arts in Film and Animation
+
+2 Programme
+
+BFA8800
+
+Bachelor of Film and Animation
+
+4 Programme
+
+BFA8801
+
+Bachelor of Arts in Digital Filmmaking
+
+3 Programme
+
+BFA8802
+
+Bachelor of Arts in Animation and Visual
+Effects
+
+3 Programme
+
+BFT8100
+
+Bachelor of Science in Financial Technology
+
+2 Programme
+
+BFT8101
+
+Bachelor of Science in Financial Technology
+
+1 Programme
+
+BWM6000
+
+Diploma in Web Media
+
+3 Programme
+
+BWM8000
+
+Bachelor of Web Media
+
+6 Programme
+
+BWM8001
+
+Bachelor of Arts in Web Media
+
+2 Programme
+
+DES6000
+
+Diploma in Visual Design
+
+4 Programme
+
+DES8000
+
+Bachelor of Visual Design
+
+5 Programme
+
+DES8001
+
+Bachelor of Arts in Visual Design
+
+2 Programme
+
+DET6005
+
+Diploma in Petroleum and Process Plant
+Operations
+
+4 Programme
+
+DMK6014
+
+Diploma in Digital and Social Media Marketing
+
+1 Programme
+
+DMK7014
+
+Associate Degree of Digital and Social Media
+Marketing
+
+1 Programme
+
+DMK8012
+
+Bachelor of Digital Marketing
+
+2 Programme
+
+DMK8012
+
+Bachelor of Digital and Social Media
+Marketing
+
+1 Programme
+
+DMK8014
+
+Bachelor of Digital and Social Media
+Marketing
+
+1 Programme
+
+DMK8014
+
+Bachelor of Digital and Social Media
+Marketing
+
+2 Programme
+
+DSM6000
+
+Diploma in Social Media
+
+3 Programme
+
+ENT6021
+
+Diploma in Engineering (Mechanical)
+
+1 Programme
+
+ENT6025
+
+Diploma in Engineering (Industrial Design and
+Process)
+
+1 Programme
+
+ENT6051
+
+Diploma in Engineering (Electromechanical)
+
+1 Programme
+
+ENT6061
+
+Diploma of Engineering (Communications and
+Networks)
+
+1 Programme
+
+ENT6071
+
+Diploma in Engineering (Chemical and
+Industrial Processes)
+
+1 Programme
+
+ENT6071
+
+Diploma in Engineering (Chemical and
+Industrial Processes)
+
+2 Programme
+
+ENT6081
+
+Diploma in Engineering (Civil)
+
+1 Programme
+
+ENT6090
+
+Diploma in Engineering (Instrumentation and
+Automatic Control)
+
+1 Programme
+
+ENT7021
+
+Associate Degree in Engineering
+(Mechanical)
+
+1 Programme
+
+ENT7025
+
+Associate degree in Engineering (Industrial
+Design and Process)
+
+1 Programme
+
+ENT7032
+
+Associate Degree in Engineering (Electronics)
+
+1 Programme
+
+ENT7041
+
+Associate Degree in Engineering (Electrical)
+
+1 Programme
+
+Page 3 of 5
+
+Entity Version Entity Type
+
+ENT7041
+
+Associate Degree in Engineering (Electrical)
+
+1 Programme
+
+ENT7051
+
+Associate degree in Engineering
+(Electromechanical)
+
+1 Programme
+
+ENT7061
+
+Associate Degree in Engineering
+(Communications and Networks)
+
+1 Programme
+
+ENT7070
+
+Associate Degree in Engineering (Chemical
+and Industrial Processes Engineering)
+
+1 Programme
+
+ENT7070
+
+Associate Degree in Engineering Technology
+(Chemical and Industrial Processes
+Engineering)
+
+1 Programme
+
+ENT7071
+
+Associate Degree in Engineering (Chemical
+and Industrial Processes Engineering)
+
+1 Programme
+
+ENT7081
+
+Associate Degree in Engineering (Civil)
+
+1 Programme
+
+ENT7090
+
+Associate in Engineering (Industrial
+Instrumentation and Automatic Control.
+
+1 Programme
+
+ENT8021
+
+Bachelor of Engineering (Mechanical)
+
+1 Programme
+
+ENT8025
+
+Bachelor of Engineering (Industrial Design
+and Process)
+
+2 Programme
+
+ENT8032
+
+Bachelor of Engineering (Electronics)
+
+1 Programme
+
+ENT8032
+
+Bachelor of Engineering (Electronics)
+
+1 Programme
+
+ENT8033
+
+Bachelor of Engineering (Electronics and
+Artificial Intelligence)
+
+1 Programme
+
+ENT8035
+
+Bachelor of Engineering (Renewable and
+Clean Energy)
+
+2 Programme
+
+ENT8041
+
+Bachelor of Engineering (Electrical)
+
+1 Programme
+
+ENT8051
+
+Bachelor of Engineering (Electromechanical)
+
+1 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+3 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+1 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+2 Programme
+
+ENT8071
+
+Bachelor of Engineering (Chemical and
+Industrial Processes)
+
+1 Programme
+
+ENT8071
+
+Bachelor of Engineering (Chemical and
+Industrial Processes)
+
+2 Programme
+
+ENT8081
+
+Bachelor of Engineering (Civil)
+
+1 Programme
+
+ENT8090
+
+Bachelors in Engineering (Industrial
+Instrumentation and Automatic Control.
+
+1 Programme
+
+ENT8091
+
+Bachelors in Engineering (Industrial
+Instrumentation and Automatic Control.
+
+1 Programme
+
+ENT8091
+
+Bachelors in Engineering (Industrial
+Instrumentation and Automatic Control.
+
+2 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+2 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+3 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+2 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+3 Programme
+
+ICT8010
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+4 Programme
+
+ICT8012
+
+Bachelor of Science in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8040
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+5 Programme
+
+ICT8041
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+3 Programme
+
+ICT8042
+
+Bachelor of Science in Data Analytics
+
+3 Programme
+
+ICT8044
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8045
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICT8060
+
+Bachelor of Science in Artificial Intelligence
+
+1 Programme
+
+and Robotics Software
+Page 4 of 5
+
+and Robotics Software
+IDS6000
+
+Diploma in Interactive Design
+
+3 Programme
+
+ILM6000
+
+Diploma in Logistics and Transport
+
+5 Programme
+
+ILM7000
+
+Associate Degree in International Logistics
+Management
+
+1 Programme
+
+ILM8000
+
+Bachelor of International Logistics
+Management
+
+8 Programme
+
+SCM8000
+
+Bachelor of Science in Supply Chain
+Management
+
+1 Programme
+
+SCM8000
+
+Bachelor of Science in Supply Chain
+Management
+
+4 Programme
+
+SHELL 8010
+
+Shell PAD (Bachelor of Business: Marketing
+V4 Pre 2025)
+
+1 Programme
+
+Page 5 of 5
+
+

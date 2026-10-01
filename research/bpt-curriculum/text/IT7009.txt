@@ -1,0 +1,219 @@
+APPROVED
+
+IT7009: Artificial Intelligence
+Course Details
+Course Code:
+
+IT7009
+
+Course Title:
+
+Artificial Intelligence APPROVED
+
+Short Title:
+
+AI
+
+Course Level::
+
+Level 7
+
+Valid From::
+
+2025/2026 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+
+To develop an understanding of AI building blocks and provide core knowledge
+of planning, reasoning, problem-solving, machine learning, knowledge
+representation, searching, logic, learning, and inference.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate advanced understanding of core concepts of artificial intelligence and foundational skills in performing AI tasks
+
+2
+
+Apply machine learning techniques for supervised and unsupervised learning problems
+
+3
+
+Develop end-to-end AI solutions using datasets for practical applications
+
+Requisites
+Pre Requisite: (IT6010 AND IT6008) OR (EN6907 AND EN6010)
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Practical)
+Assessment Type
+Examination (Practical)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Project (Group)
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8011
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+3 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+2 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+3 Programme
+
+ICT7011
+
+Associate Degree in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT7022
+
+Associate Degree in Information and
+Communications Technology (Information
+Systems)
+
+1 Programme
+
+ICT7041
+
+Associate Degree in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8012
+
+Bachelor of Science in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8041
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+3 Programme
+
+ICT8044
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICT8060
+
+Bachelor of Science in Artificial Intelligence
+and Robotics Software
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

@@ -1,0 +1,157 @@
+APPROVED
+
+IT8505: Defence in Depth
+Course Details
+Course Code:
+
+IT8505
+
+Course Title:
+
+Defence in Depth APPROVED
+
+Short Title:
+
+DiD
+
+Course Level::
+
+Level 8
+
+Valid From::
+
+2024/2025 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+Faculty of EDICT (Engineering,Design and ICT)
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To introduce and deploy Defense in Depth (DiD) approach using a series of security mechanisms and controls that are layered throughout the
+infrastructure to protect confidentiality, integrity, and availability of the network and the data within.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate critical knowledge of cyber security Defense in Depth approach using different security mechanisms.
+
+2
+
+Design and implement a comprehensive Defense in Depth approach to protect Systems & data and block cyber-attacks.
+
+Requisites
+Pre Requisite: IT7003
+Anti Requisite: IT8303
+
+Page 2 of 3
+
+Networking 2
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Assessment Type
+Examination (Practical)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Project (Group)
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+3 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+2 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

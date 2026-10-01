@@ -1,0 +1,233 @@
+APPROVED
+
+IT7004: Operating Systems and Platforms
+Course Details
+Course Code:
+
+IT7004
+
+Course Title:
+
+Operating Systems and Platforms APPROVED
+
+Short Title:
+
+OSP
+
+Course Level::
+
+Level 7
+
+Valid From::
+
+2023/2024 Sem 3
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+During this course students will build their technical skills in IT planning, design, installation, configuration and administration of server infrastructure
+for an enterprise environment.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate critical knowledge of the planning, design, deployment, and administration of server systems to support advanced business functions.
+
+2
+
+Undertake deployment of server solutions for complex business enterprise requirements.
+
+3
+
+Critically evaluate IT requirements and existing systems to formulate solutions for complex business problems.
+
+Requisites
+Pre Requisite: IT6003 Networks and Data Communications
+Pre Requisite: IT6001 Computer Systems
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Assessment Type
+Examination (Unseen)
+Other Controlled Assessments
+Assessment Type
+Lab Assignment
+No Uncontrolled Assessments
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+BFT8100
+
+Bachelor of Science in Financial Technology
+
+2 Programme
+
+BFT8101
+
+Bachelor of Science in Financial Technology
+
+1 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+2 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+3 Programme
+
+ICT7022
+
+Associate Degree in Information and
+Communications Technology (Information
+Systems)
+
+1 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+No Code Yet
+
+test Bachelor of Information and
+Communications Technology
+
+1 Programme
+
+ICTDip-Optional
+
+ICT Diploma Optional
+
+1 Group
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

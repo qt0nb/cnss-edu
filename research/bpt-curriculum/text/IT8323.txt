@@ -1,0 +1,153 @@
+APPROVED
+
+IT8323 : Advanced Networking
+Course Details
+Course Code:
+
+IT8323
+
+Course Title:
+
+Advanced Networking APPROVED
+
+Short Title:
+
+Networking 4
+
+Course Level::
+
+Level 8
+
+Valid From::
+
+2026/2027 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+School of ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To provide students with an advanced skills in current network technologies. The course will have a heavy emphasis on troubleshooting problems
+that occur in networks. Students will have to show problem solving and initiative to solve complex scenarios.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Critically evaluate and implement appropriate solutions to interior and exterior routing protocol problems.
+
+2
+
+Use specialist skills when designing and configuring a complex LAN infrastructure.
+
+3
+
+Critically evaluate and implement Layer 2/Layer 3 Virtual Private Networks (VPNs).
+
+4
+
+Engineer enterprise evel networks.
+
+Requisites
+Pre Requisite: IT7003
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Practical)
+Assessment Type
+Examination (Unseen)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Project (Group)
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ENT7060
+
+Associate Degree in Engineering Technology
+(Communications and Networks)
+
+1 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+2 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+3 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+1 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+2 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Associate Degree in Engineering
+Technology (Communications and Networks)
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

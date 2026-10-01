@@ -27,7 +27,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "CNSS-edu | Computer Networks & Security Sciences — منصة علوم الشبكات والأمن السيبراني",
   description:
-    "منصة تعليمية شاملة ثنائية اللغة لعلوم الشبكات: ١٠٠ درس دقيق، ١٠٦٠ أداة، ٢٠٠ فكرة مشروع مربح، اختبارات ومراجعة ذكية ومختبر تفاعلي بالذكاء الاصطناعي — تعمل دون اتصال.",
+    "منصة تعليمية شاملة ثنائية اللغة لعلوم الشبكات وأساسيات IT الجامعية: ١٥٠ درساً دقيقاً، ١٠٦٠ أداة، ٢٠٠ فكرة مشروع مربح، اختبارات ومراجعة ذكية ومختبر تفاعلي بالذكاء الاصطناعي — تعمل دون اتصال.",
   applicationName: "CNSS-edu",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "CNSS-edu | علوم الشبكات والأمن السيبراني",
     description:
-      "Master networking science: 100 lessons, 1060 tools, 200 monetizable ideas, quizzes & interactive lab — fully offline-capable PWA.",
+      "Master networking science and university IT fundamentals: 150 lessons, 1060 tools, 200 monetizable ideas, quizzes & interactive lab — fully offline-capable PWA.",
     siteName: "CNSS-edu",
     type: "website",
   },

@@ -1,0 +1,193 @@
+APPROVED
+
+IT6000: IT Applied Project
+Course Details
+Course Code:
+
+IT6000
+
+Course Title:
+
+IT Applied Project APPROVED
+
+Short Title:
+
+ITAP
+
+Course Level::
+
+Level 6
+
+Valid From::
+
+2025/2026 Sem 2
+
+Credits::
+
+15
+
+Owner:
+
+School of ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+This course equips IT students with the practical experience to plan, manage, and execute real-world projects aligned with the UN Sustainable
+Development Goals (UN SDGs). It also prepares students for the globally recognized CAPM certification by reinforcing key project management
+principles and terminology based on PMI standards.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Use project management principles, tools, and techniques in the design of collaborative IT projects aligned with the UN Sustainable Development Goals (UN SDGs),
+using frameworks consistent with CAPM® standards.
+
+2
+
+Organize structured project documentation for stakeholder-oriented presentations.
+
+3
+
+Present innovative IT-based solutions, with potential social and sustainable impact.
+
+Requisites
+Anti Requisite: IT7000
+
+Page 2 of 3
+
+No Examinations
+Other Controlled Assessments
+Assessment Type
+Online Quiz
+Assessment Type
+Project Demonstration
+Uncontrolled Assessments
+Assessment Type
+Essay
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8011
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+3 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+3 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+3 Programme
+
+ICT8012
+
+Bachelor of Science in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8041
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+3 Programme
+
+ICT8042
+
+Bachelor of Science in Data Analytics
+
+3 Programme
+
+ICT8044
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICT8060
+
+Bachelor of Science in Artificial Intelligence
+and Robotics Software
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

@@ -1,0 +1,284 @@
+APPROVED
+
+IT7001: Systems Analysis and Design
+Course Details
+Course Code:
+
+IT7001
+
+Course Title:
+
+Systems Analysis and Design APPROVED
+
+Short Title:
+
+SAD
+
+Course Level::
+
+Level 7
+
+Valid From::
+
+2025/2026 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+School of ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To develop students’ abilities to analyse simple and complex information systems, model business and systems requirements, and document logical
+and physical design solutions by using appropriate methods, techniques, tools and industry standards.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Explain system development concepts and principles by detailing how project management, fact-finding techniques, problem-solving methods, and object-oriented
+analysis are applied using appropriate software tools to meet client or community requirements.
+
+2
+
+Perform feasibility analysis to recommend the optimal solution for a new system to meet client / community requirements.
+
+3
+
+Apply object-oriented design modeling techniques and appropriate software tools to define the physical design specifications for a new system.
+
+Requisites
+Pre Requisite: IT6005-Database Systems 1
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Practical)
+Assessment Type
+Examination (Practical)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Project (Group/Individual)
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8011
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+3 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT7011
+
+Associate Degree in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT7022
+
+Associate Degree in Information and
+Communications Technology (Information
+Systems)
+
+1 Programme
+
+ICT7041
+
+Associate Degree in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8010
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+4 Programme
+
+ICT8012
+
+Bachelor of Science in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8040
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+5 Programme
+
+ICT8041
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+3 Programme
+
+ICT8042
+
+Bachelor of Science in Data Analytics
+
+3 Programme
+
+ICT8044
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8045
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICT8060
+
+Bachelor of Science in Artificial Intelligence
+and Robotics Software
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+No Code Yet
+
+test Bachelor of Information and
+Communications Technology
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

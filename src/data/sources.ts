@@ -966,6 +966,613 @@ export const SOURCES: Source[] = [
       en: "Cisco Networking Academy and the CCNA path — the industry yardstick for career readiness.",
     },
   },
+
+  // ─── m11 · Computer Systems Fundamentals (BPT IT6001 aligned) ────────
+  {
+    id: "von-neumann-1945",
+    kind: "paper",
+    title: "First Draft of a Report on the EDVAC",
+    org: "Moore School of Electrical Engineering, University of Pennsylvania",
+    year: 1945,
+    authors: "John von Neumann",
+    url: "https://scholar.google.com/scholar?q=%22First+Draft+of+a+Report+on+the+EDVAC%22",
+    excerpt:
+      "The report proposed a stored-program computer architecture in which instructions and data share one memory, processed by a single arithmetic unit under the control of a central unit — the blueprint of nearly every computer since.",
+    quote: false,
+    desc: {
+      ar: "الوثيقة التي وَلَدت معمارية الحاسوب الحديث: برنامج مخزّن في الذاكرة، وحدة حساب، وحدة تحكم، مدخلات ومخرجات. كل حاسوب تستخدمه اليوم — من الحاسوب المكتبي إلى الخادم — هو في جوهره جهاز فون نويمان.",
+      en: "The document that birthed modern computer architecture: stored program, ALU, control unit, I/O. Every computer you use today is, at its core, a von Neumann machine.",
+    },
+  },
+  {
+    id: "turing-1936",
+    kind: "paper",
+    title: "On Computable Numbers, with an Application to the Entscheidungsproblem",
+    org: "Proceedings of the London Mathematical Society",
+    year: 1936,
+    authors: "Alan M. Turing",
+    url: "https://scholar.google.com/scholar?q=%22On+Computable+Numbers%2C+with+an+Application+to+the+Entscheidungsproblem%22",
+    excerpt:
+      "Introduced the abstract machine now called the Turing machine — a finite control reading and writing symbols on an infinite tape — and proved fundamental limits of what can be computed.",
+    quote: false,
+    desc: {
+      ar: "الورقة التي عرّفت «الحساب» نفسه رياضياً: آلة تورنغ. قبل أي شريحة سيليكون، أثبت تورنغ حدود ما تستطيع الآلات حسابه — الأساس النظري لعلوم الحاسوب بأكملها.",
+      en: "The paper that defined computation itself mathematically: the Turing machine. Before any silicon, Turing proved the limits of what machines can compute — the theoretical bedrock of all computer science.",
+    },
+  },
+  {
+    id: "stallings-computer",
+    kind: "book",
+    title: "Computer Organization and Architecture: Designing for Performance",
+    org: "Pearson",
+    year: 2016,
+    authors: "William Stallings",
+    url: "http://williamstallings.com/ComputerOrganizationAndArchitecture/",
+    excerpt:
+      "The canonical textbook on computer internals: processor structure, instruction cycles, memory hierarchy, cache design, buses, and I/O — used in universities worldwide.",
+    quote: false,
+    desc: {
+      ar: "المرجع الجامعي المعتمد في تنظيم الحاسوب: بنية المعالج ودورات التعليمات وتسلسل الذاكرة والكاش والنواقل والإدخال/الإخراج — المرجع الذي تقاس عليه كل دروس العتاد.",
+      en: "The canonical university reference on computer internals: processor structure, instruction cycles, memory hierarchy, cache, buses, and I/O.",
+    },
+  },
+  {
+    id: "hennessy-patterson",
+    kind: "book",
+    title: "Computer Architecture: A Quantitative Approach (6th Edition)",
+    org: "Morgan Kaufmann / Elsevier",
+    year: 2019,
+    authors: "John L. Hennessy, David A. Patterson",
+    url: "https://shop.elsevier.com/books/computer-architecture/hennessy/978-0-12-811905-1",
+    excerpt:
+      "The definitive graduate-level text measuring architecture trade-offs with data: pipelines, superscalar and multicore designs, memory-hierarchy walls, and data-level parallelism.",
+    quote: false,
+    desc: {
+      ar: "المرجع الأعلى في معمارية الحاسوب الكمية — من تأليف حائزي وسام جون فون نويمان. يعلّمك أن تصميم الحاسوب قرار موازنة قابل للقياس: السرعة مقابل التكلفة مقابل الطاقة.",
+      en: "The definitive quantitative architecture text — by von Neumann Medal winners. Computer design is a measurable trade-off: speed vs cost vs power.",
+    },
+  },
+  {
+    id: "moore-1965",
+    kind: "paper",
+    title: "Cramming more components onto integrated circuits",
+    org: "Electronics Magazine",
+    year: 1965,
+    authors: "Gordon E. Moore",
+    url: "https://doi.org/10.1109/N-SSC.2006.4785860",
+    excerpt:
+      "The complexity for minimum component costs has increased at a rate of roughly a factor of two per year.",
+    quote: true,
+    ref: "opening paragraph",
+    desc: {
+      ar: "مقالة مور الأصلية عام 1965 — الجملة التي صارت «قانون مور»: مضاعفة كثافة المكوّنات نحوياً كل عامين، القانون الاقتصادي الذي حكم صناعة الرقائق لنصف قرن.",
+      en: "Moore's original 1965 article — the sentence that became 'Moore's Law': component density doubling roughly every two years, the economic law that ruled chips for half a century.",
+    },
+  },
+  {
+    id: "ieee-754",
+    kind: "standard",
+    title: "IEEE 754-2019 — IEEE Standard for Floating-Point Arithmetic",
+    org: "IEEE Computer Society",
+    year: 2019,
+    url: "https://standards.ieee.org/ieee/754/6210/",
+    excerpt:
+      "Defines interchange and arithmetic formats for binary and decimal floating-point numbers, rounding algorithms, and required exception handling (NaN, infinities, denormals).",
+    quote: false,
+    desc: {
+      ar: "المعيار الذي يقرر كيف يخزّن حاسوبك الأعداد العشرية: صيغة إشارة/أس/كسر، التقريب، وNaN واللانهاية. بفضله تعطي كل الحواسيب النتيجة نفسها — وبفضله نفهم 0.1 + 0.2 ≠ 0.3.",
+      en: "The standard deciding how your computer stores decimals: sign/exponent/fraction, rounding, NaN and infinities — why 0.1 + 0.2 ≠ 0.3, everywhere the same.",
+    },
+  },
+  {
+    id: "unicode-standard",
+    kind: "standard",
+    title: "The Unicode Standard, Version 15.0",
+    org: "The Unicode Consortium",
+    year: 2022,
+    url: "https://www.unicode.org/versions/Unicode15.0.0/",
+    excerpt:
+      "Unicode provides a unique number for every character, no matter what platform, device, application or language — 149,186 characters across 155 scripts in version 15.0.",
+    quote: false,
+    desc: {
+      ar: "المعيار الذي جعل العربية والإنجليزية والصينية تُكتب وتُعرض على أي جهاز في العالم: رقم فريد لكل حرف في 155 نظام كتابة. درس الترميز في منصتك مبني عليه.",
+      en: "The standard that made Arabic, English and Chinese render on any device worldwide: a unique number for every character across 155 scripts.",
+    },
+  },
+  {
+    id: "uefi-forum",
+    kind: "standard",
+    title: "Unified Extensible Firmware Interface (UEFI) Specification 2.10",
+    org: "UEFI Forum",
+    year: 2023,
+    url: "https://uefi.org/specifications",
+    excerpt:
+      "Defines the interface between the operating system and platform firmware — replacing the legacy BIOS with secure boot, GPT disks beyond 2 TB, and network-capable pre-boot drivers.",
+    quote: false,
+    desc: {
+      ar: "المعيار الذي حلّ محل BIOS: التمهيد الآمن Secure Boot وأقراص GPT الأكبر من 2 تيرابايت وبرامج ما قبل التمهيد الشبكية — ما يحدث فعلاً بين ضغط زر الطاقة وظهور شعار النظام.",
+      en: "The standard that replaced BIOS: Secure Boot, GPT disks beyond 2 TB, and network pre-boot — what actually happens between the power button and the OS logo.",
+    },
+  },
+
+  // ─── m12 · Operating Systems & Unix (BPT IT6004 aligned) ─────────────
+  {
+    id: "stallings-os",
+    kind: "book",
+    title: "Operating Systems: Internals and Design Principles (7th Edition)",
+    org: "Pearson",
+    year: 2012,
+    authors: "William Stallings",
+    url: "http://williamstallings.com/OperatingSystems.html",
+    excerpt:
+      "Presents the operating system as a manager of resources — processes, memory, files, devices and security — through the software-layer view: each layer makes requests down and replies up.",
+    quote: false,
+    desc: {
+      ar: "المرجع الذي يدرّس منه قسم أنظمة يونكس في البوليتكنيك نفسه — طبقات البرمجيات من العتاد إلى التطبيقات، والنظام بوصفه مديراً للموارد. مخطط معمارية يونكس في محاضراتك مقتبس منه.",
+      en: "The textbook the Polytechnic's Unix Systems course itself teaches from — software layers from hardware to applications, the OS as resource manager. The Unix architecture diagram in your lectures is drawn from it.",
+    },
+  },
+  {
+    id: "tanenbaum-modern-os",
+    kind: "book",
+    title: "Modern Operating Systems (5th Edition)",
+    org: "Pearson",
+    year: 2018,
+    authors: "Andrew S. Tanenbaum, Herbert Bos",
+    url: "https://search.worldcat.org/title/1045262498",
+    excerpt:
+      "Covers processes and threads, scheduling, memory management, file systems, and security across UNIX, Linux and Windows — by the creator of MINIX, the OS that inspired Linux.",
+    quote: false,
+    desc: {
+      ar: "كتاب تانينباوم — مبتكر MINIX الذي استلهم منه تورفالدس لينكس — يغطي العمليات والجدولة والذاكرة والملفات والأمان عبر يونكس وويندوز. الرابط التاريخي نفسه الذي ستراه في درس تاريخ لينكس.",
+      en: "Tanenbaum's text — creator of MINIX, the OS that inspired Linux — covering processes, scheduling, memory, files and security across UNIX, Linux and Windows.",
+    },
+  },
+  {
+    id: "silberschatz-os",
+    kind: "book",
+    title: "Operating System Concepts (10th Edition) — 'the Dinosaur Book'",
+    org: "Wiley",
+    year: 2018,
+    authors: "Abraham Silberschatz, Peter Baer Galvin, Greg Gagne",
+    url: "https://www.os-book.com/",
+    excerpt:
+      "The most widely adopted OS textbook: process synchronization (semaphores, monitors), deadlock handling, paging and virtual memory, file-system implementation, and protection.",
+    quote: false,
+    desc: {
+      ar: "«كتاب الديناصور» — أكثر كتب أنظمة التشغيل اعتماداً في الجامعات: تزامن العمليات، الأقفال المتبادلة، الذاكرة الافتراضية والترقيم، وتنفيذ أنظمة الملفات.",
+      en: "The 'Dinosaur Book' — the most widely adopted OS text: process synchronization, deadlocks, virtual memory and paging, file-system implementation.",
+    },
+  },
+  {
+    id: "ritchie-thompson-1974",
+    kind: "paper",
+    title: "The UNIX Time-Sharing System",
+    org: "Communications of the ACM 17(7)",
+    year: 1974,
+    authors: "Dennis M. Ritchie, Ken Thompson",
+    url: "https://dl.acm.org/doi/10.1145/361011.361061",
+    excerpt:
+      "The original paper describing UNIX by its creators: the file system, the shell, pipes, and a system remarkable for its simplicity — written by the two men who built it at Bell Labs.",
+    quote: false,
+    desc: {
+      ar: "الورقة الأصلية التي وصف بها ريتشي وتومسون — صانعا يونكس — نظامهما في مختبرات بل: نظام ملفات بسيط، وصَدَفة، وأنابيب. قراءتها تجعلك تفهم لماذا صمد تصميم يونكس 50 عاماً.",
+      en: "The original paper in which Ritchie and Thompson — the creators of UNIX — described their system at Bell Labs: a simple file system, a shell, pipes. Read it to understand why UNIX design survived 50 years.",
+    },
+  },
+  {
+    id: "torvalds-1991",
+    kind: "paper",
+    title: "Free minix-like kernel sources for 386-486 (the Linux announcement)",
+    org: "comp.os.minix newsgroup",
+    year: 1991,
+    authors: "Linus Torvalds",
+    url: "https://www.cs.cmu.edu/~awb/linux.history.html",
+    excerpt:
+      "I'm doing a (free) operating system (just a hobby, won't be big and professional like gnu) for 386(486) AT clones... I'd like any feedback on things people dislike...",
+    quote: true,
+    ref: "opening lines, 25 Aug 1991",
+    desc: {
+      ar: "رسالة هاوٍ طالب عمره 21 عاماً في هلسنكي، صارت نواة أنظمة تشغيل تشغّل أندرويد وكل سوبر كمبيوتر في قائمة TOP500. اقرأ تواضع البداية لتدرك أن أعظم المشاريع تبدأ صغيرة.",
+      en: "A hobbyist message from a 21-year-old student in Helsinki that became the kernel powering Android and every supercomputer in the TOP500. Read the humble beginning of greatness.",
+    },
+  },
+  {
+    id: "posix-1003",
+    kind: "standard",
+    title: "IEEE Std 1003.1-2017 — POSIX: Portable Operating System Interface",
+    org: "IEEE / The Open Group",
+    year: 2017,
+    url: "https://standards.ieee.org/ieee/1003.1/7131/",
+    excerpt:
+      "Defines the standard operating-system interface and environment — the shell, utilities such as ls and grep, and system-call interfaces — enabling portable software across all POSIX-conformant UNIX systems.",
+    quote: false,
+    desc: {
+      ar: "المعيار الذي يجعل مهاراتك في لينكس قابلة للنقل إلى كل أنظمة يونكس التجارية (Solaris، HP-UX، AIX): الصَدَفة والأوامر واستدعاءات النظام موحّدة. ما تتعلمه هنا يعمل هناك.",
+      en: "The standard making your Linux skills portable to every commercial UNIX (Solaris, HP-UX, AIX): shell, utilities and system calls unified. Learn once, work everywhere.",
+    },
+  },
+  {
+    id: "fhs-30",
+    kind: "standard",
+    title: "Filesystem Hierarchy Standard 3.0",
+    org: "Linux Foundation",
+    year: 2015,
+    url: "https://refspecs.linuxfoundation.org/FHS_3.0/index.html",
+    excerpt:
+      "Defines the directory structure and directory contents in Linux distributions: /bin, /etc, /home, /var, /usr and their required contents, so software and administrators can predict file locations.",
+    quote: false,
+    desc: {
+      ar: "المعيار الذي يفكّ شيفرة مجلدات لينكس: لماذا الإعدادات في /etc والسجلات في /var وبرامجك في /home. بعد هذا الدرس لن يبقى مجلد غامضاً أمامك.",
+      en: "The standard decoding Linux directories: why configs live in /etc, logs in /var, your files in /home. No directory stays mysterious after this.",
+    },
+  },
+  {
+    id: "linux-kernel-org",
+    kind: "portal",
+    title: "The Linux Kernel Archives (kernel.org)",
+    org: "Linux Foundation / kernel.org",
+    year: 2024,
+    url: "https://www.kernel.org/",
+    excerpt:
+      "The authoritative home of the Linux kernel source code, release announcements, and signing keys — the canonical origin every distribution builds upon.",
+    quote: false,
+    desc: {
+      ar: "البيت الرسمي لنواة لينكس: الشيفرة المصدرية والإصدارات ومفاتيح التوقيع — المنبع الذي تبني عليه كل التوزيعات. زيارة واحدة تكفي لتلمس قلب المشروع.",
+      en: "The official home of the Linux kernel: source, releases, signing keys — the origin every distribution builds upon.",
+    },
+  },
+  {
+    id: "gnu-manifesto",
+    kind: "paper",
+    title: "The GNU Manifesto",
+    org: "GNU Project (originally Dr. Dobb's Journal of Software Tools)",
+    year: 1985,
+    authors: "Richard Stallman",
+    url: "https://www.gnu.org/gnu/manifesto.html",
+    excerpt:
+      "I consider that the golden rule requires that if I like a program I must share it with other people who like it... So that I can continue to use computers without violating my conscience, I have decided to put together a sufficient body of free software.",
+    quote: true,
+    ref: "on sharing software",
+    desc: {
+      ar: "مانيفستو البرمجيات الحرة الذي أطلق مشروع GNU — الجذر الفلسفي للينكس: الحرية في التشغيل والدراسة والتعديل والتوزيع. افهم الفلسفة قبل أن تفهم الأمر chmod.",
+      en: "The free-software manifesto that launched GNU — the philosophical root of Linux: freedom to run, study, modify, share. Understand the philosophy before the chmod.",
+    },
+  },
+  {
+    id: "raymond-cathedral",
+    kind: "paper",
+    title: "The Cathedral and the Bazaar",
+    org: "Linux Kongress, Würzburg",
+    year: 1997,
+    authors: "Eric S. Raymond",
+    url: "https://www.catb.org/~esr/writings/cathedral-bazaar/",
+    excerpt:
+      "Given enough eyeballs, all bugs are shallow.",
+    quote: true,
+    ref: "Linus's Law",
+    desc: {
+      ar: "الورقة التي فسّرت للعالم لماذا تنجح طريقة تطوير لينكس المفتوحة: «مع توافر العيون الكافية تصبح كل الأخطاء سطحية». النقاش بين نموذج الكاتدرائية المغلق والبازار المفتوح — اقتصاد البرمجيات الحرة.",
+      en: "The paper that explained to the world why Linux's open development works: 'Given enough eyeballs, all bugs are shallow.' Cathedral vs Bazaar — the economics of free software.",
+    },
+  },
+  {
+    id: "nemeth-handbook",
+    kind: "book",
+    title: "UNIX and Linux System Administration Handbook (5th Edition)",
+    org: "Pearson",
+    year: 2017,
+    authors: "Evi Nemeth, Garth Snyder, Trent Hein, Ben Whaley, Dan Mackin",
+    url: "http://www.admin.com/",
+    excerpt:
+      "The 'purple book' every sysadmin keeps at arm's reach: booting, filesystems, user management, packaging, networking, storage, and automation across Linux, Solaris, HP-UX and AIX.",
+    quote: false,
+    desc: {
+      ar: "«الكتاب الأرجواني» الذي يبقيه كل مسؤول أنظمة في متناول يده: الإقلاع وأنظمة الملفات والمستخدمون والشبكات والتخزين والأتمتة — عبر لينكس وكل يونكس التجارية.",
+      en: "The 'purple book' every sysadmin keeps at arm's reach: booting, filesystems, users, networking, storage, automation — across Linux and the commercial UNIXes.",
+    },
+  },
+  {
+    id: "kernighan-pike",
+    kind: "book",
+    title: "The Unix Programming Environment",
+    org: "Prentice Hall",
+    year: 1984,
+    authors: "Brian W. Kernighan, Rob Pike",
+    url: "https://books.google.com/books?id=5oBQAAAAMAAJ",
+    excerpt:
+      "Classic exposition of the Unix philosophy in practice: the shell as a programming language, filters and pipes, and small tools composed into powerful workflows.",
+    quote: false,
+    desc: {
+      ar: "الشرح الكلاسيكي لفلسفة يونكس عملياً: الصَدَفة كلغة برمجة، والمرشّحات والأنابيب، وأدوات صغيرة تُركّب في تدفقات قوية — من قلم مؤلف كتاب لغة C نفسه.",
+      en: "The classic hands-on exposition of Unix philosophy: the shell as a programming language, filters and pipes, small tools composed into powerful workflows — by the author of the C book himself.",
+    },
+  },
+  {
+    id: "bcs-accreditation",
+    kind: "portal",
+    title: "BCS, The Chartered Institute for IT — Higher Education Accreditation",
+    org: "BCS",
+    year: 2024,
+    url: "https://www.bcs.org/membership-and-registration/become-a-member/higher-education-accreditation/",
+    excerpt:
+      "BCS accredits degree programmes that meet the standards of the IT profession — the Bachelor of ICT (Networking Major) at Bahrain Polytechnic is BCS accredited, recognising it against international benchmarks.",
+    quote: false,
+    desc: {
+      ar: "جهة الاعتماد المهني لبرنامجك أنت: معهد BCS المعهد الملكي لتقنية المعلومات يعتمد بكالوريوس تقنية المعلومات (تصميم الشبكات) في البوليتكنيك — اعتراف دولي بمستوى شهادتك.",
+      en: "Your programme's professional accreditor: BCS, the Chartered Institute for IT, accredits the BICT (Networking Major) at Bahrain Polytechnic — international recognition of your degree.",
+    },
+  },
+
+  // ─── m13 · Linux Command Line & Bash (BPT IT6004 labs aligned) ───────
+  {
+    id: "rfc4251",
+    kind: "rfc",
+    title: "RFC 4251 — The Secure Shell (SSH) Protocol Architecture",
+    org: "Internet Engineering Task Force (IETF)",
+    year: 2006,
+    authors: "T. Ylonen, C. Lonvick (SSH Communications Security)",
+    url: "https://www.rfc-editor.org/rfc/rfc4251",
+    excerpt:
+      "The SSH protocol provides secure encrypted channels over an insecure network for terminal access, command execution, and TCP port forwarding — protecting against eavesdropping, connection hijacking and DNS spoofing.",
+    quote: false,
+    desc: {
+      ar: "المعيار الذي يصف البروتوكول الذي تستخدمه في كل مختبر: SSH — القناة المشفّرة عبر الشبكة غير الموثوقة. فهم طبقاته يجعل دخولك بـ Putty و ssh أعمق من مجرد نقر أزرار.",
+      en: "The standard describing the protocol you use in every lab: SSH — the encrypted channel over untrusted networks. Understanding it makes your Putty/ssh logins more than button-clicking.",
+    },
+  },
+  {
+    id: "gnu-bash-manual",
+    kind: "portal",
+    title: "Bash Reference Manual (Bash 5.2)",
+    org: "Free Software Foundation — GNU Project",
+    year: 2022,
+    authors: "Chet Ramey, Brian Fox",
+    url: "https://www.gnu.org/software/bash/manual/",
+    excerpt:
+      "The official reference for the Bourne-Again SHell: syntax, variables, expansions, conditionals, loops, functions, job control — from shell's own maintainers.",
+    quote: false,
+    desc: {
+      ar: "المرجع الرسمي لـ Bash من مطوّريه أنفسهم: الصياغة والمتغيرات والتوسعات والحلقات والدوال — ما ترجع إليه في كل سطر برمجية نصية تكتبه في المختبر.",
+      en: "The official Bash reference from its own maintainers: syntax, variables, expansions, loops, functions — what you consult for every script line you write in the lab.",
+    },
+  },
+  {
+    id: "man-pages-linux",
+    kind: "portal",
+    title: "Linux man-pages — the project manual",
+    org: "man7.org / Linux man-pages maintainers",
+    year: 2024,
+    url: "https://man7.org/linux/man-pages/",
+    excerpt:
+      "The authoritative manual pages documenting the Linux kernel-userspace API and core utilities: man 5 passwd, man 3 printf, man 8 mount — the reference every command you learn points back to.",
+    quote: false,
+    desc: {
+      ar: "الموسوعة الرسمية داخل نظامك: كل أمر تتعلمه في الدروس له صفحة دليل هنا — man يفتحها، وهذا الموقع يشرح أقسامها الثمانية. تعلّم قراءتها تكتسب استقلالك الكامل.",
+      en: "The encyclopedia inside your system: every command you learn has a page here — man opens it. Learn to read them and you become fully self-sufficient.",
+    },
+  },
+  {
+    id: "openssh-project",
+    kind: "vendor",
+    title: "OpenSSH — OpenBSD Secure Shell suite",
+    org: "The OpenBSD Project",
+    year: 2024,
+    url: "https://www.openssh.com/",
+    excerpt:
+      "The definitive SSH implementation used by virtually every Linux server: ssh, scp, sftp, sshd and ssh-keygen — audited for 20+ years by the OpenBSD team.",
+    quote: false,
+    desc: {
+      ar: "تطبيق SSH القياسي على كل خوادم لينكس تقريباً: ssh و scp و ssh-keygen — يدقّقه فريق OpenBSD منذ أكثر من 20 عاماً. هذا ما يستقبلك فعلاً عند الدخول لخوادم الجامعة.",
+      en: "The definitive SSH suite on virtually every Linux server: ssh, scp, ssh-keygen — audited for 20+ years by OpenBSD. This is what actually greets you on the university servers.",
+    },
+  },
+  {
+    id: "amazon-linux-2",
+    kind: "vendor",
+    title: "Amazon Linux 2 User Guide",
+    org: "Amazon Web Services",
+    year: 2024,
+    url: "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-linux-2.html",
+    excerpt:
+      "Amazon Linux 2 is a Linux operating system provided by AWS with long-term support, the yum package manager and systemd — the distribution used on Bahrain Polytechnic's Unix Systems course servers.",
+    quote: false,
+    desc: {
+      ar: "التوزيعة التي تعمل عليها خوادم مختبراتك أنت: Amazon Linux 2 على AWS — بحزم yum و systemd ودعم طويل الأمد. توثيق AWS الرسمي مرجعك في مختبرات يونكس.",
+      en: "The distribution your lab servers actually run: Amazon Linux 2 on AWS — yum, systemd, long-term support. The official AWS docs are your lab companion.",
+    },
+  },
+
+  // ─── m14 · Programming, Databases & Web (BPT IT6008/IT6005/IT6012) ───
+  {
+    id: "codd-1970",
+    kind: "paper",
+    title: "A Relational Model of Data for Large Shared Data Banks",
+    org: "Communications of the ACM 13(6)",
+    year: 1970,
+    authors: "Edgar F. Codd",
+    url: "https://dl.acm.org/doi/10.1145/362384.362685",
+    excerpt:
+      "Future users of large data banks must be protected from having to know how the data is organized in the machine... A model based on n-ary relations, a normal form for data relations, and a universal data sublanguage.",
+    quote: false,
+    ref: "Abstract",
+    desc: {
+      ar: "الورقة التي اخترع بها إدغار كود القواعد العلائقية عام 1970 — الجداول والمفاتيح والاستعلام — فبنيت عليها Oracle وSQL وكل قاعدة بيانات ستستخدمها في مسيرتك. مادة قواعد البيانات عندكم تبدأ من هنا.",
+      en: "The 1970 paper in which Edgar Codd invented relational databases — tables, keys, queries — on which Oracle, SQL and every database you will use are built. Your DB course starts here.",
+    },
+  },
+  {
+    id: "silberschatz-db",
+    kind: "book",
+    title: "Database System Concepts (7th Edition)",
+    org: "McGraw-Hill",
+    year: 2019,
+    authors: "Abraham Silberschatz, Henry F. Korth, S. Sudarshan",
+    url: "https://www.db-book.com/",
+    excerpt:
+      "The standard database text: ER modelling, relational algebra and calculus, SQL, normalization up to BCNF, transactions, indexing (B+ trees) and recovery.",
+    quote: false,
+    desc: {
+      ar: "المرجع القياسي في قواعد البيانات: نمذجة ER والجبر العلائقي وSQL والتطبيع حتى BCNF والمعاملات والفهرسة — بنية مادة Database Systems كاملة بين دفتي كتاب.",
+      en: "The standard database text: ER modelling, relational algebra, SQL, normalization to BCNF, transactions, indexing — your entire Database Systems course structure.",
+    },
+  },
+  {
+    id: "oracle-sql",
+    kind: "vendor",
+    title: "Oracle Database SQL Language Reference (19c)",
+    org: "Oracle Corporation",
+    year: 2024,
+    url: "https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/",
+    excerpt:
+      "Official reference for Oracle SQL syntax: SELECT, JOINs, subqueries, DDL, DML, functions, and PL/SQL context — the database used in Bahrain Polytechnic's Database Systems course.",
+    quote: false,
+    desc: {
+      ar: "التوثيق الرسمي لـ SQL على Oracle — قاعدة البيانات التي تُدرَّس بها مادة Database Systems في البوليتكنيك: الاستعلامات والوصلات والدوال وكل صياغة ستحتاجها في الواجبات.",
+      en: "The official Oracle SQL reference — the database Bahrain Polytechnic's Database Systems course teaches with: queries, joins, functions and every syntax your assignments need.",
+    },
+  },
+  {
+    id: "python-docs",
+    kind: "portal",
+    title: "The Python Tutorial (Python 3 documentation)",
+    org: "Python Software Foundation",
+    year: 2024,
+    url: "https://docs.python.org/3/tutorial/",
+    excerpt:
+      "Python is an easy-to-learn, powerful programming language with efficient high-level data structures and a simple but effective approach to object-oriented programming — the official hands-on introduction.",
+    quote: false,
+    desc: {
+      ar: "المرجع الرسمي لتعلّم بايثون من مصدره: هياكل بيانات عالية الكفاءة ونهج بسيط وفعّال للبرمجة كائنية التوجه. لغة أولى مثالية لطالب الشبكات — ومنها ستبني أدوات أتمتة المستقبل.",
+      en: "The official Python tutorial from the source: efficient high-level data structures, simple effective OOP. An ideal first language for a networks student — and your future automation tools.",
+    },
+  },
+  {
+    id: "w3c-html",
+    kind: "standard",
+    title: "HTML Living Standard",
+    org: "WHATWG",
+    year: 2024,
+    url: "https://html.spec.whatwg.org/multipage/",
+    excerpt:
+      "The normative specification of HTML: document structure, semantic elements, forms, links, media — the language every web page (including this platform) is written in.",
+    quote: false,
+    desc: {
+      ar: "المواصفة المعيارية لـ HTML: البنية والعناصر الدلالية والنماذج والوسائط — اللغة التي كُتبت بها كل صفحة ويب، بمن فيها هذه المنصة التي تقرأ عليها الدرس.",
+      en: "The normative HTML specification: structure, semantic elements, forms, media — the language every web page is written in, including this very platform.",
+    },
+  },
+  {
+    id: "mdn-web",
+    kind: "portal",
+    title: "MDN Web Docs — Learn Web Development",
+    org: "Mozilla",
+    year: 2024,
+    url: "https://developer.mozilla.org/en-US/docs/Learn",
+    excerpt:
+      "Structured learning paths for HTML, CSS and JavaScript with working examples — the reference professional developers consult daily, maintained by Mozilla and the web community.",
+    quote: false,
+    desc: {
+      ar: "مسارات تعلّم منظمة لـ HTML وCSS وجافاسكريبت بأمثلة عاملة — المرجع الذي يستشيره المطوّرون المحترفون يومياً. شريكك في مادة Web Fundamentals ومشروعها العملي.",
+      en: "Structured learning paths for HTML, CSS and JavaScript with working examples — the reference professional developers consult daily. Your Web Fundamentals companion.",
+    },
+  },
+  {
+    id: "fielding-2000",
+    kind: "paper",
+    title: "Architectural Styles and the Design of Network-based Software Architectures",
+    org: "University of California, Irvine (PhD dissertation)",
+    year: 2000,
+    authors: "Roy Thomas Fielding",
+    url: "https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm",
+    excerpt:
+      "Chapter 5 presents REST — Representational State Transfer — the architectural style of the web itself: resources addressed by URL, uniform interface, statelessness, and hypermedia.",
+    quote: false,
+    desc: {
+      ar: "الفصل الخامس من أطروحة فيلدنغ الذي عرّف REST — النمط المعماري للويب نفسه: موارد بعناوين URL وواجهة موحّدة وعديمي الحالة. كل API ستستهلكه في أتمتة الشبكات مبني عليه.",
+      en: "Chapter 5 of Fielding's dissertation defining REST — the architectural style of the web itself. Every API you will consume in network automation is built on it.",
+    },
+  },
+
+  // ─── m15 · Math, Statistics & Research (BPT IT6010/IT7012 aligned) ────
+  {
+    id: "likert-1932",
+    kind: "paper",
+    title: "A Technique for the Measurement of Attitudes",
+    org: "Archives of Psychology",
+    year: 1932,
+    authors: "Rensis Likert",
+    url: "https://scholar.google.com/scholar?q=%22A+Technique+for+the+Measurement+of+Attitudes%22+Likert",
+    excerpt:
+      "Introduced the summated-rating scale — statements with graded response categories (e.g. strongly disagree to strongly agree) — which became the most widely used attitude measurement method in survey research.",
+    quote: false,
+    desc: {
+      ar: "الورقة التي قدّم فيها ليكيرت مقياسه الشهير: عبارات متدرجة من «أوافق بشدة» إلى «أعارف بشدة» — المقياس الأكثر استخداماً في تاريخ بحوث الاستبيانات، والذي ستستخدمه في مشروع بحثك الكمي.",
+      en: "The paper introducing the Likert scale: graded statements from strongly agree to strongly disagree — the most used attitude measure in survey history, and the one for your quantitative mini-project.",
+    },
+  },
+  {
+    id: "tukey-1977",
+    kind: "book",
+    title: "Exploratory Data Analysis",
+    org: "Addison-Wesley",
+    year: 1977,
+    authors: "John W. Tukey",
+    url: "https://scholar.google.com/scholar?q=%22Exploratory+Data+Analysis%22+Tukey",
+    excerpt:
+      "The book that taught statistics to look at data first: stem-and-leaf plots, box plots and the philosophy that visualization precedes hypothesis — EDA before modelling.",
+    quote: false,
+    desc: {
+      ar: "الكتاب الذي علّم الإحصاء أن ينظر إلى البيانات أولاً: المخططات الجذعية والصناديق وفلسفة «تصوّر قبل أن تفترض» — منهجية EDA التي ستطبقها في تحليل بيانات استبيانك.",
+      en: "The book that taught statistics to look first: stem-and-leaf, box plots, and visualize-before-you-hypothesize — the EDA methodology for your survey analysis.",
+    },
+  },
+  {
+    id: "openintro-stats",
+    kind: "book",
+    title: "OpenIntro Statistics (4th Edition)",
+    org: "OpenIntro",
+    year: 2019,
+    authors: "David M. Diez, Mine Çetinkaya-Rundel, Christopher D. Barr",
+    url: "https://www.openintro.org/book/os/",
+    excerpt:
+      "A free, open-licensed, classroom-tested statistics textbook: data design, numerical and graphical summaries, probability, distributions, and inference for means and proportions.",
+    quote: false,
+    desc: {
+      ar: "مرجع إحصاء مجاني مفتوح الترخيص ومُجرَّب في قاعات الدروس: تنظيم البيانات والتلخيصات الرقمية والرسومية والاحتمالات والاستدلال — كل مخرجات مادة الرياضيات للحوسبة.",
+      en: "A free, open-licensed, classroom-tested statistics text: data design, summaries, probability, inference — your Maths for Computing outcomes, covered.",
+    },
+  },
+  {
+    id: "nist-sematech",
+    kind: "portal",
+    title: "NIST/SEMATECH e-Handbook of Statistical Methods",
+    org: "National Institute of Standards and Technology (NIST)",
+    year: 2012,
+    url: "https://www.itl.nist.gov/div898/handbook/",
+    excerpt:
+      "The authoritative online handbook of applied statistics: descriptive techniques, measurement precision, hypothesis testing, and SPC — with worked engineering examples.",
+    quote: false,
+    desc: {
+      ar: "دليل NIST الإلكتروني للطرق الإحصائية التطبيقية: التقنيات الوصفية ودقة القياس واختبار الفرضيات بأمثلة هندسية محلولة — مرجع حكومي أمريكي بجودة معيارية.",
+      en: "NIST's authoritative online handbook of applied statistics: descriptive techniques, measurement precision, hypothesis testing with worked engineering examples.",
+    },
+  },
+  {
+    id: "acm-cc2020",
+    kind: "course",
+    title: "Computing Curricula 2020: Paradigms for Global Computing Education (CC2020)",
+    org: "ACM / IEEE Computer Society",
+    year: 2020,
+    url: "https://doi.org/10.1145/3467967",
+    excerpt:
+      "The global reference framing computing competencies: knowledge × skills × dispositions across all computing disciplines, guiding accredited degree programmes worldwide — including how IT degrees like the BICT are structured.",
+    quote: false,
+    desc: {
+      ar: "الإطار العالمي لكفايات علوم الحاسوب من ACM وIEEE: معرفة × مهارات × استعدادات — الدليل الذي تُبنى عليه البرامج الأكاديمية المعتمدة عالمياً ومنها بكالوريوس BICT الذي تدرسه. افهم الخريطة الكبرى لخطتك.",
+      en: "ACM/IEEE's global competency framework: knowledge × skills × dispositions — the guide behind accredited computing degrees worldwide, including your BICT. See the big map of your study plan.",
+    },
+  },
 ];
 
 export const SOURCE_BY_ID: Record<string, Source> = Object.fromEntries(

@@ -1,0 +1,185 @@
+APPROVED
+
+IT7204: Cloud Security
+Course Details
+Course Code:
+
+IT7204
+
+Course Title:
+
+Cloud Security APPROVED
+
+Short Title:
+
+Cloud Sec
+
+Course Level::
+
+Level 7
+
+Valid From::
+
+2026/2027 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+The aim of this course is to provide students with a comprehensive understanding of the principles, techniques, and best practices for securing cloud
+environments. Students will learn how to design and implement security measures that protect cloud-based systems and data from threats and
+attacks.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Analyze the security risks and threats associated with cloud computing environments.
+
+2
+
+Design and implement effective security measures for cloud-based systems and data
+
+3
+
+Evaluate and select appropriate security technologies and tools for cloud environments.
+
+4
+
+Develop and implement policies and procedures for managing cloud security risks
+
+Requisites
+Pre Requisite: IT6011
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Unseen)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Assignment
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+2 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICTDip-Optional
+
+ICT Diploma Optional
+
+1 Group
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

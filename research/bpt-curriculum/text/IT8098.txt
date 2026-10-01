@@ -1,0 +1,253 @@
+APPROVED
+
+IT8098: IT Research Project
+Course Details
+Course Code:
+
+IT8098
+
+Course Title:
+
+IT Research Project APPROVED
+
+Short Title:
+
+ITResProj
+
+Course Level::
+
+Level 8
+
+Valid From::
+
+2024/2025 Sem 2
+
+Credits::
+
+60
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+The course enables the student to apply critical knowledge acquired from the BICT degree and gain experience of research-based work practices. It
+provides the opportunity for the student to extend their learning in a particular research area, understand the practice of research as a profession and
+prepare for it, develop culture that supports research environments and also prepare them for postgraduate studies. The research experience
+provides a detailed knowledge and understanding of one or more subject disciplines and skills base that allows career prospects in both academia
+and industry work-based settings.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Apply specialized skills and detailed knowledge gained in the Bachelor of ICT programme to an approved research project
+
+2
+
+Critically analyze and evaluate the employability skills required of a work ready graduate
+
+3
+
+Critically analyze and evaluate the proposed solution using appropriate research methodologies
+
+Requisites
+Pre Requisite: minimum of 45 credits at Level 8 and currently in a year 4 onwards block
+
+Page 2 of 3
+
+No Examinations
+Other Controlled Assessments
+Assessment Type
+Online Quiz
+Assessment Type
+Viva voce examination
+Uncontrolled Assessments
+Assessment Type
+Essay
+Assessment Type
+Self-assessment
+Assessment Type
+Thesis
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8011
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+3 Programme
+
+ICT7011
+
+Associate Degree in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8010
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+4 Programme
+
+ICT8012
+
+Bachelor of Science in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8040
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+5 Programme
+
+ICT8041
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+3 Programme
+
+ICT8042
+
+Bachelor of Science in Data Analytics
+
+3 Programme
+
+ICT8044
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8045
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICT8060
+
+Bachelor of Science in Artificial Intelligence
+and Robotics Software
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+No Code Yet
+
+test Bachelor of Information and
+Communications Technology
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

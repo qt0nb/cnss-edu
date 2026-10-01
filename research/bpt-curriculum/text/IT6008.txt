@@ -1,0 +1,329 @@
+APPROVED
+
+IT6008: Computer Programming 1
+Course Details
+Course Code:
+
+IT6008
+
+Course Title:
+
+Computer Programming 1 APPROVED
+
+Short Title:
+
+CP1
+
+Course Level::
+
+Level 6
+
+Valid From::
+
+2024/2025 Sem 2
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To provide students with an overview of programming, problem-solving, testing and debugging. It explores many fundamental programming concepts
+with emphasis on applying theoretical knowledge to a practical situation. It will introduce students to problem-solving with a view to meeting user
+requirements and designing solutions to programming problems.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate detailed knowledge of primitive data types and basic data structures
+
+2
+
+Describe the sequence of steps that a computer takes to translate source code into executable code
+
+3
+
+Use diagrams to design solutions for programming problems from a problem description
+
+4
+
+Create and test programming solutions to problems using the Java programming language in accordance with best practice, industry standards and professional ethics
+and following programming and documentation conventions
+
+5
+
+Analyse and debug existing programs by following a test plan
+
+Requisites
+No requisites
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Practical)
+Assessment Type
+Examination (Practical)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Online Quiz
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8011
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+3 Programme
+
+BFT8100
+
+Bachelor of Science in Financial Technology
+
+2 Programme
+
+BFT8101
+
+Bachelor of Science in Financial Technology
+
+1 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+2 Programme
+
+ICT6025
+
+Diploma in Cloud Computing
+
+3 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+2 Programme
+
+ICT6045
+
+Diploma in Web Development
+
+3 Programme
+
+ICT7011
+
+Associate Degree in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT7022
+
+Associate Degree in Information and
+Communications Technology (Information
+Systems)
+
+1 Programme
+
+ICT7041
+
+Associate Degree in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8010
+
+Bachelor of Information and Communications
+Technology (Programming Major)
+
+4 Programme
+
+ICT8012
+
+Bachelor of Science in Information and
+Communications Technology (Programming
+Major)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8023
+
+Bachelor of Science in Cloud Computing and
+Information Systems
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8040
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+5 Programme
+
+ICT8041
+
+Bachelor of Information and Communications
+Technology (Database Systems Major)
+
+3 Programme
+
+ICT8042
+
+Bachelor of Science in Data Analytics
+
+3 Programme
+
+ICT8044
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8045
+
+Bachelor of Science in Information and
+Communications Technology (Database
+Systems Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+ICT8060
+
+Bachelor of Science in Artificial Intelligence
+and Robotics Software
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+No Code Yet
+
+test Bachelor of Information and
+Communications Technology
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

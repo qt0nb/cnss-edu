@@ -1,0 +1,111 @@
+APPROVED
+
+IT8341: Software Defined Networking
+Course Details
+Course Code:
+
+IT8341
+
+Course Title:
+
+Software Defined Networking APPROVED
+
+Short Title:
+
+SDN
+
+Course Level::
+
+Level 8
+
+Valid From::
+
+2026/2027 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+School of ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+
+To equip students with the knowledge and skills to design, configure, and
+manage scalable, secure SD-WAN architectures. Students will learn to
+transition from traditional WANs to SD-WAN, deploy and configure WAN
+Edge devices, apply intelligent policies for performance and security, and
+troubleshoot real-world networking challenges.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Explain the core and specialist theories, principles, and architectures underlying SD-WAN
+
+2
+
+Implement advanced SD-WAN solutions by configuring controllers, WAN Edge devices, and policies for scalability and security
+
+3
+
+Evaluate complex SD-WAN network performance and operational issues using analytical tools and evidence-based methods.
+
+Requisites
+Pre Requisite: IT8323
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Assessment Type
+Examination (Practical)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Project (Group)
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

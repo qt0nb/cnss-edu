@@ -1,0 +1,132 @@
+APPROVED
+
+IT7520: Network and Security Programmability
+Course Details
+Course Code:
+
+IT7520
+
+Course Title:
+
+Network and Security Programmability APPROVED
+
+Short Title:
+
+NSP
+
+Course Level::
+
+Level 7
+
+Valid From::
+
+2026/2027 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+School of ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+This course equips students with foundational and advanced skills in network and security programmability using Python. It focuses on the use of
+Python for socket programming, data encoding, serialization, and automation of network tasks. The course prepares students to analyze, design, and
+develop secure network applications by integrating modern protocols, APIs, and design patterns. Emphasis is placed on real-world scenarios
+involving programmability, data communication, and secure application development.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate advanced knowledge and understanding of networking and security programmability concepts through Python-based examples and use cases.
+
+2
+
+Analyze data encoding techniques and network protocols to optimize security, efficiency, and interoperability in Python-driven automation.
+
+3
+
+Implement secure network automation solutions using Python frameworks and APIs.
+
+Requisites
+Pre Requisite: IT6003
+Pre Requisite: IT6008
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Assessment Type
+Examination (Practical)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Project (Group)
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

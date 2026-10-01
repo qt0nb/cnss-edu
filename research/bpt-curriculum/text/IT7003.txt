@@ -1,0 +1,276 @@
+APPROVED
+
+IT7003: Networking and Data Communications 2
+Course Details
+Course Code:
+
+IT7003
+
+Course Title:
+
+Networking and Data Communications 2 APPROVED
+
+Short Title:
+
+Networking 2
+
+Course Level::
+
+Level 7
+
+Valid From::
+
+2021/2022 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To provide students with skills in building LANs, VLANs and WANs using networking technology.
+Students will configure local networks and manage switches. Students obtain skills in Wifi networks and access point configuration for Wifi networks.
+Students are introduced to WAN protocols and build a WAN using different WAN’s technologies and protocols.
+Also, Students are introduced to different IP addressing services and network device security.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate advanced knowledge of the required protocols for VLAN implementation
+
+2
+
+Implement and troubleshoot the VLAN Trunking Protocol (VTP), Inter-VLAN Routing and Spanning Tree Protocol (STP)
+
+3
+
+Demonstrate advanced knowledge of the required protocols for WAN implementation
+
+4
+
+Plan and configure LAN and WAN network connections and differentiate between WAN and LAN equipment and protocols
+
+5
+
+Design a network security policy by using Access Control Lists (ACLs) and IP addressing services to implement this policy
+
+Requisites
+Pre Requisite: IT6003
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Practical)
+Assessment Type
+Examination (Practical)
+Other Controlled Assessments
+Assessment Type
+Multiple-choice test
+Uncontrolled Assessments
+Assessment Type
+Practical Project
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ENT6060
+
+Diploma of Engineering Technology
+(Communications and Networks)
+
+1 Programme
+
+ENT6061
+
+Diploma of Engineering (Communications and
+Networks)
+
+1 Programme
+
+ENT7060
+
+Associate Degree in Engineering Technology
+(Communications and Networks)
+
+1 Programme
+
+ENT7061
+
+Associate Degree in Engineering
+(Communications and Networks)
+
+1 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+2 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+3 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+1 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+2 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+5 Programme
+
+ICT6010
+
+Diploma in Information and Communications
+Technology
+
+6 Programme
+
+ICT7022
+
+Associate Degree in Information and
+Communications Technology (Information
+Systems)
+
+1 Programme
+
+ICT7051
+
+Associate Degree in Information and
+Communications Technology (Cyber Security)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+ICT8050
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8051
+
+Bachelor of Information and Communications
+Technology (Cyber Security Major)
+
+4 Programme
+
+ICT8052
+
+Bachelor of Science in Information and
+Communications Technology (Cybersecurity
+Major)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Associate Degree in Engineering
+Technology (Communications and Networks)
+
+1 Programme
+
+No Code Yet
+
+Copy Of Bachelor of Information and
+Communications Technology (Cyber Security
+Major)
+
+1 Programme
+
+No Code Yet
+
+test Bachelor of Information and
+Communications Technology
+
+1 Programme
+
+ICTDip-Optional
+
+ICT Diploma Optional
+
+1 Group
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

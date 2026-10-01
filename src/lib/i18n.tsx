@@ -170,8 +170,8 @@ export const UI: Dict = {
   english: { ar: "الإنجليزية", en: "English" },
   menu: { ar: "القائمة", en: "Menu" },
   footerRights: {
-    ar: "CNSS-edu — منصة أدائية شخصية: ١٠٠ درس، ١٠٦٠ أداة، ٢٠٠ فكرة، مختبر ذكي",
-    en: "CNSS-edu — personal performance platform: 100 lessons, 1060 tools, 200 ideas, smart lab",
+    ar: "CNSS-edu — منصة أدائية شخصية: ١٥٠ درساً، ١٠٦٠ أداة، ٢٠٠ فكرة، مختبر ذكي",
+    en: "CNSS-edu — personal performance platform: 150 lessons, 1060 tools, 200 ideas, smart lab",
   },
 
   // Dashboard

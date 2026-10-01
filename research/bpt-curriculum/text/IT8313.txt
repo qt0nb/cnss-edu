@@ -1,0 +1,142 @@
+APPROVED
+
+IT8313 : Wireless Communications
+Course Details
+Course Code:
+
+IT8313
+
+Course Title:
+
+Wireless Communications APPROVED
+
+Short Title:
+
+WirelessComm
+
+Course Level::
+
+Level 8
+
+Valid From::
+
+2021/2022 Sem 1
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+To provide students with an advanced understanding of mobile and wireless communication concepts. To allow students to design and implement a
+modern mobile/wireless infrastructure in a specialist level, similar to the ones implemented by the mobile carriers in Bahrain.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate critical knowledge and understanding of the communications theory fundamentals that allow mobile/wireless networks to function.
+
+2
+
+Plan, design and implement wireless communication technologies for given scenarios.
+
+3
+
+Critically analyze the performance of various wireless communication technologies to determine appropriate solutions
+
+Requisites
+Pre Requisite: IT7003
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Unseen)
+Other Controlled Assessments
+Assessment Type
+Oral questioning after observation
+Uncontrolled Assessments
+Assessment Type
+Project (Group)
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ENT7061
+
+Associate Degree in Engineering
+(Communications and Networks)
+
+1 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+2 Programme
+
+ENT8060
+
+Bachelor of Engineering Technology
+(Communications and Networks)
+
+3 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+1 Programme
+
+ENT8061
+
+Bachelor of Engineering (Communications
+and Networks)
+
+2 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

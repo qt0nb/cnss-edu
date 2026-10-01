@@ -1,0 +1,141 @@
+APPROVED
+
+IT8213 : Data Centre Management
+Course Details
+Course Code:
+
+IT8213
+
+Course Title:
+
+Data Centre Management APPROVED
+
+Short Title:
+
+DCM
+
+Course Level::
+
+Level 8
+
+Valid From::
+
+2024/2025 Sem 3
+
+Credits::
+
+15
+
+Owner:
+
+ICT
+
+Assessment Method:
+
+Achievement
+
+Course Aim
+The course will enable students to use advanced scripting to implement administrative tasks that were in the past manual in nature. The course will
+then introduce the students to various automation tools that can be used by any organization to improve efficiencies and performance. These
+automation tools will be applied to manage a Data Centre environment.
+
+Page 1 of 3
+
+CILO
+On Completion of this course, the learner will be able to
+#
+
+Learning Outcome Description
+
+1
+
+Demonstrate a critical knowledge of Data Centre technologies.
+
+2
+
+Utilize a scripting language to automate tasks and critically evaluate its implementation.
+
+Requisites
+Pre Requisite: IT6003 and IT6004
+
+Page 2 of 3
+
+Examinations
+Assessment Type
+Examination (Practical)
+No Other Controlled Assessments
+Uncontrolled Assessments
+Assessment Type
+Project (Group)
+Assessment Type
+Lab Assignment
+
+Affiliated Entities
+Entity Code
+
+Entity Title
+
+ICT7022
+
+Associate Degree in Information and
+Communications Technology (Information
+Systems)
+
+1 Programme
+
+ICT8020
+
+Bachelor of Information and Communications
+Technology (Management Information
+Systems Major)
+
+3 Programme
+
+ICT8021
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8022
+
+Bachelor of Information and Communications
+Technology (Information Systems Major)
+
+3 Programme
+
+ICT8030
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+5 Programme
+
+ICT8031
+
+Bachelor of Information and Communications
+Technology (Networking Major)
+
+4 Programme
+
+ICT8032
+
+Bachelor of Science in Information and
+Communications Technology (Networking
+Major)
+
+1 Programme
+
+No Code Yet
+
+test Bachelor of Information and
+Communications Technology
+
+1 Programme
+
+Page 3 of 3
+
+Entity Version Entity Type
+
+

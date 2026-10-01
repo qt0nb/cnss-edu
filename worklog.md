@@ -825,3 +825,133 @@ Stage Summary:
 - SW v3 eliminates dev stale-chunk hydration errors permanently while keeping offline PWA capability
 - Security note: user shared PAT in chat — advised to revoke after use
 - Next candidates: glossary view (planned last round, data design ready), certificate PDF export, study heatmap
+
+---
+Task ID: 2-d
+Agent: general-purpose (content agent — module m14)
+Task: Write src/data/lessons/m14.ts (10 lessons l131–l140), src/data/lessonSourcesParts/m14.ts, src/data/interactivesParts/m14.ts — Programming, Databases & Web aligned to BPT IT6008/IT6005/IT6012 + IT7520 bridge
+
+Work Log:
+- Read worklog (last 200 lines), types.ts contracts (Lesson/LessonSection/LessonTable/LessonDiagram/CodeExample/QuizQuestion/CommandEntry/LessonSourceRef/LessonInteractive), m01.ts quality reference, CURRICULUM-DIGEST.md, text/IT6008+IT6005+IT6012.txt (CILOs), modules.ts m14 entry, stubs, sources.ts pool entries, lessonSources.ts + lessonInteractives.ts shapes
+- l131 Computational Thinking (4 CT pillars flow diagram, flowchart-symbol table, login-validator Python worked example, pseudocode + desk-check trace table) — IT6008 CILO 3
+- l132 Source→Execution (compiler-vs-interpreter table, same program in C + Python + bash, Python bytecode/PVM middle path, 3 error families w/ code, debugger mindset + 3-layer test plan) — IT6008 CILO 2
+- l133 Python Basics (why-Python-for-networks, 4 primitive types table, input/f-strings, indentation-as-syntax trap, boundary-tested grading example)
+- l134 Loops/Structures/Functions (while/for/range, IP list w/ indexing+slicing, tuple, device-name→IP dict, def/return/scope, combined net_devices.py) — IT6008 CILO 1
+- l135 Relational & ERD (files' 3 flaws, Codd 1970 terms table, PK/FK/composite, ERD symbol table, student↔course topology diagram, junction-table CREATE TABLE on Oracle) — IT6005 CILO 1/2
+- l136 SQL (DQL/DML/DDL table, SELECT/WHERE toolbox LIKE/IN/BETWEEN/IS NULL, forgotten-WHERE disaster + ROLLBACK, GROUP BY/HAVING, INNER JOIN) — Oracle-compatible — IT6005 CILO 4
+- l137 Normalization (unnormalized mess w/ 3 anomalies, 1NF→2NF→3NF evolution, BCNF mention, denormalization stop-rule, normal-form rule/anomaly table, 3NF DDL) — IT6005 CILO 2
+- l138 HTML (browser→HTTP→server recap, element anatomy + skeleton, content elements + relative links, semantic tag table, forms w/ label/name, complete page) — IT6012 CILO 1
+- l139 CSS (content/style separation, selector syntax, specificity ladder table, box-model layers diagram, hex↔l104 tie, units, one stylesheet + flexbox + media query) — IT6012 CILO 2
+- l140 Sockets (IP+port endpoint, full runnable TCP server/client pair, TCP handshake socket-call flow diagram, UDP variant, why engineers code, REST + requests/json) — IT7520 bridge
+- Sources: 10 lessons × 2-3 refs (23 refs) from mandated pool only — codd-1970/silberschatz-db/oracle-sql for DB, python-docs/acm-cc2020 for programming, w3c-html/mdn-web/rfc9110 for web, kurose-ross/fielding-2000 for sockets/REST
+- Interactives: 10 widgets, 1/lesson, ids w:l131:1..w:l140:1 — order ×2 (l131 CT pipeline, l140 TCP calls), classify ×3 (l132 error families [REQUIRED], l136 SQL dialects, l137 anomaly→form), match ×4 (l133 types, l135 ERD symbols, l138 HTML tags [REQUIRED], l139 box model), fill ×1 (l134 Python blanks, bank = 2 answers + 2 distractors)
+- Contract audit via throwaway scripts then deleted: 10 lessons ids l131-l140 order 1-10; levels beginner×3/intermediate×7; 4-5 sections each; 9 tables (≥8 ✓); 4 diagrams (flow×2, topology, layers); code in every lesson (python×7, sql×4, c, bash, html×3, css, text×3); 8 lessons with commands (skipped l137/l139 pure-theory per contract); keyPoints 4-6; quiz 3-4 × exactly 4 options + bilingual explain; durationMin 14-25; zero CJK in any string
+- Validation: bunx tsc --noEmit | grep m14|lessonSourcesParts|interactivesParts → CLEAN (remaining repo errors are pre-existing in examples/ and skills/, unrelated)
+
+Stage Summary:
+- m14 complete: 10/10 lessons (2139 lines across 3 files), lessons+sources+interactives all type-clean and integrated via existing lessonSources.ts/lessonInteractives.ts imports (M14_LESSON_SOURCES, M14_INTERACTIVES export names match)
+- Curriculum coverage: IT6008 CILO 1-3+5 (l131-l134), IT6005 CILO 1/2/4 (l135-l137), IT6012 CILO 1/2 (l138-l139), IT7520 forward bridge (l140)
+- Deviations: IT6008 CILO 4 names Java, but task spec mandates Python (mirrors course first weeks + matches IT7520 toolchain) — C included alongside Python in l132 for the compiler contrast; commands omitted only for l137/l139 where not natural
+
+---
+Task ID: 2-b
+Agent: general-purpose (content agent — module m12 Operating Systems & Unix)
+Task: Write 3 files for module m12 (أنظمة التشغيل ويونكس / Operating Systems & Unix) — 10 bilingual lessons l111..l120 aligned to BPT IT6004 Unix Systems, lesson sources, and interactive widgets.
+
+Work Log:
+- Read worklog (project state: m11..m15 expansion phase, sources registry 59+ entries, interactives/sourcesParts aggregation wired), types.ts contracts, m01.ts quality reference, CURRICULUM-DIGEST.md, IT6004.txt course PDF (aim + 4 CILOs), modules.ts m12 entry, and the 3 stub files.
+- Read sources.ts entries for the 14-source m12 pool (stallings-os = the book IT6004 slides cite; torvalds-1991 verbatim hobby quote; bcs-accreditation = programme accreditor) and lessonInteractives.ts shapes (order/match/classify/fill + MatchExercise index-matching semantics → no duplicate left labels).
+- Authored src/data/lessons/m12.ts: 10 lessons l111..l120, order 1..10, moduleId m12. Every lesson: 4-6 sections, bilingual \n\n + "- " bodies, 5-6 keyPoints, 3-4 commands (uname -a, who, man 1/2 mkdir, lsb_release -a, man hier, id, last, ls | wc -l), 3-4 quiz × exactly 4 options + bilingual explain, durationMin 14-18, level beginner (l118/l120 intermediate). Rich content in 10/10 lessons: l111+l114 REQUIRED Stallings "layers" diagrams (5 boxes), l112 OS-eras flow diagram, l113 timeline flow + branch table (BSD/System V/GNU-Linux), l114 REQUESTS-down/REPLIES-up table + API vs CLI (math.h, mkdir() vs mkdir, man 1 vs man 2), l115 WinAPI (kernel32/advapi32/gdi/user32) vs POSIX big table + why-Linux-viruses-rare, l116 the IT6004 matching-activity table (Windows XP..11, HP-UX/Solaris/AIX, Ubuntu/Red Hat/Amazon Linux 2, macOS Leopard..Ventura) + GNOME/KDE/XFCE + headless, l117 FHS table + tree topology + ext4-vs-NTFS + mount points + swap, l118 UID/GID table + root + permissions isolation + SSH audit + least privilege, l119 server roles (Apache/PostgreSQL/BIND/Postfix) + Bahrain/Gulf employers (Batelco, stc, NESA, Bapco, Alba, AWS region) + RHCSA/bash/AWS/Docker skills + BCS, l120 philosophy (filters/pipes live code) + GNU manifesto + 1991 hobby quote verbatim + cathedral/bazaar + GPL/MIT/proprietary table.
+- Authored src/data/lessonSourcesParts/m12.ts: M12_LESSON_SOURCES, exactly 3 refs per lesson (all within 2-3 contract), all 14 pool sources used, bilingual notes tying each source to the specific lesson part.
+- Authored src/data/interactivesParts/m12.ts: M12_INTERACTIVES, exactly 1 widget per lesson (ids w:l111:1 .. w:l120:1), xp 10-15, sectionIndex < sections.length everywhere, bilingual mobile-length strings, fill bank = 4 answers + 3 distractors. Mix: classify ×3 (l111 kernel/user space, l115 which-OS, l118 multi-user), order ×2 (l112 eras, l113 timeline), match ×4 (l114 layer↔role, l116 REQUIRED OS↔version/distribution matching activity, l119 server-role↔software, l120 license↔trait), fill ×1 (l117 FHS paths).
+- Fixed 4 Arabic typos/stray-language slips found in self-review (mixed EN inside AR string in l119, "اسأل نفسها"→"نفسك", "الأحلاف"→"الأحرف", HP-OS tip rewritten, GNU acronym phrasing). Verified zero CJK chars in all 3 files; U+200E LRM marks only where consistent with m05/lessonInteractives practice.
+- Validation: bun structural script (ids/orders/sections/keyPoints/quiz options/commands/duration/sectionIndex/xp/source counts/registry membership) → all pass; `bunx tsc --noEmit | grep m12|lessonSourcesParts|interactivesParts` → CLEAN.
+
+Stage Summary:
+- m12 module content complete: 10 lessons (l111..l120) + 30 source citations (14/14 pool sources used) + 10 interactive checkpoints, all IT6004-aligned (Stallings layers, REQUEST/REPLY, API vs UI, WinAPI vs POSIX, matching activity, Amazon Linux 2 labs, Bahrain/Gulf job market).
+- Next agents: m13 (Linux command line & bash — l121..l130), m14, m15 content authors can follow the same pattern; grading/certificates automatically pick up new lessons via lessons/index.ts, LESSON_SOURCES, LESSON_INTERACTIVES aggregates.
+
+---
+Task ID: 2-c
+Agent: general-purpose (content agent — module m13 Linux Command Line & Bash)
+Task: Write 3 files for module m13 (سطر أوامر لينكس و Bash / Linux Command Line & Bash) — 10 bilingual lessons l121..l130 mirroring the actual BPT IT6004 Unix Systems labs, lesson sources, and interactive widgets.
+
+Work Log:
+- Read worklog (m11..m15 expansion phase; m12 & m14 already authored by sibling agents), types.ts contracts (Lesson/LessonSection/LessonTable/LessonDiagram/CodeExample/QuizQuestion/CommandEntry/LessonSourceRef/LessonInteractive), m01.ts quality reference, CURRICULUM-DIGEST.md + IT6004.txt (4 CILOs: command-line, server management, scripting), modules.ts m13 entry, and the 3 stub files.
+- Read the 12-source mandated pool in sources.ts (rfc4251, openssh-project, amazon-linux-2 = the actual lab SSH/server docs; gnu-bash-manual; man-pages-linux; fhs-30; stallings-os; nemeth-handbook; kernighan-pike; posix-1003; torvalds-1991; ritchie-thompson-1974) and lessonInteractives.ts l001/l022/l037 shapes for order/match/classify/fill.
+- Authored src/data/lessons/m13.ts (1643 lines): 10 lessons l121..l130, order 1..10, moduleId m13, level beginner, durationMin 12-20. Terminal-first: 38 bash code blocks with realistic Amazon Linux 2 outputs ([A20161234@student1 ~]$ prompts, Amazon Linux 2 banner, ps aux/ls -l/yum/passwd transcripts). Coverage: l121 THE actual Lab01 (Putty from putty.org, student1.bptest.cloud, window 120×20, host-key yes, A+StudentID username, Mac ssh alternative, SSH-vs-Telnet table, download→shell flow diagram); l122 passwd dialogue + invisible typing + the lab's critical exit-vs-X warning + who; l123 prompt anatomy, pwd/ls(-l/-a/-lh), cd absolute vs relative, home tree topology diagram, command table; l124 touch/mkdir -p, nano shortcuts table (Ctrl+O/Ctrl+X/Ctrl+G), cat/head/tail, cp/mv/rm(-r/-i) no-recycle-bin warning, find, realistic outputs; l125 IT6004 CILO-3 exam material: triplets dissection, r/w/x file-vs-directory table, octal math + REQUIRED octal↔symbolic↔meaning table (755/644/700/600/777), symbolic u/g/o +-=, chown, Permission-denied & root bypass; l126 multi-user origins, id/whoami, /etc/passwd 7 fields, passwd/shadow/group file table, useradd/usermod/groupadd chain, sudo vs su - + visudo warning; l127 process/PID, ps aux columns, top + load average, Ctrl+Z/jobs/fg/bg flow diagram, TERM-vs-KILL signals table + orphan/zombie; l128 why repos vs .exe, yum on Amazon Linux 2 (install/search/info/update with real output), yum history undo, dnf/apt + yum-vs-apt equivalents table; l129 Unix philosophy, pipe stdout→stdin + data-flow diagram, five golden filters + cut, grep-matches-itself exam trap tip, > vs >> vs 2>, layered report assembly; l130 CILO-4 finale: why automate, shebang, chmod +x, variables-no-spaces, read -p, $1/$#/$@, $(...) substitution, if [ -f ]/for loops, complete dated backup script walked line-by-line.
+- Authored src/data/lessonSourcesParts/m13.ts: M13_LESSON_SOURCES, exactly 3 refs per lesson (10×3=30), pool-only sourceIds, bilingual notes tied to specific lesson parts (rfc4251/openssh-project for l121 SSH logins, amazon-linux-2 for l121/l128 lab distro, ritchie-thompson-1974 for l126 multi-user origins, kernighan-pike for l123/l129 pipes philosophy, gnu-bash-manual for l130 scripting, posix-1003 for l125/l127/l129/l130 standards).
+- Authored src/data/interactivesParts/m13.ts: M13_INTERACTIVES, exactly 1 widget per lesson (ids w:l121:1..w:l130:1), xp 10-14, sectionIndex < sections.length, bilingual mobile-length strings, fill banks = all answers + ≤3 distractors. Mix: order ×3 (l121 login sequence, l122 passwd workflow, l130 script execution steps), match ×3 (l123 command↔purpose, l125 REQUIRED octal↔symbolic↔meaning, l128 yum↔apt equivalents), classify ×2 (l124 delete-vs-move-vs-copy, l127 polite vs forced signals), fill ×2 (l126 /etc/passwd fields 7/x/UID/shell, l129 grep/wc/>> pipe blanks).
+- Self-review fixes via python: stray "0.7%" artifact before a body block, broken nested-object tip in l130, 4 mis-typed guillemets after escaped quotes (\"xxx» → \"xxx\"), 4 Arabic typos (ويندوالم→ويندوز، خطاطر→خطوات، يفربط→يربط، بtxt-→بالامتداد .txt، examiner→الممتحنون، الإcheduling→جدولة المعالج).
+- Validation: bun structural scripts → 10 lessons all pass contract (4-6 sections, keyPoints 6, commands 3-4, quiz 3-4 × exactly 4 options + bilingual explain, every lesson has bash code, 9 tables in 8 lessons, 5 diagrams incl. required flow/topology); sources validated against pool + registry; widgets validated (ids/sectionIndex/xp/bank/template-blank counts); zero CJK characters in all 3 files; no Arabic inside en strings; `bunx tsc --noEmit | grep -iE "m13|lessonSourcesParts|interactivesParts"` → CLEAN. Aggregation verified: lessonsByModule("m13") = l121..l130, LESSON_SOURCES/LESSON_INTERACTIVES pick up all 30 refs + 10 widgets, no duplicate lesson ids platform-wide (145 lessons total).
+
+Stage Summary:
+- m13 module content complete: 10 lessons (l121..l130, 1643 lines) + 30 source citations (11/12 pool sources used; torvalds-1991 reserved for m12 which covers Linux history) + 10 interactive checkpoints, all mirroring the real IT6004 labs (Putty/SSH to student1.bptest.cloud on Amazon Linux 2, passwd, exit warning, file/permission/user/process/yum management, CILO-4 backup script).
+- Ready for: m15 content author (same pattern via M15_LESSON_SOURCES/M15_INTERACTIVES), and any grading/certificate features automatically see the new lessons through the existing aggregates.
+
+---
+Task ID: 2-e
+Agent: general-purpose (content agent — m15 Math, Statistics & Research)
+Task: Write module m15 — 10 bilingual lessons (l141-l150) + lesson sources + interactive widgets, aligned to BPT IT6010 Maths for Computing and IT7012 Entrepreneurship & Research Methods (quantitative gamers survey mini-project)
+
+Work Log:
+- Read worklog (200-line skim), types.ts contracts (Lesson/LessonSection/LessonTable/LessonDiagram/QuizQuestion/LessonSourceRef/LessonInteractive), m01.ts quality reference, CURRICULUM-DIGEST.md, IT6010.txt + IT7012.txt course specs, modules.ts m15 entry, sources.ts m15 pool (likert-1932, tukey-1977, openintro-stats, nist-sematech, acm-cc2020, ieee-754, stallings-computer, kurose-ross), lessonSources.ts l001 shape, lessonInteractives.ts widget shapes, then overwrote the 3 stubs
+- src/data/lessons/m15.ts: 10 lessons l141-l150 (order 1-10; beginner l141-l143, intermediate l144-l150; durations 14/16/20/15/18/16/15/16/18/15 min) — l141 math-OS orientation + sets (VLAN/IP ranges) + functions (DNS/ARP) + 2^n subnetting + rates (uptime 216 min, loss 3%); l142 truth tables + gate table + bitwise-AND mask worked example (192.168.10.77 AND 255.255.255.0) + De Morgan + python truth-table snippet; l143 binary/hex/octal conversions step-by-step (11010110=214, 202=11001010, nibble D6) + 0-15 four-bases table + chmod 755 + IPv4/IPv6/MAC; l144 data types + mean/median/mode on gamer sleep 5,6,6,7,9,12 (45/6=7.5, median 6.5, mode 6) + outlier resistance + skewness + measure-strength table + python snippet; l145 variance/SD step-by-step on pings (mean 16, Σsq 40, σ≈2.83) + Tukey quartiles/IQR (Q1 5.5, Q3 8.5) + box plots + chart-choice table + jitter; l146 probability rules + 0.99^10≈0.904 hop loss + redundancy 1−0.0001=99.99% + nines table; l147 quant-vs-qual table + research question + IV/DV + H0/H1 + sampling bias + questionnaire structure + pilot + research-pipeline flow diagram; l148 Likert 1932 five points + odd/even debate + wording-pitfalls good-vs-bad table + $0/$1-10/$11-30/$30+ MECE options + reverse scoring (6−old); l149 spreadsheet workflow + formulas table (AVERAGE/MEDIAN/MODE/STDEV/COUNTIF/SUMIF/CORREL) + 10-gamer mini dataset table (mean sleep 6.0, mode 4) + pivot tables + r≈−0.9 + correlation≠causation; l150 plagiarism 3 types + APA in-text/reference (Likert, 1932 real example) + fabrication/falsification + privacy/GDPR-ish + AI-tools ethics + report-structure table
+- src/data/lessonSourcesParts/m15.ts: M15_LESSON_SOURCES — 2-3 refs per lesson, 10/10 lessons covered, pool-only ids (likert-1932×2, tukey-1977×2, openintro-stats×6, nist-sematech×4, acm-cc2020×4, ieee-754×1, stallings-computer×3, kurose-ross×3), bilingual notes
+- src/data/interactivesParts/m15.ts: M15_INTERACTIVES — 10 widgets, ids w:l141:1..w:l150:1, kinds fill×3 (l141 powers-of-2, l146 nines, l148 Likert) / match×3 (l142 logic↔behavior, l145 chart↔data, l149 formula↔purpose) / classify×2 (l144 data types, l150 plagiarism types) / order×1 (l147 research pipeline) / binary×1 (l143 values [12,168,200]); all sectionIndex < sections.length, xp 8-15, fill banks = answers + ≤3 distractors, bilingual mobile-length strings
+- Validation: bunx tsc --noEmit → CLEAN (m15-filtered and full-project); CJK scan on all 3 files → none; bun structural audit → ALL-VALIDATIONS-PASS (ids/orders/levels/durations/section counts/keyPoints/4-option quizzes/table row widths/fill bank integrity/widget bounds/source pool membership); ALL_LESSONS registry picks up m15 (145 total incl. empty sibling stubs)
+- Fixed during review: stray Arabic-key property in one quiz object, "Boel"→"Boole" typo, malformed NOT table row, awkward 0.99¹⁰ phrasing
+
+Stage Summary:
+- Module m15 content complete: 10 lessons (5,700+ lines of authored bilingual content), 10/10 with tables, 5 with code blocks (python/text), commands on l144/l145/l149, 1 flow diagram (l147), 35 quiz questions × 4 options with bilingual explanations, 25 source citations from the 8 relevant pool sources, 10 interactive checkpoint widgets covering all 5 required kinds
+- The through-line lands: every stats lesson (l144-l149) feeds the real first-year quantitative gamers survey mini-project (gaming hours vs sleep, ping satisfaction on 1-5 Likert, $0/$1-10/$11-30/$30+ spend brackets) exactly as in the BPT lab brief
+- Next actions: sibling agents 2-a..2-d still own m11-m14 lesson stubs (sources/interactives parts wired and waiting); platform renders m15 immediately — no other files touched
+
+---
+Task ID: 2-a
+Agent: general-purpose (m11 lessons)
+Task: Write 10 lessons l101-l110 (Computer Systems Fundamentals) + sources + interactives
+
+Work Log:
+- Read worklog.md (state + contracts), src/lib/types.ts (Lesson/LessonSection/LessonTable/LessonDiagram/CodeExample/QuizQuestion/CommandEntry/LessonSourceRef/LessonInteractive widget types)
+- Read m01.ts as the depth/Arabic-style reference, CURRICULUM-DIGEST.md + research/bpt-curriculum/text/IT6001.txt (CILO1 hardware architectures, CILO2 install/administer end-user OS, CILO5 cloud models), modules.ts m11 entry
+- Read stubs (lessons/m11.ts, lessonSourcesParts/m11.ts, interactivesParts/m11.ts), lessonSources.ts l001/l002 shape, lessonInteractives.ts header + fill/binary/order/match/classify examples, sources.ts entries for my 10-source pool
+- Wrote src/data/lessons/m11.ts: 10 lessons l101-l110, order 1-10, ids sequential; curriculum as briefed (Turing/von Neumann + layers; CPU/RAM/motherboard; HDD/SSD/NVMe/RAID + storage pyramid; binary/hex/ASCII-Unicode/IEEE-754; end-user OS install & administration; BIOS/UEFI boot chain + PXE; hypervisors Type1/Type2 + GNS3/EVE-NG + containers; NIST cloud IaaS/PaaS/SaaS + Bahrain me-south-1; USB/HDMI/RJ45/PCIe/NIC buying; Moore's law/power wall/bottlenecks/smart buying + nines uptime + quantum/neuromorphic)
+- Every lesson: 4-5 sections, bilingual body with \n\n paragraphs and - bullets, keyPoints 4-6, commands 2-4 (lscpu, free -h, lsblk, df -h, smartctl, xxd, winget, apt, bcdedit, efibootmgr, systemd-analyze, VBoxManage, virsh, Get-VM, aws, lsusb, lspci, htop, nproc...), quiz 3-4 x exactly-4 options with bilingual explain; tables/diagrams in 10/10 lessons (layers/flow/topology); code examples in l102/l104/l106; durationMin 12-25; levels: 9 beginner + l107 intermediate
+- Wrote src/data/lessonSourcesParts/m11.ts: 24 refs across l101-l110 (2-3 each), all sourceIds from the allowed pool only, all 10 pool sources used at least once, bilingual notes tied to specific lesson sections (IT6001 CILO2 for l105, CILO5 for l108, moore-1965 verbatim quote for l110, nist-sp800-145 definition for l108)
+- Wrote src/data/interactivesParts/m11.ts: 10 widgets (1 per lesson, "w:lXXX:1"): match x2 (l101 von Neumann components, l109 port-purpose), fill x1 (l102 CPU/RAM facts, bank = 3 answers + 2 distractors), order x3 (l103 storage pyramid, l105 install steps, l106 boot chain), binary x1 (l104 REQUIRED values [10, 170, 202]), classify x3 (l107 Type1/Type2, l108 IaaS/PaaS/SaaS, l110 upgrade decisions); all sectionIndex < sections.length, xp 8-15
+- QA pass 1: fixed stray English word in ar string (l104), mixed "ي grinding" (l110), typos عنق الزجاقة/عشوائيه; replaced 18 Unicode multiplication signs with ASCII x in Arabic strings (charset rule: Arabic/Latin/digits only)
+- Validation: bunx tsc --noEmit filtered to m11/lessonSourcesParts/interactivesParts -> CLEAN; custom bun validator (structure, quiz 4-option/correct range, fill bank completeness, sectionIndex bounds, Arabic charset scanner incl. CJK/Hangul detection) -> ALL M11 CHECKS PASSED
+
+Stage Summary:
+- Files written: src/data/lessons/m11.ts (10 lessons l101-l110), src/data/lessonSourcesParts/m11.ts (24 refs, 10/10 pool sources), src/data/interactivesParts/m11.ts (10 widgets)
+- Module m11 (Computer Systems Fundamentals / أساسيات أنظمة الحاسوب) now has full bilingual content aligned to BPT IT6001 CILOs 1/2/3/5
+- Validation: tsc CLEAN for all 3 files; structural + Arabic-charset checks all pass; no other files modified
+- Deviation note: task listed 2 widget options for l109 (match port-purpose vs classify input/output/storage) but only 1 widget per lesson allowed -> chose match port->purpose (ports are the lesson title focus; peripheral classification kept in lesson body + quiz)
+
+---
+Task ID: 3
+Agent: main (Z.ai Code)
+Task: BPT curriculum research + 50-lesson university IT expansion (m11-m15) + platform-wide verification
+
+Work Log:
+- User request: align platform to Bahrain Polytechnic BICT (Networking Major) study plan; add 50 foundational IT lessons
+- Browsed bpt.akarisoftware.com (Masar CMS) with agent-browser: School of ICT → Networking Major (courseId 13139)
+- Extracted full study plan: Y1S1 IT6001/EL6006/IT6010/IT6004 · Y1S2 IT6008/IT6005/EL6007/IT6003 · Y2 IT6011/IT7001/IT6012/IT6000/IT7003/IT7004 · Y3 IT7009/IT8505/IT7301/IT8323/IT8213/IT8313 · Y4 IT7204/IT7012/IT7520/IT8341 (+IT8399/IT8097/IT8098)
+- Downloaded official programme PDF + all 26 course PDFs (downloadModule API) → research/bpt-curriculum/pdfs/ (27 files)
+- Extracted text from all PDFs → text/*.txt; wrote CURRICULUM-DIGEST.md (programme meta, CILOs, teaching materials from user's uploads)
+- Key facts: BICTN ICT8031, 480 credits, BCS accredited; major selection via IT6003+IT6004 GPA; labs = Amazon Linux 2 on AWS via Putty/SSH
+- Added 5 modules m11-m15 to modules.ts (Computer Systems / OS & Unix / Linux CLI & Bash / Programming-DB-Web / Math-Stats-Research) mapped to IT6001/IT6004-labs/IT6008+IT6005+IT6012/IT6010+IT7012
+- Added 34 academic sources to sources.ts (von Neumann, Turing, Stallings OS — THE IT6004 textbook, Ritchie-Thompson 1974, Torvalds 1991, POSIX, FHS 3.0, GNU manifesto, Cathedral&Bazaar, Codd 1970, Python docs, W3C HTML, Likert 1932, Tukey 1977, OpenIntro Stats, NIST SEMATECH, ACM CC2020, BCS accreditation…)
+- Built part-file architecture: lessonSourcesParts/ + interactivesParts/ (m11-m15) spread into LESSON_SOURCES/LESSON_INTERACTIVES; lessons/m11-m15 stubs wired into index.ts
+- Launched 5 parallel content agents (2-a..2-e) → each wrote 10 lessons + sources part + interactives part; all reported tsc CLEAN + zero CJK + contract audits passed
+- Fixed: Chinese chars typo in raymond-cathedral ar desc; updated footerRights + layout metadata 100→150 lessons
+- Platform-wide verification (bun script): TOTAL_LESSONS 150, no dup/missing ids, all modules 10 lessons with correct orders, 195 new quiz Qs, ≥2 sources + ≥1 widget per new lesson, all sourceIds valid, 126 unique widget ids, 15 modules with lessons
+- bun run lint → 0 errors 0 warnings; dev server restarted via supervisor → HTTP 200
+- agent-browser QA: dashboard 0/150 + M11-M15 in track; lessons view all 5 modules; opened l114 (Unix architecture): 5 sections + Stallings layers diagram + match widget SOLVED (+12 XP) + sources (Stallings/Ritchie/Kernighan) + lesson completed (+10 XP); quiz console 552 questions, 15 module exams, 150 lesson quizzes; m12 exam started, Arabic question rendered, answered, advanced; zero browser errors; screenshot research/bpt-curriculum/exam-console-qa.png
+
+Stage Summary:
+- Platform now 150 lessons (100 networking + 50 BPT-aligned university IT), 552 quiz questions, 126 interactive widgets, 93 academic sources
+- New content deeply aligned to the official BPT curriculum: m12 mirrors IT6004 Topic-1 lecture (Stallings layers diagram, API vs CLI, mkdir() vs mkdir), m13 mirrors the actual Lab 1 (Putty/SSH/A+studentID/passwd/exit), l116 mirrors the xlsx Matching Activity, m15 mirrors the gamers survey mini-project (Likert, gaming-hours vs sleep)
+- research/bpt-curriculum/ = 27 official PDFs + digest + QA screenshot (excluded from git via upload/.gitignore? NO — research/ IS committed as project research artifacts; upload/ (user's course files) stays untracked)
+- Git: token verified (201 probe), remote had previous icon-redesign commits (fetched+verified local supersedes), push pending this session's commit

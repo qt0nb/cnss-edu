@@ -3,8 +3,14 @@
 // sourceId MUST exist in src/data/sources.ts (SOURCES registry).
 // Notes are bilingual citation annotations: what THIS source supports in THIS lesson.
 // Coverage: all 100 lessons (l001..l100), all 10 modules, all 59 registry sources.
+// BPT-aligned expansion (m11..m15, l101..l150) lives in lessonSourcesParts/.
 
 import type { LessonSourceRef } from "@/lib/types";
+import { M11_LESSON_SOURCES } from "./lessonSourcesParts/m11";
+import { M12_LESSON_SOURCES } from "./lessonSourcesParts/m12";
+import { M13_LESSON_SOURCES } from "./lessonSourcesParts/m13";
+import { M14_LESSON_SOURCES } from "./lessonSourcesParts/m14";
+import { M15_LESSON_SOURCES } from "./lessonSourcesParts/m15";
 
 export const LESSON_SOURCES: Record<string, LessonSourceRef[]> = {
   // ── EXAMPLES (correct shape — keep them, they are real lessons) ──
@@ -2490,4 +2496,9 @@ export const LESSON_SOURCES: Record<string, LessonSourceRef[]> = {
       },
     },
   ],
+  ...M11_LESSON_SOURCES,
+  ...M12_LESSON_SOURCES,
+  ...M13_LESSON_SOURCES,
+  ...M14_LESSON_SOURCES,
+  ...M15_LESSON_SOURCES,
 };

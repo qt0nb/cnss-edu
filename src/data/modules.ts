@@ -111,6 +111,61 @@ export const MODULES: ModuleMeta[] = [
     level: "expert",
     color: "#a855f7",
   },
+  {
+    id: "m11",
+    title: { ar: "أساسيات أنظمة الحاسوب", en: "Computer Systems Fundamentals" },
+    desc: {
+      ar: "العتاد والمعمارية وتمثيل البيانات والتمهيد والمحاكاة والسحابة — أساس مادة أنظمة الحاسوب في السنة الأولى.",
+      en: "Hardware, architecture, data representation, booting, virtualization and cloud — the Year-1 Computer Systems foundation.",
+    },
+    icon: "Cpu",
+    level: "beginner",
+    color: "#14b8a6",
+  },
+  {
+    id: "m12",
+    title: { ar: "أنظمة التشغيل ويونكس", en: "Operating Systems & Unix" },
+    desc: {
+      ar: "من طبقات البرمجيات إلى نواة يونكس وتاريخه وفلسفته ومقارنته بويندوز وماك — قلب مادة أنظمة يونكس.",
+      en: "From software layers to the Unix kernel, its history and philosophy, and how it compares to Windows and Mac — the heart of Unix Systems.",
+    },
+    icon: "Terminal",
+    level: "beginner",
+    color: "#b45309",
+  },
+  {
+    id: "m13",
+    title: { ar: "سطر أوامر لينكس و Bash", en: "Linux Command Line & Bash" },
+    desc: {
+      ar: "الدخول عبر SSH بـ Putty، إدارة الملفات والصلاحيات والمستخدمين والعمليات والبرمجة النصية — مختبرات يونكس خطوة بخطوة.",
+      en: "SSH login with Putty, managing files, permissions, users, processes and scripting — the Unix labs step by step.",
+    },
+    icon: "SquareTerminal",
+    level: "beginner",
+    color: "#65a30d",
+  },
+  {
+    id: "m14",
+    title: { ar: "البرمجة وقواعد البيانات والويب", en: "Programming, Databases & Web" },
+    desc: {
+      ar: "التفكير الحاسوبي وبايثون وهياكل البيانات وقواعد Oracle وSQL وERD وبناء المواقع بـ HTML/CSS.",
+      en: "Computational thinking, Python, data structures, Oracle databases, SQL, ERD, and building websites with HTML/CSS.",
+    },
+    icon: "Code2",
+    level: "intermediate",
+    color: "#c2410c",
+  },
+  {
+    id: "m15",
+    title: { ar: "الرياضيات والإحصاء والبحث العلمي", en: "Math, Statistics & Research" },
+    desc: {
+      ar: "المنطق والاحتمالات والإحصاء الوصفي وتصميم الاستبيانات ومقاييس ليكرت وتحليل البيانات وأخلاقيات البحث.",
+      en: "Logic, probability, descriptive statistics, survey design, Likert scales, data analysis, and research ethics.",
+    },
+    icon: "Sigma",
+    level: "intermediate",
+    color: "#9f1239",
+  },
 ];
 
 export const moduleById = (id: string): ModuleMeta =>
